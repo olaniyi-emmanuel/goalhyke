@@ -1,0 +1,26 @@
+* {
+  box-sizing: border-box;
+}
+
+.frame109 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 10px;
+  border: 1px solid var(--Primary_color, #7655fb);
+  border-radius: 54px;
+  background: var(--Primary_color, #7655fb);
+  padding: 9px 9px 9px 14px;
+  width: 298px;
+  height: 42px;
+
+  .verifyNow {
+    flex-shrink: 0;
+    line-height: 20px;
+    letter-spacing: 0;
+    color: #ffffff;
+    font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+  }
+}

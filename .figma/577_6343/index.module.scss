@@ -1,0 +1,14 @@
+* {
+  box-sizing: border-box;
+}
+
+.verification {
+  width: 106px;
+  height: 26px;
+  line-height: 26px;
+  letter-spacing: 0;
+  color: var(--Text_color, #262525);
+  font-family: Poligon, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+}

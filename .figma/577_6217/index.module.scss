@@ -1,0 +1,14 @@
+* {
+  box-sizing: border-box;
+}
+
+.login {
+  width: 72px;
+  height: 39px;
+  line-height: 39px;
+  letter-spacing: 0;
+  color: var(--Text_color, #262525);
+  font-family: Poligon, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+  font-size: 30px;
+  font-weight: 500;
+}

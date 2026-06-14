@@ -1,0 +1,27 @@
+* {
+  box-sizing: border-box;
+}
+
+.group196 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 255px;
+  height: 23px;
+
+  .alreadyHaveAnAccount {
+    line-height: 23px;
+    letter-spacing: 0;
+    color: var(--Text_color, #262525);
+    font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 17px;
+  }
+
+  .signIn {
+    line-height: 23px;
+    letter-spacing: 0;
+    color: var(--Primary_color, #7655fb);
+    font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 17px;
+  }
+}

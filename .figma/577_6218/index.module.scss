@@ -1,0 +1,43 @@
+* {
+  box-sizing: border-box;
+}
+
+.frame63 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 507px;
+  height: 107px;
+  row-gap: 10px;
+
+  .email {
+    flex-shrink: 0;
+    align-self: stretch;
+    line-height: 31px;
+    letter-spacing: 0;
+    color: var(--Text_color, #262525);
+    font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 20px;
+  }
+
+  .frame60 {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    align-self: stretch;
+    column-gap: 10px;
+    border: 1px solid #504e4e;
+    border-radius: 8px;
+    padding: 9px 9px 9px 14px;
+    height: 66px;
+
+    .enterYourEmail {
+      flex-shrink: 0;
+      line-height: 29px;
+      letter-spacing: 0;
+      color: #8e8989;
+      font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 18px;
+    }
+  }
+}

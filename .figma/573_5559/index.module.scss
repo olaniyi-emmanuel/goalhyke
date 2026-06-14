@@ -1,0 +1,64 @@
+* {
+  box-sizing: border-box;
+}
+
+.selectYourGoal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  padding: 43px 20px 92px;
+  width: 648px;
+  height: 850px;
+  overflow: hidden;
+
+  .frame1321315079 {
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+    border-radius: 80px;
+    background: #f6f6f6;
+    padding: 8px 8px 8px 25px;
+    width: 608px;
+    height: 60px;
+
+    .vector {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+    }
+
+    .search {
+      flex-shrink: 0;
+      line-height: 26px;
+      letter-spacing: 0;
+      color: #878484;
+      font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 19px;
+    }
+  }
+
+  .growWealth {
+    margin: 45px 0px 0px;
+    padding: 12px 8px 12px 15px;
+    width: 608px;
+    height: 50px;
+    line-height: 27px;
+    letter-spacing: 0;
+    color: var(--Text_color, #262525);
+    font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 20px;
+  }
+
+  .loseWeight {
+    margin: 20px 0px 0px;
+    padding: 12px 8px 12px 15px;
+    width: 608px;
+    height: 50px;
+    line-height: 27px;
+    letter-spacing: 0;
+    color: var(--Text_color, #262525);
+    font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 20px;
+  }
+}

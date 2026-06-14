@@ -1,0 +1,60 @@
+* {
+  box-sizing: border-box;
+}
+
+.frame18 {
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  background: #7152ed;
+  padding-left: 58px;
+  width: 1312px;
+  height: 376px;
+  overflow: hidden;
+
+  .frame20 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    row-gap: 54px;
+
+    .progressConsistency {
+      flex-shrink: 0;
+      align-self: stretch;
+      line-height: 41px;
+      letter-spacing: 0;
+      color: #ffffff;
+      font-family: Poligon, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 32px;
+      font-weight: 500;
+    }
+
+    .defineMeaningfulGoal {
+      flex-shrink: 0;
+      align-self: stretch;
+      width: 527px;
+      height: 129px;
+      line-height: 10px;
+      letter-spacing: 0;
+      color: #ffffff;
+      font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 20px;
+    }
+  }
+
+  .frame19 {
+    display: flex;
+    align-items: flex-start;
+    margin-left: 167px;
+    border-radius: 210px 0px 0px;
+    background: #f23753;
+    padding: 17px 31px 0px 120px;
+    height: 376px;
+    overflow: hidden;
+
+    .image12 {
+      width: 410px;
+      height: 359px;
+    }
+  }
+}

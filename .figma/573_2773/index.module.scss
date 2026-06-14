@@ -1,0 +1,60 @@
+* {
+  box-sizing: border-box;
+}
+
+.frame14 {
+  display: inline-flex;
+  align-items: center;
+  column-gap: 35px;
+  width: 476px;
+  height: 56px;
+
+  .frame11 {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    column-gap: 144px;
+    border-radius: 7px;
+    background: #f4f0f0;
+    padding: 10px 10px 10px 15px;
+    width: 334px;
+    height: 56px;
+
+    .selectYourGoal {
+      flex-shrink: 0;
+      line-height: 24px;
+      letter-spacing: 0;
+      color: #717070;
+      font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 17px;
+    }
+
+    .vector {
+      flex-shrink: 0;
+      width: 16px;
+      height: 8px;
+    }
+  }
+
+  .frame7 {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+    border-radius: 60px;
+    background: var(--Primary_color, #7655fb);
+    padding: 10px;
+    width: 107px;
+
+    .sIgnup {
+      flex-shrink: 0;
+      line-height: 28px;
+      letter-spacing: 0;
+      color: #ffffff;
+      font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 17px;
+      font-weight: 500;
+    }
+  }
+}

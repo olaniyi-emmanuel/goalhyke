@@ -1,0 +1,15 @@
+* {
+  box-sizing: border-box;
+}
+
+.growWealth {
+  width: 310px;
+  height: 32px;
+  text-align: center;
+  line-height: 32px;
+  letter-spacing: 0;
+  color: var(--Text_color, #262525);
+  font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+}

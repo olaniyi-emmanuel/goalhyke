@@ -1,0 +1,102 @@
+* {
+  box-sizing: border-box;
+}
+
+.frame1321315078 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  padding-bottom: 451px;
+  width: 306px;
+  height: 896px;
+  overflow: hidden;
+
+  .navBar {
+    width: 306px;
+    height: 40px;
+    overflow: hidden;
+  }
+
+  .hOwitworks {
+    margin: 23px 0px 0px;
+    padding: 10px;
+    width: 306px;
+    text-align: center;
+    line-height: 18px;
+    letter-spacing: 0;
+    color: var(--Text_color, #262525);
+    font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+
+  .aBoutus {
+    margin: 24px 0px 0px;
+    padding: 10px;
+    width: 306px;
+    text-align: center;
+    line-height: 20px;
+    letter-spacing: 0;
+    color: var(--Text_color, #262525);
+    font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+
+  .hElpcentre {
+    margin: 24px 0px 0px;
+    padding: 10px;
+    width: 306px;
+    text-align: center;
+    line-height: 23px;
+    letter-spacing: 0;
+    color: var(--Text_color, #262525);
+    font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+
+  .frame5 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+    margin-top: 105px;
+    border: 1px solid var(--Primary_color, #7655fb);
+    border-radius: 50px;
+    padding: 9px;
+    width: 272px;
+    height: 44px;
+
+    .lOgin {
+      flex-shrink: 0;
+      line-height: 28px;
+      letter-spacing: 0;
+      color: var(--Primary_color, #7655fb);
+      font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+
+  .frame6 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+    margin-top: 20px;
+    border-radius: 50px;
+    background: var(--Primary_color, #7655fb);
+    padding: 10px;
+    width: 272px;
+    height: 44px;
+
+    .sIgnup {
+      flex-shrink: 0;
+      line-height: 28px;
+      letter-spacing: 0;
+      color: #ffffff;
+      font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+}

@@ -1,0 +1,88 @@
+* {
+  box-sizing: border-box;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 27px 100px;
+  width: 1512px;
+  height: 110px;
+  overflow: hidden;
+
+  .goalHyke1Dpi1 {
+    width: 198px;
+    height: 56px;
+  }
+
+  .frame7 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 27px;
+    margin-left: 218px;
+    border-radius: 56px;
+    background: var(--Secondary_color, #4169e1);
+    width: 463px;
+
+    .hOwitworks {
+      flex-shrink: 0;
+      padding: 10px;
+      line-height: 28px;
+      letter-spacing: 0;
+      color: #ffffff;
+      font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 17px;
+    }
+  }
+
+  .frame77 {
+    display: inline-flex;
+    align-items: center;
+    column-gap: 25px;
+    margin-left: 194px;
+
+    .frame5 {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      column-gap: 10px;
+      border: 1px solid var(--Primary_color, #7655fb);
+      border-radius: 50px;
+      padding: 9px;
+      width: 107px;
+
+      .lOgin {
+        flex-shrink: 0;
+        line-height: 28px;
+        letter-spacing: 0;
+        color: var(--Primary_color, #7655fb);
+        font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 17px;
+      }
+    }
+
+    .frame6 {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      column-gap: 10px;
+      border-radius: 60px;
+      background: var(--Primary_color, #7655fb);
+      padding: 10px;
+      width: 107px;
+
+      .sIgnup {
+        flex-shrink: 0;
+        line-height: 28px;
+        letter-spacing: 0;
+        color: #ffffff;
+        font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 17px;
+      }
+    }
+  }
+}

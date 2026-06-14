@@ -1,0 +1,133 @@
+* {
+  box-sizing: border-box;
+}
+
+.goalHyke {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--Secondary_color, #4169e1);
+  padding-top: 74px;
+  padding-bottom: 67px;
+  width: 1512px;
+  height: 702px;
+  overflow: hidden;
+
+  .frame24 {
+    position: relative;
+    width: 389px;
+    height: 75px;
+
+    .ellipse2 {
+      position: absolute;
+      top: 0;
+      left: 312px;
+      border-radius: 50%;
+      background: #ffd54f;
+      width: 75px;
+      height: 75px;
+    }
+
+    .whatSGoalHyke {
+      position: absolute;
+      top: 12px;
+      left: -9px;
+      width: 374px;
+      height: 51px;
+      line-height: 51px;
+      letter-spacing: 0;
+      color: #ffffff;
+      font-family: Poligon, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 45px;
+      font-weight: 500;
+    }
+  }
+
+  .goalHykeIsAnEverEvol {
+    margin: 47px 0px 0px;
+    width: 826px;
+    height: 81px;
+    text-align: center;
+    line-height: 27px;
+    letter-spacing: 0;
+    color: #ffffff;
+    font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 20px;
+  }
+
+  .frame1321315124 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 40px;
+    margin-top: 31px;
+    padding-top: 54px;
+    padding-bottom: 24px;
+    width: 1512px;
+
+    .frame29 {
+      position: relative;
+      flex-shrink: 0;
+      width: 382px;
+      height: 249px;
+
+      .frame28 {
+        display: flex;
+        position: absolute;
+        top: 0;
+        left: 0;
+        flex-direction: column;
+        align-items: flex-start;
+        border-radius: 20px;
+        box-shadow: 0px 0px 4px 0px #00000040;
+        background: #ffffff;
+        padding: 29px 182px 76px 28px;
+        width: 382px;
+        height: 219px;
+        overflow: hidden;
+
+        .autoWrapper {
+          display: flex;
+          align-items: flex-start;
+          align-self: stretch;
+          justify-content: space-between;
+          padding-right: 0;
+          padding-left: 0;
+
+          .avatarImage53 {
+            border-radius: 27px;
+            width: 53px;
+            height: 53px;
+            overflow: hidden;
+          }
+
+          .johnDoe {
+            margin: 17px 0px 0px;
+            line-height: 27px;
+            letter-spacing: 0;
+            color: var(--Text_color, #262525);
+            font-family: "Roboto Serif", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+            font-size: 20px;
+          }
+        }
+
+        .quitSmoking {
+          margin: 34px 0px 0px;
+          line-height: 27px;
+          letter-spacing: 0;
+          color: var(--Text_color, #262525);
+          font-family: "Roboto Serif", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+          font-size: 21px;
+        }
+      }
+
+      .group2 {
+        position: absolute;
+        top: 188px;
+        left: 161px;
+        width: 61px;
+        height: 61px;
+      }
+    }
+  }
+}

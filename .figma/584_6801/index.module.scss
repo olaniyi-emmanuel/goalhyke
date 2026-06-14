@@ -1,0 +1,40 @@
+* {
+  box-sizing: border-box;
+}
+
+.frame1321314893 {
+  display: flex;
+  align-items: center;
+  padding: 27px 100px 27px 1236px;
+  width: 1512px;
+  height: 104px;
+  overflow: hidden;
+
+  .frame1321314894 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 8px;
+    border-radius: 5px;
+    background: var(--Primary_color, #7655fb);
+    padding: 8px;
+    width: 176px;
+    height: 50px;
+
+    .createAGoal {
+      flex-shrink: 0;
+      line-height: 26px;
+      letter-spacing: 0;
+      color: #ffffff;
+      font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 19px;
+      font-weight: 500;
+    }
+
+    .vector {
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+    }
+  }
+}

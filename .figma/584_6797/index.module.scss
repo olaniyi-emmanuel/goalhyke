@@ -1,0 +1,108 @@
+* {
+  box-sizing: border-box;
+}
+
+.navigationRegistered {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 27px 100px;
+  width: 1512px;
+  height: 110px;
+  overflow: hidden;
+
+  .goalHyke1Dpi1 {
+    width: 198px;
+    height: 56px;
+  }
+
+  .frame7 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 27px;
+    margin-left: 209px;
+    border-radius: 56px;
+    background: var(--Secondary_color, #4169e1);
+    width: 472px;
+
+    .hOwitworks {
+      flex-shrink: 0;
+      padding: 10px;
+      line-height: 28px;
+      letter-spacing: 0;
+      color: #ffffff;
+      font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 17px;
+    }
+  }
+
+  .group {
+    display: flex;
+    align-items: flex-start;
+    margin-left: 154px;
+    padding: 2px 1px 14px 11px;
+    background-image: url(../image/mlmjkmiw-85l6yye.svg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    .ellipse55 {
+      border-radius: 50%;
+      background: var(--Success-Errors, #ff4e68);
+      width: 8px;
+      height: 8px;
+    }
+  }
+
+  .frame4 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+    margin-left: 25px;
+    border: 1px solid var(--Primary_color, #7655fb);
+    border-radius: 56px;
+    padding: 9px;
+
+    .gEttoken {
+      flex-shrink: 0;
+      line-height: 28px;
+      letter-spacing: 0;
+      color: var(--Primary_color, #7655fb);
+      font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 17px;
+      font-weight: 500;
+    }
+  }
+
+  .frame1321314867 {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-left: 39px;
+    border-radius: 48px;
+    background: var(--Primary_color, #7655fb);
+    padding: 4px 13px 3px 6px;
+    width: 83px;
+    min-width: 83px;
+
+    .avatarImage48 {
+      border: 1px solid #ffffff;
+      border-radius: 21px;
+      width: 41px;
+      height: 41px;
+      overflow: hidden;
+      background-image: url(../image/mlmjkmjh-0xe5jaw.png);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .vector {
+      margin-top: 21px;
+      width: 12px;
+      height: 6px;
+    }
+  }
+}

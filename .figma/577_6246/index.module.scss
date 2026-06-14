@@ -1,0 +1,37 @@
+* {
+  box-sizing: border-box;
+}
+
+.frame72 {
+  position: relative;
+  width: 273px;
+  height: 45px;
+
+  .donTHaveAnAccount {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 197px;
+    height: 26px;
+    line-height: 26px;
+    letter-spacing: 0;
+    color: #626161;
+    font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 19px;
+  }
+
+  .signUp {
+    position: absolute;
+    top: 0;
+    left: 196px;
+    padding: 10px;
+    width: 82px;
+    height: 45px;
+    line-height: 25px;
+    letter-spacing: 0;
+    color: var(--Primary_color, #7655fb);
+    font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+  }
+}

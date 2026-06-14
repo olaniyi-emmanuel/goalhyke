@@ -1,0 +1,60 @@
+* {
+  box-sizing: border-box;
+}
+
+.frame192 {
+  display: flex;
+  align-items: flex-start;
+  border-radius: 10px;
+  background: var(--Secondary_color, #4169e1);
+  padding: 6px 50px 0px 7px;
+  width: 1312px;
+  height: 376px;
+  overflow: hidden;
+
+  .frame19 {
+    display: flex;
+    align-items: center;
+    border-radius: 210px 0px 0px;
+    background: #ffd54f;
+    padding: 16px 109px 17px;
+    overflow: hidden;
+
+    .image12 {
+      width: 343px;
+      height: 343px;
+    }
+  }
+
+  .frame20 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 76px;
+    margin-left: 167px;
+    row-gap: 54px;
+
+    .milestones {
+      flex-shrink: 0;
+      align-self: stretch;
+      line-height: 41px;
+      letter-spacing: 0;
+      color: #ffffff;
+      font-family: Poligon, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 32px;
+      font-weight: 500;
+    }
+
+    .asYouHitYourTargetsG {
+      flex-shrink: 0;
+      align-self: stretch;
+      width: 527px;
+      height: 118px;
+      line-height: 27px;
+      letter-spacing: 0;
+      color: #ffffff;
+      font-family: "Nunito Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 20px;
+    }
+  }
+}
