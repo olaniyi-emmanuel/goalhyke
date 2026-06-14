@@ -11,32 +11,26 @@ const Sidebar = () => {
   const menuItems = [
     {
       icon: "/images/sidebar-dashboard-active.svg",
-      activeIcon: "/images/sidebar-dashboard-active.svg",
       label: "Dashboard",
       href: "/dashboard",
-      isActive: true, // For now, let's hardcode the active state logic based on path later
     },
     {
       icon: "/images/sidebar-goals.svg",
-      activeIcon: "/images/sidebar-goals.svg",
       label: "Goals",
       href: "/goals",
     },
     {
       icon: "/images/sidebar-links.svg",
-      activeIcon: "/images/sidebar-links.svg",
       label: "Links",
       href: "/links",
     },
     {
       icon: "/images/sidebar-stats.svg",
-      activeIcon: "/images/sidebar-stats.svg",
       label: "Stats",
       href: "/stats",
     },
     {
       icon: "/images/sidebar-settings.svg",
-      activeIcon: "/images/sidebar-settings.svg",
       label: "Settings",
       href: "/settings",
     },
@@ -56,28 +50,31 @@ const Sidebar = () => {
 
       {/* Navigation Items */}
       <div className="flex flex-col gap-8 w-full items-center">
-        {menuItems.map((item, index) => (
-          <Link
-            key={index}
-            href={item.href}
-            className="flex items-center justify-center relative group"
-          >
-            {/* Active Indicator Background */}
-            {item.isActive && (
-              <div className="absolute inset-0 bg-[#4169e1] rounded-[40px] opacity-100 -z-10 w-[91px] h-[76px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-            )}
-            
-            <div className={`relative w-[24px] h-[24px] flex items-center justify-center z-10`}>
-               <Image
-                src={item.icon}
-                alt={item.label}
-                width={24}
-                height={24}
-                className={item.isActive ? "brightness-0 invert" : ""} // Make icon white if active
-              />
-            </div>
-          </Link>
-        ))}
+        {menuItems.map((item, index) => {
+          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+          return (
+            <Link
+              key={index}
+              href={item.href}
+              className="flex items-center justify-center relative group"
+            >
+              {/* Active Indicator Background */}
+              {isActive && (
+                <div className="absolute inset-0 bg-[#4169e1] rounded-[40px] opacity-100 -z-10 w-[91px] h-[76px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+              )}
+              
+              <div className={`relative w-[24px] h-[24px] flex items-center justify-center z-10`}>
+                 <Image
+                  src={item.icon}
+                  alt={item.label}
+                  width={24}
+                  height={24}
+                  className={isActive ? "brightness-0 invert" : ""} // Make icon white if active
+                />
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
       {/* Spacer */}

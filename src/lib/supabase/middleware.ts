@@ -35,7 +35,11 @@ export async function updateSession(request: NextRequest) {
 
   // If page requires authentication, redirect if user is not authenticated:
   const isProtectedRoute = request.nextUrl.pathname.startsWith('/set-goal') || 
-                          request.nextUrl.pathname.startsWith('/dashboard');
+                          request.nextUrl.pathname.startsWith('/dashboard') ||
+                          request.nextUrl.pathname.startsWith('/goals') ||
+                          request.nextUrl.pathname.startsWith('/links') ||
+                          request.nextUrl.pathname.startsWith('/stats') ||
+                          request.nextUrl.pathname.startsWith('/settings');
 
   if (isProtectedRoute && !user) {
     const url = request.nextUrl.clone();
