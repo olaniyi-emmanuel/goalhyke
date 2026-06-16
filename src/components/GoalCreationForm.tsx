@@ -1,16 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-const GoalCreationForm = () => {
+interface GoalCreationFormProps {
+  initialCategory?: string;
+  onCancel?: () => void;
+}
+
+const GoalCreationForm = ({ initialCategory = "", onCancel }: GoalCreationFormProps) => {
   const [formData, setFormData] = useState({
-    title: "",
-    category: "",
+    title: initialCategory,
+    category: initialCategory,
     startDate: "",
     endDate: "",
     description: "",
   });
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      category: initialCategory,
+      title: initialCategory,
+    }));
+  }, [initialCategory]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -182,12 +195,22 @@ const GoalCreationForm = () => {
         />
       </div>
 
-      {/* Submit Button */}
-      <div className="flex justify-end mt-4">
+      {/* Submit / Action Buttons */}
+      <div className="flex justify-end items-center gap-4 mt-4">
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isLoading}
+            className="border border-[#7655fb] text-[#7655fb] hover:bg-[#7655fb]/5 rounded-[50px] px-8 py-3 text-[15px] font-bold font-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[150px] cursor-pointer"
+          >
+            Back
+          </button>
+        )}
         <button
           type="submit"
           disabled={isLoading}
-          className="bg-[#7655fb] text-white rounded-[50px] px-8 py-3 text-[15px] font-bold font-secondary hover:bg-[#6445e0] transition-colors shadow-lg shadow-[#7655fb]/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[150px]"
+          className="bg-[#7655fb] text-white rounded-[50px] px-8 py-3 text-[15px] font-bold font-secondary hover:bg-[#6445e0] transition-colors shadow-lg shadow-[#7655fb]/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[150px] cursor-pointer"
         >
           {isLoading ? "Creating..." : "Create Goal"}
         </button>

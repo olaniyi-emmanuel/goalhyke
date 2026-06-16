@@ -85,162 +85,171 @@ export default function Signup() {
       setError(oAuthError.message);
     }
   };
+
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen gh-page-bg">
       <Navigation />
-      
-      {/* Main Content */}
-      <div className="flex flex-col lg:flex-row min-h-[calc(100vh-110px)] max-w-[1280px] mx-auto">
-        
-        {/* Left Side - Illustration */}
-        <div className="hidden lg:flex flex-1 items-center justify-center bg-white relative overflow-hidden">
-          <div className="relative w-full h-full min-h-[800px]">
-            <Image 
-              src="/images/signup-illustration.png"
-              alt="Goal Hyke Illustration"
-              fill
-              className="object-contain object-center scale-110"
-              priority
-            />
-          </div>
-        </div>
 
-        {/* Right Side - Form */}
-        <div className="flex-1 flex flex-col justify-center px-6 py-12 md:px-12 lg:px-20 xl:px-32 bg-white">
-          <div className="w-full max-w-[500px] mx-auto lg:mx-0">
-            <h1 className="text-[28px] md:text-[32px] lg:text-[36px] font-bold text-[#262525] font-secondary mb-2">
-              Sign Up
-            </h1>
-            <p className="text-[#666666] text-[14px] font-secondary mb-10">
-              Join Goal Hyke and start your journey today.
-            </p>
-
-            <form onSubmit={handleSignup} className="flex flex-col gap-6">
-              {error && (
-                <div className="p-3 text-sm text-red-500 bg-red-50 rounded-[8px] border border-red-200">
-                  {error}
-                </div>
-              )}
-              {success && (
-                <div className="p-3 text-sm text-green-600 bg-green-50 rounded-[8px] border border-green-200">
-                  Account created! Please check your email to verify.
-                </div>
-              )}
-
-              {/* Name Input */}
-              <div className="flex flex-col gap-2">
-                <label className="text-[#262525] text-[14px] font-bold font-secondary">
-                  Full Name
-                </label>
-                <input 
-                  type="text"
-                  placeholder="Enter your full name"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  disabled={isLoading}
-                  className="w-full h-[56px] px-4 rounded-[12px] border border-[#E0E0E0] bg-[#FAFAFA] text-[#262525] font-secondary focus:outline-none focus:border-[#7655fb] transition-colors"
-                  required
+      <div className="gh-shell px-4 py-6 md:px-6 lg:px-10 lg:py-10">
+        <div className="gh-panel overflow-hidden">
+          <div className="grid min-h-[calc(100vh-210px)] grid-cols-1 lg:grid-cols-[1fr_1fr]">
+            <div className="relative hidden overflow-hidden bg-[linear-gradient(145deg,#f4f7ff_0%,#f7efff_46%,#ffffff_100%)] lg:flex lg:items-center lg:justify-center">
+              <div className="absolute inset-x-10 top-10 flex items-center justify-between">
+                <span className="gh-badge">Start strong</span>
+                <span className="rounded-full bg-white/85 px-4 py-2 text-[13px] font-semibold text-[#4f5b7f] shadow-[0_8px_24px_rgba(24,33,77,0.06)]">
+                  Design goals you can keep
+                </span>
+              </div>
+              <div className="absolute left-10 top-28 h-[180px] w-[180px] rounded-full bg-[#7655fb]/10 blur-3xl" />
+              <div className="absolute bottom-10 right-12 h-[220px] w-[220px] rounded-full bg-[#4169e1]/10 blur-3xl" />
+              <div className="relative h-full min-h-[780px] w-full">
+                <Image
+                  src="/images/signup-illustration.png"
+                  alt="Goal Hyke Illustration"
+                  fill
+                  className="object-contain object-center scale-105"
+                  priority
                 />
               </div>
+            </div>
 
-              {/* Email Input */}
-              <div className="flex flex-col gap-2">
-                <label className="text-[#262525] text-[14px] font-bold font-secondary">
-                  Email Address
-                </label>
-                <input 
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                  className="w-full h-[56px] px-4 rounded-[12px] border border-[#E0E0E0] bg-[#FAFAFA] text-[#262525] font-secondary focus:outline-none focus:border-[#7655fb] transition-colors"
-                  required
-                />
+            <div className="flex flex-col justify-center bg-white px-6 py-12 md:px-10 lg:px-14">
+              <div className="mx-auto w-full max-w-[540px] lg:mx-0">
+                <span className="gh-badge mb-4">Create account</span>
+                <h1 className="mb-3 text-[32px] font-bold leading-[1.05] text-[#262525] md:text-[40px]">
+                  Join GoalHyke and build habits with a
+                  <span className="bg-gradient-to-r from-[#4169e1] to-[#7655fb] bg-clip-text text-transparent">
+                    {" "}clear system
+                  </span>
+                </h1>
+                <p className="mb-10 max-w-[470px] text-[15px] leading-7 text-[#666f85]">
+                  Start with a calmer interface, stronger structure, and accountability tools that make your goals easier to keep.
+                </p>
+
+                <form onSubmit={handleSignup} className="flex flex-col gap-5">
+                  {error && (
+                    <div className="rounded-[18px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-500">
+                      {error}
+                    </div>
+                  )}
+                  {success && (
+                    <div className="rounded-[18px] border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-600">
+                      Account created! Please check your email to verify.
+                    </div>
+                  )}
+
+                  <div className="grid gap-5 md:grid-cols-2">
+                    <div className="gh-panel-soft px-5 py-5 md:col-span-2">
+                      <label className="mb-2 block text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                        Full name
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Enter your full name"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        disabled={isLoading}
+                        className="gh-input"
+                        required
+                      />
+                    </div>
+
+                    <div className="gh-panel-soft px-5 py-5 md:col-span-2">
+                      <label className="mb-2 block text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                        Email address
+                      </label>
+                      <input
+                        type="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        disabled={isLoading}
+                        className="gh-input"
+                        required
+                      />
+                    </div>
+
+                    <div className="gh-panel-soft px-5 py-5">
+                      <label className="mb-2 block text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                        Password
+                      </label>
+                      <input
+                        type="password"
+                        placeholder="Create a password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={isLoading}
+                        className="gh-input"
+                        required
+                      />
+                    </div>
+
+                    <div className="gh-panel-soft px-5 py-5">
+                      <label className="mb-2 block text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                        Confirm password
+                      </label>
+                      <input
+                        type="password"
+                        placeholder="Confirm your password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        disabled={isLoading}
+                        className="gh-input"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="gh-btn-primary mt-2 h-[58px] w-full text-[16px] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
+                  >
+                    {isLoading ? "Signing up..." : "Sign up"}
+                  </button>
+
+                  <div className="my-2 flex items-center gap-4">
+                    <div className="h-px flex-1 bg-[#e8ebf4]" />
+                    <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#9aa1b4]">
+                      Or continue with
+                    </p>
+                    <div className="h-px flex-1 bg-[#e8ebf4]" />
+                  </div>
+
+                  <div className="grid gap-4">
+                    <button
+                      type="button"
+                      onClick={handleGoogleLogin}
+                      disabled={isLoading}
+                      className="gh-panel-soft flex h-[58px] items-center justify-center gap-3 px-4 text-[14px] font-semibold text-[#262525] transition-colors hover:bg-[#f5f7ff] disabled:opacity-50"
+                    >
+                      <Image src="/images/google-icon.svg" width={24} height={24} alt="Google" />
+                      Sign in with Google
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAppleLogin}
+                      disabled={isLoading}
+                      className="flex h-[58px] items-center justify-center gap-3 rounded-[22px] bg-[#20232d] px-4 text-[14px] font-semibold text-white transition-colors hover:bg-[#161922] disabled:opacity-50"
+                    >
+                      <Image src="/images/apple-icon.svg" width={20} height={24} alt="Apple" />
+                      Sign in with Apple
+                    </button>
+                  </div>
+
+                  <p className="mt-4 text-center text-[14px] text-[#666f85] lg:text-left">
+                    Already have an account?{" "}
+                    <Link href="/login" className="font-bold text-[#7655fb] hover:underline">
+                      Login
+                    </Link>
+                  </p>
+                </form>
               </div>
-
-              {/* Password Input */}
-              <div className="flex flex-col gap-2">
-                <label className="text-[#262525] text-[14px] font-bold font-secondary">
-                  Password
-                </label>
-                <input 
-                  type="password"
-                  placeholder="Create a password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={isLoading}
-                  className="w-full h-[56px] px-4 rounded-[12px] border border-[#E0E0E0] bg-[#FAFAFA] text-[#262525] font-secondary focus:outline-none focus:border-[#7655fb] transition-colors"
-                  required
-                />
-              </div>
-
-              {/* Confirm Password Input */}
-              <div className="flex flex-col gap-2">
-                <label className="text-[#262525] text-[14px] font-bold font-secondary">
-                  Confirm Password
-                </label>
-                <input 
-                  type="password"
-                  placeholder="Confirm your password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  disabled={isLoading}
-                  className="w-full h-[56px] px-4 rounded-[12px] border border-[#E0E0E0] bg-[#FAFAFA] text-[#262525] font-secondary focus:outline-none focus:border-[#7655fb] transition-colors"
-                  required
-                />
-              </div>
-
-              {/* Submit Button */}
-              <button 
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-[56px] mt-4 bg-[#7655fb] text-white rounded-[60px] text-[16px] font-bold font-secondary hover:bg-[#6445e0] transition-colors shadow-lg shadow-[#7655fb]/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                {isLoading ? "Signing up..." : "Sign up"}
-              </button>
-
-              {/* Divider */}
-              <div className="flex items-center gap-4 my-2">
-                <div className="flex-1 h-[1px] bg-[#E0E0E0]"></div>
-                <p className="text-[#666666] font-secondary text-[14px]">or</p>
-                <div className="flex-1 h-[1px] bg-[#E0E0E0]"></div>
-              </div>
-
-              {/* Social Login Buttons */}
-              <div className="flex flex-col gap-4">
-                <button 
-                  type="button"
-                  onClick={handleGoogleLogin}
-                  disabled={isLoading}
-                  className="flex items-center justify-center gap-3 w-full h-[56px] bg-white border border-[#E0E0E0] rounded-[10px] text-[#262525] text-[14px] font-secondary hover:bg-gray-50 transition-colors disabled:opacity-50"
-                >
-                  <Image src="/images/google-icon.svg" width={24} height={24} alt="Google" />
-                  Sign in with Google
-                </button>
-                <button 
-                  type="button"
-                  onClick={handleAppleLogin}
-                  disabled={isLoading}
-                  className="flex items-center justify-center gap-3 w-full h-[56px] bg-[#2D2C2C] rounded-[10px] text-white text-[14px] font-secondary hover:bg-[#1a1a1a] transition-colors disabled:opacity-50"
-                >
-                  <Image src="/images/apple-icon.svg" width={20} height={24} alt="Apple" />
-                  Sign in with Apple
-                </button>
-              </div>
-
-              {/* Login Link */}
-              <p className="text-center text-[#666666] font-secondary mt-4">
-                Already have an account?{" "}
-                <Link href="/login" className="text-[#7655fb] font-bold hover:underline">
-                  Login
-                </Link>
-              </p>
-            </form>
+            </div>
           </div>
         </div>
       </div>
-      
+
       <Footer />
     </main>
   );

@@ -25,8 +25,8 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="flex items-center bg-white py-4 w-full h-[76px] lg:h-[80px] border-b border-gray-100 relative z-50">
-      <div className="relative flex items-center justify-between w-full max-w-[1280px] mx-auto px-6 lg:px-12">
+    <nav className="sticky top-0 z-50 border-b border-white/60 bg-white/82 backdrop-blur-xl">
+      <div className="gh-shell relative flex h-[82px] items-center justify-between px-6 lg:px-12">
         {/* Logo */}
         <div className="relative w-[120px] lg:w-[150px] h-[32px] lg:h-[40px] shrink-0">
           <Link href="/">
@@ -41,12 +41,12 @@ const Navigation = () => {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-6 rounded-[56px] bg-[#4169e1] w-[420px] h-[40px] px-4 shrink-0">
+        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-2 rounded-full border border-[#d9e1ff] bg-white/90 p-1 shadow-[0_10px_30px_rgba(24,33,77,0.06)] shrink-0">
           {["HOW IT WORKS", "ABOUT US", "HELP CENTER"].map((text) => (
             <Link
               key={text}
               href="#"
-              className="text-white text-[13px] xl:text-[14px] font-bold tracking-wide font-secondary hover:opacity-90 transition-opacity whitespace-nowrap"
+              className="rounded-full px-4 py-2 text-[13px] font-bold tracking-wide text-[#4f5b7f] transition-colors hover:bg-[#f3f6ff] hover:text-[#4169e1] whitespace-nowrap"
             >
               {text}
             </Link>
@@ -59,13 +59,13 @@ const Navigation = () => {
             <>
               <Link
                 href="/set-goal"
-                className="text-[#7655fb] text-[14px] font-bold font-secondary hover:underline"
+                className="gh-btn-secondary px-5 py-2 text-[14px]"
               >
                 CREATE GOAL
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center justify-center rounded-[60px] bg-[#7655fb] w-[96px] h-[38px] text-white text-[14px] font-bold font-secondary hover:bg-[#6445e0] transition-colors shadow-md hover:shadow-lg cursor-pointer"
+                className="gh-btn-primary h-[44px] min-w-[110px] px-5 py-0 text-[14px] cursor-pointer"
               >
                 LOG OUT
               </button>
@@ -74,13 +74,13 @@ const Navigation = () => {
             <>
               <Link
                 href="/login"
-                className="flex items-center justify-center border border-[#7655fb] rounded-[50px] w-[96px] h-[38px] text-[#7655fb] text-[14px] font-bold font-secondary hover:bg-[#7655fb] hover:text-white transition-all duration-300"
+                className="gh-btn-secondary h-[44px] min-w-[110px] px-5 py-0 text-[14px]"
               >
                 LOG IN
               </Link>
               <Link
                 href="/signup"
-                className="flex items-center justify-center rounded-[60px] bg-[#7655fb] w-[96px] h-[38px] text-white text-[14px] font-bold font-secondary hover:bg-[#6445e0] transition-colors shadow-md hover:shadow-lg"
+                className="gh-btn-primary h-[44px] min-w-[110px] px-5 py-0 text-[14px]"
               >
                 SIGN UP
               </Link>
@@ -131,9 +131,9 @@ const Navigation = () => {
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 bg-white z-[60] flex flex-col animate-in slide-in-from-right duration-300">
+        <div className="fixed inset-0 z-[60] flex flex-col bg-white animate-in slide-in-from-right duration-300">
           {/* Mobile Header */}
-          <div className="flex items-center justify-between px-[20px] py-4 h-[76px] border-b border-gray-100">
+          <div className="flex h-[82px] items-center justify-between border-b border-gray-100 px-[20px] py-4">
             {/* Logo */}
             <div className="relative w-[120px] h-[32px]">
               <Link href="/" onClick={() => setIsMenuOpen(false)}>

@@ -8,8 +8,8 @@ const NavigationRegistered = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="flex items-center bg-white py-[27px] w-full h-[110px] border-b border-gray-100 relative z-50">
-      <div className="relative flex items-center justify-between w-full max-w-[1280px] mx-auto px-[20px] lg:px-[100px]">
+    <nav className="sticky top-0 z-50 border-b border-white/60 bg-white/82 backdrop-blur-xl">
+      <div className="gh-shell relative flex h-[110px] items-center justify-between px-[20px] lg:px-[100px]">
         {/* Logo */}
         <div className="relative w-[150px] lg:w-[198px] h-[42px] lg:h-[56px] shrink-0">
           <Link href="/">
@@ -24,12 +24,12 @@ const NavigationRegistered = () => {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-[27px] rounded-[56px] bg-[#4169e1] w-[472px] h-[48px] px-4 shrink-0">
+        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-2 rounded-full border border-[#d9e1ff] bg-white/90 p-1 shadow-[0_10px_30px_rgba(24,33,77,0.06)] shrink-0">
           {["HOW IT WORKS", "ABOUT US", "HELP CENTER"].map((text) => (
             <Link
               key={text}
               href="#"
-              className="text-white text-[14px] xl:text-[15px] font-normal tracking-wide font-secondary hover:opacity-90 transition-opacity whitespace-nowrap"
+              className="rounded-full px-4 py-2 text-[14px] font-bold tracking-wide text-[#4f5b7f] transition-colors hover:bg-[#f3f6ff] hover:text-[#4169e1] whitespace-nowrap"
             >
               {text}
             </Link>
@@ -45,12 +45,12 @@ const NavigationRegistered = () => {
           </div>
 
           {/* Get Token Button */}
-          <div className="flex items-center justify-center border border-[#7655fb] rounded-[56px] px-[20px] py-[9px] mr-[39px] cursor-pointer hover:bg-[#7655fb] hover:text-white transition-all group">
-            <span className="text-[#7655fb] text-[15px] font-medium font-secondary group-hover:text-white">GET TOKEN</span>
-          </div>
+          <Link href="/get-token" className="gh-btn-secondary mr-[30px] px-[20px] py-[10px] text-[14px]">
+            <span className="text-[14px] font-bold font-secondary">GET TOKEN</span>
+          </Link>
 
           {/* User Profile */}
-          <div className="flex items-center justify-between bg-[#7655fb] rounded-[48px] px-[6px] py-[4px] min-w-[83px] cursor-pointer">
+          <div className="flex items-center justify-between rounded-[48px] bg-gradient-to-r from-[#4169e1] to-[#7655fb] px-[6px] py-[4px] min-w-[83px] shadow-[0_12px_30px_rgba(118,85,251,0.22)] cursor-pointer">
             <div className="relative w-[41px] h-[41px] rounded-[21px] border border-white overflow-hidden">
               <Image
                 src="/images/nav-avatar.png"

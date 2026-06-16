@@ -96,76 +96,69 @@ export default function Settings() {
   };
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen gh-page-bg">
       <NavigationRegistered />
 
-      <div className="flex max-w-[1280px] mx-auto min-h-[calc(100vh-110px)]">
-        {/* Sidebar */}
+      <div className="gh-shell flex min-h-[calc(100vh-110px)]">
         <Sidebar />
 
-        {/* Main Content Area */}
-        <div className="flex-1 bg-[#f4f6fb] flex flex-col">
-          {/* Header */}
+        <div className="flex-1 flex flex-col">
           <DashboardHeader />
 
-          {/* Content */}
-          <div className="flex-1 p-8 pt-0 flex flex-col lg:flex-row gap-8">
-            {/* Left Column - Forms */}
-            <div className="flex-1 bg-white rounded-[20px] p-6 md:p-8 h-full flex flex-col gap-8">
-              
-              {/* Header Title */}
+          <div className="flex-1 p-4 pt-0 md:p-8 md:pt-0 flex flex-col lg:flex-row gap-8">
+            <div className="gh-panel flex-1 h-full p-6 md:p-8 flex flex-col gap-8">
               <div>
-                <h1 className="text-[28px] font-bold text-[#262525] font-secondary">
+                <span className="gh-badge mb-4">Profile controls</span>
+                <h1 className="text-[32px] font-bold text-[#262525]">
                   Account Settings
                 </h1>
-                <p className="text-gray-500 text-sm font-secondary mt-1">
+                <p className="mt-2 text-[15px] leading-7 text-[#666f85]">
                   Manage your public profile and default configuration rules
                 </p>
               </div>
 
               {successMessage && (
-                <div className="p-3 text-sm text-green-600 bg-green-50 rounded-[8px] border border-green-200">
+                <div className="rounded-[18px] border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-600">
                   {successMessage}
                 </div>
               )}
 
-              {/* Form 1: Profile Details */}
-              <form onSubmit={handleProfileSave} className="flex flex-col gap-4 border-b border-gray-100 pb-8">
-                <h3 className="text-[17px] font-bold text-[#262525] font-secondary">
+              <form onSubmit={handleProfileSave} className="gh-panel-soft flex flex-col gap-4 p-6">
+                <h3 className="text-[20px] font-bold text-[#262525]">
                   Profile Details
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5 font-secondary text-[13px]">
-                    <label className="font-bold text-[#262525]">Display Name</label>
+                  <div className="flex flex-col gap-2 text-[13px]">
+                    <label className="font-bold uppercase tracking-[0.12em] text-[#7a7f90]">Display Name</label>
                     <input
                       type="text"
                       value={profile.name}
                       onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                      className="h-[46px] px-3.5 rounded-[10px] border border-[#E0E0E0] bg-[#FAFAFA] text-[#262525]"
+                      className="gh-input"
                       required
                     />
                   </div>
 
-                  <div className="flex flex-col gap-1.5 font-secondary text-[13px]">
-                    <label className="font-bold text-[#262525]">Username</label>
+                  <div className="flex flex-col gap-2 text-[13px]">
+                    <label className="font-bold uppercase tracking-[0.12em] text-[#7a7f90]">Username</label>
                     <input
                       type="text"
                       value={profile.username}
                       onChange={(e) => setProfile({ ...profile, username: e.target.value })}
-                      className="h-[46px] px-3.5 rounded-[10px] border border-[#E0E0E0] bg-[#FAFAFA] text-[#262525]"
+                      className="gh-input"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-1.5 font-secondary text-[13px]">
-                  <label className="font-bold text-[#262525]">Email Address</label>
+                <div className="flex flex-col gap-2 text-[13px]">
+                  <label className="font-bold uppercase tracking-[0.12em] text-[#7a7f90]">Email Address</label>
                   <input
                     type="email"
                     value={profile.email}
                     disabled
-                    className="h-[46px] px-3.5 rounded-[10px] border border-[#E0E0E0] bg-gray-100 text-[#717070] cursor-not-allowed"
+                    className="gh-input cursor-not-allowed bg-[#f1f3f8] text-[#717070]"
                   />
                 </div>
 
@@ -173,49 +166,48 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="bg-[#7655fb] hover:bg-[#6445e0] text-white rounded-[24px] px-6 py-2.5 text-[13px] font-bold font-secondary shadow-md hover:shadow-lg transition-all"
+                    className="gh-btn-primary px-6 py-3 text-[14px] disabled:opacity-50"
                   >
                     Save Profile
                   </button>
                 </div>
               </form>
 
-              {/* Form 2: Default Referee Configuration */}
-              <form onSubmit={handlePrefsSave} className="flex flex-col gap-4">
-                <h3 className="text-[17px] font-bold text-[#262525] font-secondary">
+              <form onSubmit={handlePrefsSave} className="gh-panel-soft flex flex-col gap-4 p-6">
+                <h3 className="text-[20px] font-bold text-[#262525]">
                   Referee Defaults
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5 font-secondary text-[13px]">
-                    <label className="font-bold text-[#262525]">Default Referee Name</label>
+                  <div className="flex flex-col gap-2 text-[13px]">
+                    <label className="font-bold uppercase tracking-[0.12em] text-[#7a7f90]">Default Referee Name</label>
                     <input
                       type="text"
                       value={refereePrefs.defaultRefereeName}
                       onChange={(e) => setRefereePrefs({ ...refereePrefs, defaultRefereeName: e.target.value })}
-                      className="h-[46px] px-3.5 rounded-[10px] border border-[#E0E0E0] bg-[#FAFAFA] text-[#262525]"
+                      className="gh-input"
                       required
                     />
                   </div>
 
-                  <div className="flex flex-col gap-1.5 font-secondary text-[13px]">
-                    <label className="font-bold text-[#262525]">Default Referee Email</label>
+                  <div className="flex flex-col gap-2 text-[13px]">
+                    <label className="font-bold uppercase tracking-[0.12em] text-[#7a7f90]">Default Referee Email</label>
                     <input
                       type="email"
                       value={refereePrefs.defaultRefereeEmail}
                       onChange={(e) => setRefereePrefs({ ...refereePrefs, defaultRefereeEmail: e.target.value })}
-                      className="h-[46px] px-3.5 rounded-[10px] border border-[#E0E0E0] bg-[#FAFAFA] text-[#262525]"
+                      className="gh-input"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-1.5 font-secondary text-[13px]">
-                  <label className="font-bold text-[#262525]">Report Grace Period (Hours)</label>
+                <div className="flex flex-col gap-2 text-[13px]">
+                  <label className="font-bold uppercase tracking-[0.12em] text-[#7a7f90]">Report Grace Period (Hours)</label>
                   <select
                     value={refereePrefs.gracePeriod}
                     onChange={(e) => setRefereePrefs({ ...refereePrefs, gracePeriod: Number(e.target.value) })}
-                    className="h-[46px] px-4 rounded-[10px] border border-[#E0E0E0] bg-[#FAFAFA] text-[#262525] focus:outline-none focus:border-[#7655fb] transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23717070%22%20stroke-width%3D%222%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:14px] bg-[right_16px_center] bg-no-repeat pr-10"
+                    className="gh-select cursor-pointer pr-10"
                   >
                     <option value={12}>12 Hours</option>
                     <option value={24}>24 Hours</option>
@@ -228,7 +220,7 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="bg-[#7655fb] hover:bg-[#6445e0] text-white rounded-[24px] px-6 py-2.5 text-[13px] font-bold font-secondary shadow-md hover:shadow-lg transition-all"
+                    className="gh-btn-primary px-6 py-3 text-[14px] disabled:opacity-50"
                   >
                     Save Preferences
                   </button>
@@ -239,10 +231,8 @@ export default function Settings() {
 
             {/* Right Column - Configurations */}
             <div className="w-full lg:w-[350px] shrink-0 flex flex-col gap-6">
-              
-              {/* Card 1: Notifications Settings */}
-              <div className="bg-white rounded-[20px] shadow-sm border border-gray-100 p-6 flex flex-col gap-5">
-                <h3 className="font-bold text-[#262525] text-[17px] font-secondary">
+              <div className="gh-panel p-6 flex flex-col gap-5">
+                <h3 className="font-bold text-[#262525] text-[20px]">
                   Notifications
                 </h3>
 
@@ -292,14 +282,14 @@ export default function Settings() {
               </div>
 
               {/* Card 2: Security Actions */}
-              <div className="bg-white rounded-[20px] shadow-sm border border-gray-100 p-6 flex flex-col gap-4 font-secondary">
-                <h3 className="font-bold text-[#262525] text-[17px]">
+              <div className="gh-panel p-6 flex flex-col gap-4 font-secondary">
+                <h3 className="font-bold text-[#262525] text-[20px]">
                   Preferences
                 </h3>
                 
                 <button
                   onClick={() => alert("Change password function triggered.")}
-                  className="w-full py-2.5 border border-gray-200 text-[#262525] hover:bg-gray-50 rounded-[20px] text-[13px] font-bold transition-all text-center"
+                  className="gh-btn-secondary w-full py-3 text-[14px]"
                 >
                   Change Password
                 </button>
@@ -310,7 +300,7 @@ export default function Settings() {
                       alert("Deactivation request sent.");
                     }
                   }}
-                  className="w-full py-2.5 border border-red-100 hover:bg-red-50 text-red-500 rounded-[20px] text-[13px] font-bold transition-all text-center"
+                  className="w-full rounded-full border border-red-100 py-3 text-[14px] font-bold text-red-500 transition-all hover:bg-red-50"
                 >
                   Deactivate Account
                 </button>
