@@ -69,7 +69,7 @@ export default async function Home() {
         </div>
 
         {/* How It Works Section */}
-        <div className="mt-16 mb-8 flex flex-col items-center gap-4">
+        <div id="how-it-works" className="mt-16 mb-8 flex flex-col items-center gap-4 scroll-mt-20">
           <HowItWorksLabel />
         </div>
 

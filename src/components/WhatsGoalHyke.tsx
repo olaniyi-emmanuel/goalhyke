@@ -22,7 +22,7 @@ const TestimonialCard = ({ image, name, goal }: { image: string; name: string; g
 
 const WhatsGoalHyke = () => {
   return (
-    <section className="w-full bg-[#4169e1] py-[50px] px-4">
+    <section id="about-us" className="w-full bg-[#4169e1] py-[50px] px-4 scroll-mt-20">
       <div className="max-w-[960px] mx-auto flex flex-col items-center">
         {/* Title with Yellow Circle Accent */}
         <div className="relative mb-[20px]">

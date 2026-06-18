@@ -85,13 +85,17 @@ const NavigationRegistered = () => {
 
         {/* Desktop Navigation Links */}
         <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-2 rounded-full border border-[#d9e1ff] bg-white/90 p-1 shadow-[0_10px_30px_rgba(24,33,77,0.06)] shrink-0">
-          {["HOW IT WORKS", "ABOUT US", "HELP CENTER"].map((text) => (
+          {[
+            { text: "HOW IT WORKS", href: "/#how-it-works" },
+            { text: "ABOUT US", href: "/#about-us" },
+            { text: "HELP CENTER", href: "mailto:support@goalhyke.com" }
+          ].map((item) => (
             <Link
-              key={text}
-              href="#"
+              key={item.text}
+              href={item.href}
               className="rounded-full px-4 py-2 text-[14px] font-bold tracking-wide text-[#4f5b7f] transition-colors hover:bg-[#f3f6ff] hover:text-[#4169e1] whitespace-nowrap"
             >
-              {text}
+              {item.text}
             </Link>
           ))}
         </div>
@@ -305,14 +309,18 @@ const NavigationRegistered = () => {
           <div className="flex flex-col items-center justify-center flex-1 gap-8 pb-20">
             {/* Links */}
             <div className="flex flex-col items-center gap-8">
-              {["HOW IT WORKS", "ABOUT US", "HELP CENTER"].map((text) => (
+              {[
+                { text: "HOW IT WORKS", href: "/#how-it-works" },
+                { text: "ABOUT US", href: "/#about-us" },
+                { text: "HELP CENTER", href: "mailto:support@goalhyke.com" }
+              ].map((item) => (
                 <Link
-                  key={text}
-                  href="#"
+                  key={item.text}
+                  href={item.href}
                   className="text-[#262525] text-[16px] font-medium font-secondary tracking-wide hover:text-[#7655fb] transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {text}
+                  {item.text}
                 </Link>
               ))}
             </div>
