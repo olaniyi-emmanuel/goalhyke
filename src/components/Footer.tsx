@@ -46,19 +46,19 @@ const Footer = () => {
               </h3>
               <div className="flex flex-col gap-2.5">
                 <a
-                  href="#"
+                  href="/#about-us"
                   className="text-white/82 font-secondary text-[14px] transition-colors hover:text-white"
                 >
                   About us
                 </a>
                 <a
-                  href="#"
+                  href="mailto:support@goalhyke.com"
                   className="text-white/82 font-secondary text-[14px] transition-colors hover:text-white"
                 >
                   Help Center
                 </a>
                 <a
-                  href="#"
+                  href="mailto:support@goalhyke.com"
                   className="text-white/82 font-secondary text-[14px] transition-colors hover:text-white"
                 >
                   Contact Us
