@@ -63,6 +63,9 @@ export default function Signup() {
     } else {
       setSuccess(true);
       setIsLoading(false);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("signup_email", email);
+      }
       router.push("/verify-email");
     }
   };

@@ -7,12 +7,19 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
 export default function VerifyEmail() {
+  const [email, setEmail] = useState("your email");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
     if (inputRefs.current[0]) {
       inputRefs.current[0].focus();
+    }
+    if (typeof window !== "undefined") {
+      const storedEmail = localStorage.getItem("signup_email");
+      if (storedEmail) {
+        setEmail(storedEmail);
+      }
     }
   }, []);
 
@@ -83,15 +90,12 @@ export default function VerifyEmail() {
               <div className="mx-auto w-full max-w-[520px] lg:mx-0">
                 <span className="gh-badge mb-4">Verify email</span>
                 <h1 className="mb-3 text-[32px] font-bold leading-[1.05] text-[#262525] md:text-[40px]">
-                  Confirm your account and unlock your
-                  <span className="bg-gradient-to-r from-[#4169e1] to-[#7655fb] bg-clip-text text-transparent">
-                    {" "}goal dashboard
-                  </span>
+                  Confirm your account
                 </h1>
                 <p className="mb-10 max-w-[470px] text-[15px] leading-7 text-[#666f85]">
                   Please enter the verification code sent to{" "}
                   <span className="font-bold text-[#262525]">
-                    oluwatosinadesoro96@gmail.com
+                    {email}
                   </span>
                   . Once verified, you can continue setting goals and tracking habits.
                 </p>
