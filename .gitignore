@@ -42,3 +42,6 @@ next-env.d.ts
 
 # figma integration cache
 .figma/
+
+# scratch directory for temporary scripts
+scratch/

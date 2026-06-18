@@ -66,6 +66,8 @@ export default function Links() {
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
   const [newGroupDesc, setNewGroupDesc] = useState("");
+  const [isSubmittingGroup, setIsSubmittingGroup] = useState(false);
+  const [groupCreateError, setGroupCreateError] = useState<string | null>(null);
   const [addMemberInput, setAddMemberInput] = useState("");
   const [isAddingMember, setIsAddingMember] = useState(false);
   const [addMemberSuccess, setAddMemberSuccess] = useState<string | null>(null);
@@ -610,6 +612,9 @@ export default function Links() {
     e.preventDefault();
     if (!newGroupName.trim() || !user) return;
 
+    setIsSubmittingGroup(true);
+    setGroupCreateError(null);
+
     try {
       const supabase = createClient();
 
@@ -643,8 +648,11 @@ export default function Links() {
       // Refresh groups list and select new group
       await fetchGroups(user.id);
       setActiveGroupId(newGroup.id);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to create group:", err);
+      setGroupCreateError(err?.message || "An unexpected error occurred while creating the group.");
+    } finally {
+      setIsSubmittingGroup(false);
     }
   };
 
@@ -1015,7 +1023,10 @@ export default function Links() {
                   <div className="flex items-center justify-between">
                     <h3 className="font-bold text-[#262525] text-[18px]">Accountability Groups</h3>
                     <button
-                      onClick={() => setIsCreatingGroup(!isCreatingGroup)}
+                      onClick={() => {
+                        setIsCreatingGroup(!isCreatingGroup);
+                        setGroupCreateError(null);
+                      }}
                       className="text-[#7655fb] hover:text-[#6445e0] text-[13px] font-bold transition-colors cursor-pointer"
                     >
                       {isCreatingGroup ? "Cancel" : "New Group"}
@@ -1045,11 +1056,15 @@ export default function Links() {
                           className="px-3 py-2 rounded-[10px] border border-[#e4e8f2] bg-white text-[13px] focus:outline-none focus:border-[#7655fb]"
                         />
                       </div>
+                      {groupCreateError && (
+                        <p className="text-[11px] text-red-500 font-semibold">{groupCreateError}</p>
+                      )}
                       <button
                         type="submit"
-                        className="bg-[#7655fb] hover:bg-[#6445e0] text-white py-2 rounded-[12px] text-[13px] font-bold cursor-pointer"
+                        disabled={isSubmittingGroup}
+                        className="bg-[#7655fb] hover:bg-[#6445e0] text-white py-2 rounded-[12px] text-[13px] font-bold cursor-pointer disabled:opacity-50"
                       >
-                        Create Group
+                        {isSubmittingGroup ? "Creating..." : "Create Group"}
                       </button>
                     </form>
                   )}
