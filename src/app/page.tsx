@@ -10,8 +10,16 @@ import WhatsGoalHyke from "@/components/WhatsGoalHyke";
 import WhosItFor from "@/components/WhosItFor";
 import Footer from "@/components/Footer";
 import Image from "next/image";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
     <main className="min-h-screen bg-white">
       <Navigation />

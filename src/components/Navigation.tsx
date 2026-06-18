@@ -31,7 +31,7 @@ const Navigation = () => {
         <div className="relative w-[120px] lg:w-[150px] h-[32px] lg:h-[40px] shrink-0">
           <Link href="/">
             <Image
-              src="/images/mku9ytzu-u6m6vhm.png"
+              src="/images/nav-logo.png"
               alt="Goal Hyke"
               fill
               className="object-contain cursor-pointer"
@@ -138,7 +138,7 @@ const Navigation = () => {
             <div className="relative w-[120px] h-[32px]">
               <Link href="/" onClick={() => setIsMenuOpen(false)}>
                 <Image
-                  src="/images/mku9ytzu-u6m6vhm.png"
+                  src="/images/nav-logo.png"
                   alt="Goal Hyke"
                   fill
                   className="object-contain cursor-pointer"

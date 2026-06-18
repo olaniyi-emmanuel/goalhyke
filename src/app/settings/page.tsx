@@ -6,19 +6,82 @@ import Sidebar from "@/components/Sidebar";
 import DashboardHeader from "@/components/DashboardHeader";
 import Footer from "@/components/Footer";
 import { createClient } from "@/lib/supabase/client";
+import Image from "next/image";
+
+const resizeImage = (file: File): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX_WIDTH = 400;
+        const MAX_HEIGHT = 400;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error("Failed to convert image to blob."));
+            }
+          }, "image/jpeg", 0.85);
+        } else {
+          reject(new Error("Failed to get canvas context."));
+        }
+      };
+      img.onerror = () => reject(new Error("Failed to load image."));
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => reject(new Error("Failed to read file."));
+    reader.readAsDataURL(file);
+  });
+};
+
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, "+")
+    .replace(/_/g, "/");
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
 
 export default function Settings() {
   const [profile, setProfile] = useState({
     name: "Olaniyi Emmanuel",
     email: "user@example.com",
     username: "goalhyker_emmanuel",
+    avatarUrl: "/images/nav-avatar.png",
   });
 
-  const [notifications, setNotifications] = useState({
-    checkInAlerts: true,
-    verificationAlerts: true,
-    buddyMilestones: false,
-  });
+  const [emailEnabled, setEmailEnabled] = useState(true);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [prefsLoading, setPrefsLoading] = useState(false);
 
   const [refereePrefs, setRefereePrefs] = useState({
     defaultRefereeName: "Adesorotosin",
@@ -45,34 +108,152 @@ export default function Settings() {
       }
     }
 
-    const fetchProfile = async () => {
+    const fetchProfileAndPrefs = async () => {
       try {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           setProfile({
-            name: user.user_metadata?.name || "Olaniyi Emmanuel",
+            name: user.user_metadata?.name || user.user_metadata?.full_name || "Olaniyi Emmanuel",
             email: user.email || "user@example.com",
             username: user.user_metadata?.username || "goalhyker_emmanuel",
+            avatarUrl: user.user_metadata?.avatar_url || "/images/nav-avatar.png",
           });
+
+          // Fetch user notification preferences
+          const { data: prefs } = await supabase
+            .from("notification_preferences")
+            .select("*")
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+          if (prefs) {
+            setEmailEnabled(prefs.email_enabled);
+            setPushEnabled(prefs.push_enabled);
+          } else {
+            // Setup default record if missing
+            await supabase.from("notification_preferences").insert({
+              user_id: user.id,
+              email_enabled: true,
+              push_enabled: false
+            });
+            setEmailEnabled(true);
+            setPushEnabled(false);
+          }
         }
       } catch (e) {
-        console.error("Failed to load profile:", e);
+        console.error("Failed to load profile and preferences:", e);
       }
     };
-    fetchProfile();
+    fetchProfileAndPrefs();
   }, []);
 
-  const handleProfileSave = (e: React.FormEvent) => {
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setIsLoading(true);
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          alert("Please log in to change your avatar.");
+          return;
+        }
+
+        const resizedBlob = await resizeImage(file);
+        
+        // Upload to storage bucket 'avatars'
+        const fileExt = "jpg";
+        const filePath = `${user.id}/avatar-${Date.now()}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("avatars")
+          .upload(filePath, resizedBlob, {
+            upsert: true,
+            contentType: "image/jpeg",
+          });
+
+        if (uploadError) {
+          if (uploadError.message.includes("not found") || uploadError.message.includes("does not exist") || (uploadError as any).status === 404) {
+            throw new Error(
+              "Storage bucket 'avatars' not found. Please make sure to create a public storage bucket named 'avatars' in your Supabase project dashboard, or execute the SQL migration."
+            );
+          }
+          throw uploadError;
+        }
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from("avatars")
+          .getPublicUrl(filePath);
+
+        setProfile((prev) => ({
+          ...prev,
+          avatarUrl: publicUrl,
+        }));
+      } catch (err) {
+        console.error(err);
+        alert(err instanceof Error ? err.message : "Could not upload image.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const handleProfileSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setSuccessMessage(null);
 
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("No active user session found.");
+      }
+
+      // 1. Update Supabase Auth Session Metadata
+      const { error: authError } = await supabase.auth.updateUser({
+        data: {
+          name: profile.name,
+          full_name: profile.name,
+          username: profile.username,
+          avatar_url: profile.avatarUrl,
+        },
+      });
+
+      if (authError) {
+        throw authError;
+      }
+
+      // 2. Update Postgres database profiles table
+      const { error: dbError } = await supabase
+        .from("profiles")
+        .update({
+          full_name: profile.name,
+          username: profile.username,
+          avatar_url: profile.avatarUrl,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id);
+
+      if (dbError) {
+        throw dbError;
+      }
+
       setSuccessMessage("Profile updated successfully!");
       setTimeout(() => setSuccessMessage(null), 3000);
-    }, 1200);
+    } catch (err) {
+      console.error("Profile save error:", err);
+      const msg = err instanceof Error 
+        ? err.message 
+        : (err && typeof err === "object" && "message" in err) 
+          ? (err as any).message 
+          : JSON.stringify(err);
+      alert("Failed to update profile: " + msg);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handlePrefsSave = (e: React.FormEvent) => {
@@ -93,6 +274,131 @@ export default function Settings() {
       setSuccessMessage("Referee preferences saved successfully!");
       setTimeout(() => setSuccessMessage(null), 3000);
     }, 1200);
+  };
+
+  const handleToggleEmail = async (enabled: boolean) => {
+    setEmailEnabled(enabled);
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from("notification_preferences")
+          .upsert({
+            user_id: user.id,
+            email_enabled: enabled,
+            updated_at: new Date().toISOString()
+          });
+      }
+    } catch (err) {
+      console.error("Failed to save email preference:", err);
+    }
+  };
+
+  const handleTogglePush = async (enabled: boolean) => {
+    setPrefsLoading(true);
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        alert("Please log in first.");
+        setPrefsLoading(false);
+        return;
+      }
+
+      if (enabled) {
+        if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+          alert("Browser push notifications are not supported in this browser.");
+          setPrefsLoading(false);
+          return;
+        }
+
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") {
+          alert("Notification permission was denied.");
+          setPrefsLoading(false);
+          return;
+        }
+
+        const registration = await navigator.serviceWorker.register("/sw.js", {
+          scope: "/"
+        });
+
+        await navigator.serviceWorker.ready;
+
+        const applicationServerKey = urlBase64ToUint8Array("BMmQ0FebFhkN6PjT5xf3RL65sRbxHCML0419RGrH87rOdYhWN2VUPn_-KyqMOYzdZh34K5P-MyojI0E01aJMO0k");
+        const subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: applicationServerKey
+        });
+
+        const subscriptionJson = subscription.toJSON();
+        const p256dh = subscriptionJson.keys?.p256dh;
+        const auth = subscriptionJson.keys?.auth;
+
+        if (!subscription.endpoint || !p256dh || !auth) {
+          throw new Error("Invalid push subscription returned by browser.");
+        }
+
+        const { error: subErr } = await supabase
+          .from("push_subscriptions")
+          .upsert({
+            user_id: user.id,
+            endpoint: subscription.endpoint,
+            p256dh: p256dh,
+            auth: auth
+          }, { onConflict: "endpoint" });
+
+        if (subErr) throw subErr;
+
+        const { error: prefErr } = await supabase
+          .from("notification_preferences")
+          .upsert({
+            user_id: user.id,
+            push_enabled: true,
+            updated_at: new Date().toISOString()
+          });
+
+        if (prefErr) throw prefErr;
+
+        setPushEnabled(true);
+        setSuccessMessage("Push notifications registered successfully!");
+        setTimeout(() => setSuccessMessage(null), 3000);
+      } else {
+        try {
+          const registration = await navigator.serviceWorker.ready;
+          const subscription = await registration.pushManager.getSubscription();
+          if (subscription) {
+            await subscription.unsubscribe();
+            await supabase
+              .from("push_subscriptions")
+              .delete()
+              .eq("endpoint", subscription.endpoint);
+          }
+        } catch (unsubErr) {
+          console.warn("Browser unsubscribe issue:", unsubErr);
+        }
+
+        const { error: prefErr } = await supabase
+          .from("notification_preferences")
+          .upsert({
+            user_id: user.id,
+            push_enabled: false,
+            updated_at: new Date().toISOString()
+          });
+
+        if (prefErr) throw prefErr;
+
+        setPushEnabled(false);
+        setSuccessMessage("Push notifications disabled.");
+        setTimeout(() => setSuccessMessage(null), 3000);
+      }
+    } catch (err) {
+      console.error("Failed to toggle push notifications:", err);
+      alert("Failed to configure push: " + (err instanceof Error ? err.message : JSON.stringify(err)));
+    } finally {
+      setPrefsLoading(false);
+    }
   };
 
   return (
@@ -127,6 +433,41 @@ export default function Settings() {
                 <h3 className="text-[20px] font-bold text-[#262525]">
                   Profile Details
                 </h3>
+
+                {/* Avatar Uploader Grid */}
+                <div className="flex flex-col sm:flex-row items-center gap-6 pb-4 border-b border-gray-100">
+                  <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#7655fb]/20 bg-gray-50 flex items-center justify-center group shadow-sm">
+                    <Image
+                      src={profile.avatarUrl || "/images/nav-avatar.png"}
+                      alt="Avatar Preview"
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                    <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-[11px] font-bold uppercase tracking-wider">
+                      Upload
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleAvatarChange} 
+                        className="hidden" 
+                      />
+                    </label>
+                  </div>
+                  <div className="flex flex-col gap-1 text-center sm:text-left">
+                    <h4 className="text-[15px] font-bold text-[#262525]">Profile Photo</h4>
+                    <p className="text-[12px] text-gray-500">JPG or PNG. Max size 5MB (will be optimized automatically).</p>
+                    <label className="gh-btn-secondary px-4 py-1.5 text-[12px] cursor-pointer mt-1 self-center sm:self-start">
+                      Choose Image
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleAvatarChange} 
+                        className="hidden" 
+                      />
+                    </label>
+                  </div>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-2 text-[13px]">
@@ -240,42 +581,30 @@ export default function Settings() {
                   {/* Toggle 1 */}
                   <label className="flex items-center justify-between cursor-pointer">
                     <div className="flex flex-col gap-0.5">
-                      <span className="font-bold text-[#262525]">Email check-in alerts</span>
-                      <span className="text-[11px] text-gray-400">Reminders for active goals</span>
+                      <span className="font-bold text-[#262525]">Email Notifications</span>
+                      <span className="text-[11px] text-gray-400">Check-in alerts and updates</span>
                     </div>
                     <input
                       type="checkbox"
-                      checked={notifications.checkInAlerts}
-                      onChange={(e) => setNotifications({ ...notifications, checkInAlerts: e.target.checked })}
-                      className="w-4 h-4 text-[#7655fb] border-gray-300 rounded focus:ring-[#7655fb]"
+                      disabled={prefsLoading}
+                      checked={emailEnabled}
+                      onChange={(e) => handleToggleEmail(e.target.checked)}
+                      className="w-4 h-4 text-[#7655fb] border-gray-300 rounded focus:ring-[#7655fb] disabled:opacity-50"
                     />
                   </label>
 
                   {/* Toggle 2 */}
                   <label className="flex items-center justify-between cursor-pointer">
                     <div className="flex flex-col gap-0.5">
-                      <span className="font-bold text-[#262525]">Referee requests</span>
-                      <span className="text-[11px] text-gray-400">When buddies link you as referee</span>
+                      <span className="font-bold text-[#262525]">Push Notifications</span>
+                      <span className="text-[11px] text-gray-400">Browser and desktop system alerts</span>
                     </div>
                     <input
                       type="checkbox"
-                      checked={notifications.verificationAlerts}
-                      onChange={(e) => setNotifications({ ...notifications, verificationAlerts: e.target.checked })}
-                      className="w-4 h-4 text-[#7655fb] border-gray-300 rounded focus:ring-[#7655fb]"
-                    />
-                  </label>
-
-                  {/* Toggle 3 */}
-                  <label className="flex items-center justify-between cursor-pointer">
-                    <div className="flex flex-col gap-0.5">
-                      <span className="font-bold text-[#262525]">Buddy milestones</span>
-                      <span className="text-[11px] text-gray-400">Weekly success accomplishments</span>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={notifications.buddyMilestones}
-                      onChange={(e) => setNotifications({ ...notifications, buddyMilestones: e.target.checked })}
-                      className="w-4 h-4 text-[#7655fb] border-gray-300 rounded focus:ring-[#7655fb]"
+                      disabled={prefsLoading}
+                      checked={pushEnabled}
+                      onChange={(e) => handleTogglePush(e.target.checked)}
+                      className="w-4 h-4 text-[#7655fb] border-gray-300 rounded focus:ring-[#7655fb] disabled:opacity-50"
                     />
                   </label>
                 </div>

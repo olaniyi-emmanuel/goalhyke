@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, getRedirectUrl } from "@/lib/supabase/client";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
@@ -17,6 +17,15 @@ export default function Signup() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        router.push("/dashboard");
+      }
+    });
+  }, [router]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +53,7 @@ export default function Signup() {
           full_name: fullName,
           username: email.split("@")[0],
         },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: getRedirectUrl(),
       },
     });
 
@@ -64,7 +73,7 @@ export default function Signup() {
     const { error: oAuthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: getRedirectUrl(),
       },
     });
     if (oAuthError) {
@@ -78,7 +87,7 @@ export default function Signup() {
     const { error: oAuthError } = await supabase.auth.signInWithOAuth({
       provider: "apple",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: getRedirectUrl(),
       },
     });
     if (oAuthError) {
@@ -115,16 +124,9 @@ export default function Signup() {
 
             <div className="flex flex-col justify-center bg-white px-6 py-12 md:px-10 lg:px-14">
               <div className="mx-auto w-full max-w-[540px] lg:mx-0">
-                <span className="gh-badge mb-4">Create account</span>
-                <h1 className="mb-3 text-[32px] font-bold leading-[1.05] text-[#262525] md:text-[40px]">
-                  Join GoalHyke and build habits with a
-                  <span className="bg-gradient-to-r from-[#4169e1] to-[#7655fb] bg-clip-text text-transparent">
-                    {" "}clear system
-                  </span>
+                <h1 className="mb-10 text-[32px] font-bold leading-[1.05] text-[#262525] md:text-[40px]">
+                  Sign Up
                 </h1>
-                <p className="mb-10 max-w-[470px] text-[15px] leading-7 text-[#666f85]">
-                  Start with a calmer interface, stronger structure, and accountability tools that make your goals easier to keep.
-                </p>
 
                 <form onSubmit={handleSignup} className="flex flex-col gap-5">
                   {error && (
@@ -139,8 +141,8 @@ export default function Signup() {
                   )}
 
                   <div className="grid gap-5 md:grid-cols-2">
-                    <div className="gh-panel-soft px-5 py-5 md:col-span-2">
-                      <label className="mb-2 block text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                    <div className="flex flex-col gap-1.5 md:col-span-2">
+                      <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
                         Full name
                       </label>
                       <input
@@ -154,8 +156,8 @@ export default function Signup() {
                       />
                     </div>
 
-                    <div className="gh-panel-soft px-5 py-5 md:col-span-2">
-                      <label className="mb-2 block text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                    <div className="flex flex-col gap-1.5 md:col-span-2">
+                      <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
                         Email address
                       </label>
                       <input
@@ -169,8 +171,8 @@ export default function Signup() {
                       />
                     </div>
 
-                    <div className="gh-panel-soft px-5 py-5">
-                      <label className="mb-2 block text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
                         Password
                       </label>
                       <input
@@ -184,8 +186,8 @@ export default function Signup() {
                       />
                     </div>
 
-                    <div className="gh-panel-soft px-5 py-5">
-                      <label className="mb-2 block text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
                         Confirm password
                       </label>
                       <input

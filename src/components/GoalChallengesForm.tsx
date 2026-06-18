@@ -76,7 +76,7 @@ const GoalChallengesForm = ({
       </div>
 
       {/* Form Card */}
-      <div className="w-full bg-white border border-gray-100 rounded-[20px] p-10 shadow-sm relative overflow-visible">
+      <div className="gh-panel w-full p-10 relative overflow-visible">
         <div className="flex flex-col gap-6 max-w-[600px]">
           <p className="text-[#262525] text-[16px] font-medium font-secondary mb-2">
             What challenges might stop you from achieving your goal?
@@ -89,10 +89,10 @@ const GoalChallengesForm = ({
                 className="flex items-center gap-4 cursor-pointer group"
                 onClick={() => toggleChallenge(challenge)}
               >
-                <div className={`w-6 h-6 rounded-[4px] border-2 flex items-center justify-center transition-all ${
+                <div className={`w-6 h-6 rounded-[8px] border-2 flex items-center justify-center transition-all ${
                   value.includes(challenge)
-                    ? "bg-[#7655fb] border-[#7655fb]" 
-                    : "border-[#D1D1D1] group-hover:border-[#7655fb]"
+                    ? "bg-[#7655fb] border-[#7655fb] shadow-[0_0_8px_rgba(118,85,251,0.3)]" 
+                    : "border-[#e4e8f2] bg-[#fbfbff] group-hover:border-[#7655fb] shadow-sm"
                 }`}>
                   {value.includes(challenge) && (
                     <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -120,14 +120,14 @@ const GoalChallengesForm = ({
       <div className="flex items-center gap-6 mt-12 mb-12">
         <button
           onClick={onCancel}
-          className="px-10 py-3 rounded-[50px] border border-[#7655fb] text-[#7655fb] font-bold font-secondary hover:bg-[#7655fb]/5 transition-colors min-w-[200px]"
+          className="gh-btn-secondary px-10 py-3 min-w-[200px] cursor-pointer"
         >
           Choose a new goal
         </button>
         <button
           onClick={onNext}
           disabled={isSubmitting}
-          className="px-10 py-3 rounded-[50px] bg-[#7655fb] text-white font-bold font-secondary hover:bg-[#6445e0] transition-all shadow-lg shadow-[#7655fb]/20 flex items-center justify-center gap-2 min-w-[150px]"
+          className="gh-btn-primary px-10 py-3 flex items-center justify-center gap-2 min-w-[150px] cursor-pointer"
         >
           <span>{isSubmitting ? "Saving..." : "Next"}</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

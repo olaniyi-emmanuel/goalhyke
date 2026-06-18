@@ -1,11 +1,71 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 const NavigationRegistered = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      title: "Welcome to GoalHyke! 🚀",
+      description: "Start establishing your daily habits and beat your streaks.",
+      time: "Just now",
+      unread: true,
+    },
+    {
+      id: 2,
+      title: "Referee Reminder",
+      description: "Link a referee to your active goals to stay accountable.",
+      time: "2h ago",
+      unread: true,
+    }
+  ]);
+
+  const hasUnread = notifications.some(n => n.unread);
+
+  const markAllRead = () => {
+    setNotifications(notifications.map(n => ({ ...n, unread: false })));
+  };
+
+  useEffect(() => {
+    const supabase = createClient();
+    
+    const fetchUser = async () => {
+      try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        setUser(currentUser);
+      } catch (err) {
+        console.error("Failed to load user session:", err);
+      }
+    };
+    fetchUser();
+
+    // Listen to Auth state changes (including USER_UPDATED when profile updates)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+      } else if (event === "SIGNED_OUT") {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    window.location.href = "/login";
+  };
 
   return (
     <nav className="sticky top-0 z-50 border-b border-white/60 bg-white/82 backdrop-blur-xl">
@@ -39,9 +99,58 @@ const NavigationRegistered = () => {
         {/* Right Side Actions */}
         <div className="hidden lg:flex items-center">
           {/* Notification Bell */}
-          <div className="relative w-[34px] h-[34px] flex items-center justify-center cursor-pointer mr-[25px]">
-             <div className="absolute inset-0 bg-[url('/images/nav-bell-bg.svg')] bg-center bg-no-repeat bg-cover"></div>
-             <div className="w-[8px] h-[8px] bg-[#ff4e68] rounded-full absolute top-[2px] right-[2px]"></div>
+          <div 
+            className="relative mr-[25px]"
+            onMouseLeave={() => setNotificationOpen(false)}
+          >
+            <button
+              onClick={() => setNotificationOpen(!notificationOpen)}
+              className="relative w-[44px] h-[44px] rounded-full border border-[#eceff7] bg-white flex items-center justify-center text-[#7d859a] hover:text-[#7655fb] hover:bg-[#f3f6ff]/40 shadow-[0_4px_12px_rgba(24,33,77,0.03)] hover:shadow-[0_4px_15px_rgba(118,85,251,0.08)] transition-all duration-300 cursor-pointer"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              {hasUnread && (
+                <div className="absolute top-[10px] right-[12px] w-[8px] h-[8px] bg-[#ff4e68] rounded-full ring-2 ring-white animate-pulse"></div>
+              )}
+            </button>
+
+            {notificationOpen && (
+              <div className="absolute right-0 top-full pt-3 w-80 z-50 animate-in fade-in duration-200">
+                <div className="rounded-[22px] border border-[#eceff7] bg-white p-4 shadow-[0_12px_40px_rgba(24,33,77,0.12)]">
+                  <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-2 px-1">
+                    <h4 className="text-[14px] font-bold text-[#262525]">Notifications</h4>
+                    {hasUnread && (
+                      <button 
+                        onClick={markAllRead}
+                        className="text-[11px] font-bold text-[#7655fb] hover:text-[#6445e0] border-none bg-transparent cursor-pointer"
+                      >
+                        Mark all read
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2 max-h-60 overflow-y-auto pr-1">
+                    {notifications.map(item => (
+                      <div 
+                        key={item.id} 
+                        className={`p-2.5 rounded-[14px] transition-colors ${item.unread ? 'bg-[#f8f9ff]' : 'hover:bg-gray-50'}`}
+                      >
+                        <div className="flex justify-between items-start gap-1">
+                          <h5 className={`text-[12px] leading-tight ${item.unread ? 'font-bold text-[#262525]' : 'font-semibold text-gray-700'}`}>
+                            {item.title}
+                          </h5>
+                          <span className="text-[10px] text-gray-400 shrink-0">{item.time}</span>
+                        </div>
+                        <p className="text-[11px] text-[#666f85] mt-0.5 leading-normal">
+                          {item.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Get Token Button */}
@@ -50,23 +159,64 @@ const NavigationRegistered = () => {
           </Link>
 
           {/* User Profile */}
-          <div className="flex items-center justify-between rounded-[48px] bg-gradient-to-r from-[#4169e1] to-[#7655fb] px-[6px] py-[4px] min-w-[83px] shadow-[0_12px_30px_rgba(118,85,251,0.22)] cursor-pointer">
-            <div className="relative w-[41px] h-[41px] rounded-[21px] border border-white overflow-hidden">
-              <Image
-                src="/images/nav-avatar.png"
-                alt="User Avatar"
-                fill
-                className="object-cover"
-              />
+          <div 
+            className="relative"
+            onMouseLeave={() => setDropdownOpen(false)}
+          >
+            <div 
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="flex items-center gap-[10px] rounded-[48px] bg-gradient-to-r from-[#4169e1] to-[#7655fb] p-[4px] pr-[16px] shadow-[0_12px_30px_rgba(118,85,251,0.22)] cursor-pointer select-none hover:shadow-[0_12px_35px_rgba(118,85,251,0.3)] hover:translate-y-[-1px] transition-all duration-300"
+            >
+              <div className="relative w-[38px] h-[38px] rounded-[19px] border border-white overflow-hidden shrink-0">
+                <Image
+                  src={user?.user_metadata?.avatar_url || "/images/nav-avatar.png"}
+                  alt="User Avatar"
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+              <span className="text-white text-[13px] font-bold tracking-wide font-secondary truncate max-w-[100px]">
+                {user?.user_metadata?.full_name?.split(" ")[0] || user?.user_metadata?.name?.split(" ")[0] || "Account"}
+              </span>
+              <div className="shrink-0">
+                <Image
+                  src="/images/nav-arrow-down.svg"
+                  alt="Dropdown"
+                  width={10}
+                  height={5}
+                  className="brightness-0 invert opacity-80"
+                />
+              </div>
             </div>
-            <div className="mr-[13px]">
-              <Image
-                src="/images/nav-arrow-down.svg"
-                alt="Dropdown"
-                width={12}
-                height={6}
-              />
-            </div>
+
+            {dropdownOpen && (
+              <div className="absolute right-0 top-full pt-3 w-56 z-50 animate-in fade-in duration-200">
+                <div className="rounded-[22px] border border-[#eceff7] bg-white p-4 shadow-[0_10px_30px_rgba(24,33,77,0.1)]">
+                  <div className="px-3 py-2 border-b border-gray-100 mb-2">
+                    <p className="text-[14px] font-bold text-[#262525] truncate">
+                      {user?.user_metadata?.full_name || user?.user_metadata?.name || "Olaniyi Emmanuel"}
+                    </p>
+                    <p className="text-[11px] text-[#8f8e98] truncate">
+                      {user?.email || "user@example.com"}
+                    </p>
+                  </div>
+                  <Link 
+                    href="/settings"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors"
+                  >
+                    Settings
+                  </Link>
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full text-left flex items-center gap-3 px-3 py-2 text-[13px] font-bold text-red-500 hover:bg-red-50 rounded-full transition-colors cursor-pointer mt-1 border-none bg-transparent"
+                  >
+                    Log out
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -169,21 +319,42 @@ const NavigationRegistered = () => {
 
             {/* Mobile Actions */}
             <div className="flex flex-col items-center gap-6 mt-8 w-full px-10 max-w-[350px]">
-              <button className="flex items-center justify-center border border-[#7655fb] rounded-[50px] w-full h-[50px] text-[#7655fb] text-[14px] font-bold font-secondary tracking-wide hover:bg-[#F9FAFF] transition-colors">
-                GET TOKEN
-              </button>
+              <Link href="/get-token" onClick={() => setIsMenuOpen(false)} className="w-full">
+                <button className="flex items-center justify-center border border-[#7655fb] rounded-[50px] w-full h-[50px] text-[#7655fb] text-[14px] font-bold font-secondary tracking-wide hover:bg-[#F9FAFF] transition-colors cursor-pointer">
+                  GET TOKEN
+                </button>
+              </Link>
               
-              <div className="flex items-center gap-4 cursor-pointer">
-                <div className="relative w-[40px] h-[40px] rounded-full overflow-hidden border border-gray-200">
+              <Link 
+                href="/settings"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex flex-col items-center gap-2 cursor-pointer mb-2"
+              >
+                <div className="relative w-[60px] h-[60px] rounded-full overflow-hidden border-2 border-[#7655fb]/20 shadow-sm">
                     <Image
-                        src="/images/nav-avatar.png"
+                        src={user?.user_metadata?.avatar_url || "/images/nav-avatar.png"}
                         alt="User Avatar"
                         fill
                         className="object-cover"
+                        unoptimized
                     />
                 </div>
-                <span className="text-[#262525] text-[16px] font-medium font-secondary">My Profile</span>
-              </div>
+                <div className="text-center">
+                  <p className="text-[#262525] text-[16px] font-bold font-secondary">
+                    {user?.user_metadata?.full_name || user?.user_metadata?.name || "Olaniyi Emmanuel"}
+                  </p>
+                  <p className="text-[12px] text-gray-500">
+                    @{user?.user_metadata?.username || "goalhyker"}
+                  </p>
+                </div>
+              </Link>
+
+              <button 
+                onClick={handleLogout}
+                className="flex items-center justify-center border border-red-200 rounded-[50px] w-full h-[50px] text-red-500 text-[14px] font-bold font-secondary tracking-wide hover:bg-red-50 transition-colors cursor-pointer"
+              >
+                LOG OUT
+              </button>
             </div>
           </div>
         </div>

@@ -155,7 +155,7 @@ export default function Goals() {
 
           {/* Content */}
           <div className="flex-1 p-8 pt-0 flex gap-8">
-            <div className="flex-1 bg-white rounded-[20px] p-6 md:p-8 h-full flex flex-col">
+            <div className="gh-panel flex-1 p-6 md:p-8 h-full flex flex-col">
               
               {/* Title Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -177,7 +177,7 @@ export default function Goals() {
                     placeholder="Search goals..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full h-[46px] pl-10 pr-4 rounded-[10px] border border-[#E0E0E0] bg-[#FAFAFA] text-[#262525] text-[14px] font-secondary focus:outline-none focus:border-[#7655fb] transition-colors"
+                    className="gh-input pl-10 pr-4 text-[14px] font-secondary"
                   />
                   <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -191,7 +191,7 @@ export default function Goals() {
                   <select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="w-full h-[46px] px-4 rounded-[10px] border border-[#E0E0E0] bg-[#FAFAFA] text-[#262525] text-[14px] font-secondary focus:outline-none focus:border-[#7655fb] transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23717070%22%20stroke-width%3D%222%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:16px] bg-[right_16px_center] bg-no-repeat"
+                    className="gh-select cursor-pointer pr-10 bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23717070%22%20stroke-width%3D%222%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:16px] bg-[right_16px_center] bg-no-repeat text-[14px] font-secondary"
                   >
                     <option value="all">All Categories</option>
                     {categories.map((cat) => (
@@ -224,7 +224,7 @@ export default function Goals() {
                         {activeGoals.map((goal) => (
                           <div
                             key={goal.id}
-                            className="bg-[#fafafa] rounded-[16px] border border-[#e8e8e8] p-5 flex flex-col justify-between min-h-[180px] shadow-sm hover:shadow-md transition-shadow relative overflow-hidden"
+                            className="gh-panel-soft p-5 flex flex-col justify-between min-h-[180px] hover:shadow-md transition-all relative overflow-hidden"
                           >
                             <div>
                               <div className="flex items-start justify-between gap-2">
@@ -246,12 +246,20 @@ export default function Goals() {
                               <span className="text-[11px] font-semibold text-gray-500 font-secondary">
                                 Week {goal.week_current || 1} of {goal.week_total || 12}
                               </span>
-                              <button
-                                onClick={() => handleToggleComplete(goal.id)}
-                                className="px-3.5 py-1.5 bg-[#7655fb]/10 hover:bg-[#7655fb] text-[#7655fb] hover:text-white rounded-[20px] text-[11px] font-bold font-secondary transition-all"
-                              >
-                                Mark Complete
-                              </button>
+                              <div className="flex items-center gap-2">
+                                <Link
+                                  href={`/goals/${goal.id}`}
+                                  className="gh-btn-secondary px-3.5 py-1.5 text-[11px] hover:bg-[#f7f8ff] cursor-pointer"
+                                >
+                                  Open Goal
+                                </Link>
+                                <button
+                                  onClick={() => handleToggleComplete(goal.id)}
+                                  className="gh-btn-secondary px-3.5 py-1.5 text-[11px] hover:bg-[#f7f8ff] cursor-pointer"
+                                >
+                                  Mark Complete
+                                </button>
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -260,7 +268,7 @@ export default function Goals() {
                       <div className="py-12 border-2 border-dashed border-gray-100 rounded-[16px] text-center flex flex-col items-center justify-center gap-3">
                         <p className="text-gray-400 font-secondary text-sm">No active goals found matching the filters.</p>
                         <Link href="/set-goal">
-                          <button className="px-5 py-2 bg-[#7655fb] hover:bg-[#6445e0] text-white rounded-[24px] text-[13px] font-bold font-secondary shadow-md transition-all">
+                          <button className="gh-btn-primary px-5 py-2.5 text-[13px] hover:shadow-lg cursor-pointer">
                             Set New Goal
                           </button>
                         </Link>
@@ -282,7 +290,7 @@ export default function Goals() {
                         {completedGoals.map((goal) => (
                           <div
                             key={goal.id}
-                            className="bg-[#FAFAFA] rounded-[16px] border border-[#e8e8e8] p-5 flex flex-col justify-between min-h-[160px] opacity-80"
+                            className="gh-panel-soft p-5 flex flex-col justify-between min-h-[160px] opacity-75 hover:opacity-90 transition-opacity"
                           >
                             <div>
                               <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase font-secondary">
@@ -305,12 +313,20 @@ export default function Goals() {
                                 </svg>
                                 Completed
                               </span>
-                              <button
-                                onClick={() => handleToggleComplete(goal.id)}
-                                className="text-gray-400 hover:text-indigo-600 text-[11px] font-bold font-secondary transition-colors"
-                              >
-                                Re-activate
-                              </button>
+                              <div className="flex items-center gap-3">
+                                <Link
+                                  href={`/goals/${goal.id}`}
+                                  className="text-[#7655fb] hover:text-[#6445e0] text-[11px] font-bold font-secondary transition-colors"
+                                >
+                                  Open Goal
+                                </Link>
+                                <button
+                                  onClick={() => handleToggleComplete(goal.id)}
+                                  className="text-[#8f8e98] hover:text-[#7655fb] text-[11px] font-bold font-secondary transition-colors"
+                                >
+                                  Re-activate
+                                </button>
+                              </div>
                             </div>
                           </div>
                         ))}

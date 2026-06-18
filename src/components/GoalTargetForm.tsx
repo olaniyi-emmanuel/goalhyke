@@ -63,7 +63,7 @@ const GoalTargetForm = ({
       </div>
 
       {/* Form Card */}
-      <div className="w-full bg-white border border-gray-100 rounded-[20px] p-10 shadow-sm relative overflow-visible">
+      <div className="gh-panel w-full p-10 relative overflow-visible">
         <div className="flex flex-col gap-8 max-w-[600px]">
           {/* Question 1 */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -72,7 +72,7 @@ const GoalTargetForm = ({
             </label>
             <div className="relative min-w-[120px]">
               <select 
-                className="w-full h-[45px] px-4 rounded-[7px] border border-[#E0E0E0] bg-[#f4f0f0]/50 text-[#262525] text-[15px] font-secondary appearance-none cursor-pointer focus:outline-none focus:border-[#7655fb]"
+                className="gh-select cursor-pointer text-[15px] font-secondary"
                 value={value.daysPerWeek}
                 onChange={(e) => onChange({ ...value, daysPerWeek: e.target.value })}
               >
@@ -99,7 +99,7 @@ const GoalTargetForm = ({
             </label>
             <div className="relative min-w-[120px]">
               <select 
-                className="w-full h-[45px] px-4 rounded-[7px] border border-[#E0E0E0] bg-[#f4f0f0]/50 text-[#262525] text-[15px] font-secondary appearance-none cursor-pointer focus:outline-none focus:border-[#7655fb]"
+                className="gh-select cursor-pointer text-[15px] font-secondary"
                 value={value.sessionDuration}
                 onChange={(e) =>
                   onChange({ ...value, sessionDuration: e.target.value })
@@ -125,7 +125,7 @@ const GoalTargetForm = ({
             </label>
             <div className="relative min-w-[150px]">
               <select 
-                className="w-full h-[45px] px-4 rounded-[7px] border border-[#E0E0E0] bg-[#f4f0f0]/50 text-[#262525] text-[15px] font-secondary appearance-none cursor-pointer focus:outline-none focus:border-[#7655fb]"
+                className="gh-select cursor-pointer text-[15px] font-secondary"
                 value={value.exerciseType}
                 onChange={(e) => onChange({ ...value, exerciseType: e.target.value })}
               >
@@ -149,7 +149,7 @@ const GoalTargetForm = ({
             </label>
             <div className="relative min-w-[120px]">
               <select 
-                className="w-full h-[45px] px-4 rounded-[7px] border border-[#E0E0E0] bg-[#f4f0f0]/50 text-[#262525] text-[15px] font-secondary appearance-none cursor-pointer focus:outline-none focus:border-[#7655fb]"
+                className="gh-select cursor-pointer text-[15px] font-secondary"
                 value={value.startDate}
                 onChange={(e) => onChange({ ...value, startDate: e.target.value })}
               >
@@ -188,13 +188,13 @@ const GoalTargetForm = ({
       <div className="flex items-center gap-6 mt-12 mb-12">
         <button
           onClick={onCancel}
-          className="px-10 py-3 rounded-[50px] border border-[#7655fb] text-[#7655fb] font-bold font-secondary hover:bg-[#7655fb]/5 transition-colors min-w-[200px]"
+          className="gh-btn-secondary px-10 py-3 min-w-[200px] cursor-pointer"
         >
           Choose a new goal
         </button>
         <button
           onClick={onNext}
-          className="px-10 py-3 rounded-[50px] bg-[#7655fb] text-white font-bold font-secondary hover:bg-[#6445e0] transition-all shadow-lg shadow-[#7655fb]/20 flex items-center justify-center gap-2 min-w-[150px]"
+          className="gh-btn-primary px-10 py-3 flex items-center justify-center gap-2 min-w-[150px] cursor-pointer"
         >
           <span>Next</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

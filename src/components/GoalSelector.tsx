@@ -101,11 +101,11 @@ const GoalSelector = () => {
       <div className="relative w-full max-w-[280px]" ref={dropdownRef}>
         <div
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center justify-between w-full h-[46px] px-[12px] bg-[#f4f0f0] rounded-[7px] cursor-pointer hover:bg-[#ebe7e7] transition-colors"
+          className="flex items-center justify-between w-full h-[52px] px-4 border border-[#e4e8f2] bg-[#fbfbff] rounded-[18px] cursor-pointer hover:border-[#7655fb] transition-colors"
         >
           <span
             className={`font-secondary text-[15px] ${
-              selectedGoal ? "text-[#262525]" : "text-[#717070]"
+              selectedGoal ? "text-[#262525] font-bold" : "text-[#717070]"
             }`}
           >
             {selectedGoal || "Select your Goal..."}
@@ -119,9 +119,9 @@ const GoalSelector = () => {
 
         {/* Dropdown Menu */}
         {isOpen && (
-          <div className="absolute top-[52px] left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0 w-[90vw] max-w-[360px] md:w-[360px] bg-white rounded-[16px] shadow-2xl border border-gray-100 py-5 px-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="absolute top-[58px] left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0 w-[90vw] max-w-[360px] md:w-[360px] bg-white rounded-[22px] shadow-2xl border border-[#eceff7] py-5 px-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
             {/* Search Bar */}
-            <div className="flex items-center gap-2 bg-[#F6F6F6] rounded-[80px] px-3.5 py-2.5 mb-3">
+            <div className="flex items-center gap-2 bg-[#F6F6F6] rounded-full px-3.5 py-2.5 mb-3 border border-gray-100">
               <SearchIcon className="text-[#878484] w-3.5 h-3.5 shrink-0" />
               <input
                 type="text"
@@ -141,7 +141,7 @@ const GoalSelector = () => {
                   <div
                     key={goal}
                     onClick={() => handleSelect(goal)}
-                    className="px-3.5 py-2.5 hover:bg-[#F9FAFF] rounded-[8px] cursor-pointer font-secondary text-[15px] text-[#262525] transition-colors"
+                    className="px-3.5 py-2.5 hover:bg-[#F9FAFF] hover:text-[#7655fb] rounded-[10px] cursor-pointer font-secondary text-[15px] font-medium text-[#262525] transition-colors"
                   >
                     {goal}
                   </div>
@@ -158,14 +158,14 @@ const GoalSelector = () => {
 
       {/* Action Button */}
       <button
-        onClick={() =>
-          alert(
-            selectedGoal
-              ? `Starting goal: ${selectedGoal}`
-              : "Please select a goal first!"
-          )
-        }
-        className="flex items-center justify-center w-[90px] h-[40px] bg-[#7655fb] rounded-[60px] text-white font-secondary text-[15px] font-medium hover:bg-[#6445e0] transition-colors shadow-md hover:shadow-lg shrink-0"
+        onClick={() => {
+          if (selectedGoal) {
+            window.location.href = `/set-goal?category=${encodeURIComponent(selectedGoal)}`;
+          } else {
+            alert("Please select a goal first!");
+          }
+        }}
+        className="flex items-center justify-center w-[110px] h-[52px] bg-[#7655fb] rounded-full text-white font-secondary text-[15px] font-bold hover:bg-[#6445e0] hover:shadow-[0_12px_24px_rgba(118,85,251,0.24)] transition-all cursor-pointer shadow-md hover:translate-y-[-1px] shrink-0"
       >
         HYKE
       </button>

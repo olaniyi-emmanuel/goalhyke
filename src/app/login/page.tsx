@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, getRedirectUrl } from "@/lib/supabase/client";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
@@ -14,6 +14,15 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        router.push("/dashboard");
+      }
+    });
+  }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +41,7 @@ export default function Login() {
       setError(signInError.message);
       setIsLoading(false);
     } else {
-      router.push("/");
+      router.push("/dashboard");
       router.refresh();
     }
   };
@@ -43,7 +52,7 @@ export default function Login() {
     const { error: oAuthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: getRedirectUrl(),
       },
     });
     if (oAuthError) {
@@ -57,7 +66,7 @@ export default function Login() {
     const { error: oAuthError } = await supabase.auth.signInWithOAuth({
       provider: "apple",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: getRedirectUrl(),
       },
     });
     if (oAuthError) {
@@ -93,16 +102,9 @@ export default function Login() {
 
             <div className="flex flex-col justify-center bg-white px-6 py-12 md:px-10 lg:px-14">
               <div className="mx-auto w-full max-w-[520px] lg:mx-0">
-                <span className="gh-badge mb-4">Welcome back</span>
-                <h1 className="mb-3 text-[32px] font-bold leading-[1.05] text-[#262525] md:text-[40px]">
-                  Log in to continue your{" "}
-                  <span className="bg-gradient-to-r from-[#4169e1] to-[#7655fb] bg-clip-text text-transparent">
-                    GoalHyke journey
-                  </span>
+                <h1 className="mb-10 text-[32px] font-bold leading-[1.05] text-[#262525] md:text-[40px]">
+                  Log In
                 </h1>
-                <p className="mb-10 max-w-[460px] text-[15px] leading-7 text-[#666f85]">
-                  Pick up where you left off, review your goals, and keep your streak alive with a calmer, more focused workspace.
-                </p>
 
                 <form onSubmit={handleLogin} className="flex flex-col gap-5">
                   {error && (
@@ -111,8 +113,8 @@ export default function Login() {
                     </div>
                   )}
 
-                  <div className="gh-panel-soft px-5 py-5">
-                    <label className="mb-2 block text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
                       Email
                     </label>
                     <input
@@ -126,8 +128,8 @@ export default function Login() {
                     />
                   </div>
 
-                  <div className="gh-panel-soft px-5 py-5">
-                    <label className="mb-2 block text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
                       Password
                     </label>
                     <input
