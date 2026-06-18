@@ -32,6 +32,11 @@ export default function Login() {
     }
     setError(null);
     setIsLoading(true);
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("signup_email", email);
+    }
+
     const supabase = createClient();
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
@@ -40,6 +45,12 @@ export default function Login() {
     if (signInError) {
       setError(signInError.message);
       setIsLoading(false);
+      if (
+        signInError.message.toLowerCase().includes("confirm") ||
+        signInError.message.toLowerCase().includes("verify")
+      ) {
+        router.push("/verify-email");
+      }
     } else {
       router.push("/dashboard");
       router.refresh();
