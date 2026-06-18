@@ -5,10 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { createClient } from "@/lib/supabase/client";
 
 export default function VerifyEmail() {
   const [email, setEmail] = useState("your email");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -22,6 +27,77 @@ export default function VerifyEmail() {
       }
     }
   }, []);
+
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = otp.join("");
+    if (token.length !== 6) {
+      setError("Please enter the 6-digit verification code.");
+      return;
+    }
+
+    if (email === "your email") {
+      setError("Email address not found. Please sign up again.");
+      return;
+    }
+
+    setError(null);
+    setSuccess(null);
+    setIsVerifying(true);
+
+    try {
+      const supabase = createClient();
+      const { data, error: verifyError } = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type: "signup",
+      });
+
+      if (verifyError) {
+        throw verifyError;
+      }
+
+      setSuccess("Account successfully confirmed! Redirecting...");
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1500);
+    } catch (err: any) {
+      console.error("Verification error:", err);
+      setError(err?.message || "Invalid or expired verification code. Please try again.");
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    if (email === "your email") {
+      setError("Email address not found. Please sign up again.");
+      return;
+    }
+
+    setError(null);
+    setSuccess(null);
+    setIsResending(true);
+
+    try {
+      const supabase = createClient();
+      const { error: resendError } = await supabase.auth.resend({
+        type: "signup",
+        email,
+      });
+
+      if (resendError) {
+        throw resendError;
+      }
+
+      setSuccess("Verification code has been resent to your email!");
+    } catch (err: any) {
+      console.error("Resend error:", err);
+      setError(err?.message || "Failed to resend verification code. Please try again later.");
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   const handleChange = (index: number, value: string) => {
     if (isNaN(Number(value))) return;
@@ -97,10 +173,10 @@ export default function VerifyEmail() {
                   <span className="font-bold text-[#262525]">
                     {email}
                   </span>
-                  . Once verified, you can continue setting goals and tracking habits.
+                  .
                 </p>
 
-                <form className="flex flex-col gap-8">
+                <form onSubmit={handleVerify} className="flex flex-col gap-8">
                   <div className="gh-panel-soft px-5 py-6">
                     <div className="mb-4 text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
                       Verification code
@@ -124,18 +200,31 @@ export default function VerifyEmail() {
                     </div>
                   </div>
 
+                  {error && (
+                    <p className="text-[12px] text-red-500 font-semibold -mt-4">{error}</p>
+                  )}
+                  {success && (
+                    <p className="text-[12px] text-green-600 font-semibold -mt-4">{success}</p>
+                  )}
+
                   <button
-                    type="button"
-                    className="gh-btn-primary h-[58px] w-full max-w-[320px] text-[16px]"
+                    type="submit"
+                    disabled={isVerifying}
+                    className="gh-btn-primary h-[58px] w-full text-[16px] disabled:opacity-50"
                   >
-                    Verify Now
+                    {isVerifying ? "Verifying..." : "Verify Now"}
                   </button>
 
                   <div className="flex flex-col gap-3 text-[14px] text-[#666f85]">
                     <div className="flex items-center justify-between rounded-[18px] border border-[#eceff7] bg-[#fbfbff] px-4 py-3">
                       <span>Didn&apos;t get a code?</span>
-                      <button type="button" className="font-bold text-[#7655fb] hover:underline">
-                        Resend code
+                      <button 
+                        type="button" 
+                        onClick={handleResendCode}
+                        disabled={isResending}
+                        className="font-bold text-[#7655fb] hover:underline disabled:opacity-50"
+                      >
+                        {isResending ? "Resending..." : "Resend code"}
                       </button>
                     </div>
                     <div className="flex items-center justify-between rounded-[18px] border border-[#eceff7] bg-[#fbfbff] px-4 py-3">
