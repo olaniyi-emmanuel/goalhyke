@@ -45,7 +45,7 @@ export default function Signup() {
     setError(null);
     setIsLoading(true);
     const supabase = createClient();
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -63,10 +63,15 @@ export default function Signup() {
     } else {
       setSuccess(true);
       setIsLoading(false);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("signup_email", email);
+      if (signUpData?.session) {
+        router.push("/dashboard");
+        router.refresh();
+      } else {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("signup_email", email);
+        }
+        router.push("/verify-email");
       }
-      router.push("/verify-email");
     }
   };
 
