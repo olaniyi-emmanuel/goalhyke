@@ -37,7 +37,7 @@ const reminderOptions = [
 
 const tokenOptions = [
   { label: "--select--", value: "" },
-  { label: "10 tokens", value: "10" },
+  { label: "20 tokens (Minimum)", value: "20" },
   { label: "25 tokens", value: "25" },
   { label: "50 tokens", value: "50" },
   { label: "100 tokens", value: "100" },
@@ -49,6 +49,13 @@ const tokenFateOptions = [
   { label: "Return to GoalHyke pool", value: "goalhyke-pool" },
   { label: "Give to my referee", value: "referee" },
   { label: "Burn the tokens", value: "burn" },
+];
+
+const submissionModeOptions = [
+  { label: "--select submission mode--", value: "" },
+  { label: "Image / Screenshot upload", value: "image" },
+  { label: "Video / Screen recording upload", value: "video" },
+  { label: "Text Log / Written proof (no file required)", value: "text" },
 ];
 
 function resolveEndDate(deadline: string) {
@@ -101,6 +108,7 @@ const GoalCreationForm = ({
     reminderPreference: "",
     tokenCommitment: "",
     tokenFate: "",
+    submissionMode: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -146,6 +154,7 @@ const GoalCreationForm = ({
       formData.reminderPreference,
       formData.tokenCommitment,
       formData.tokenFate,
+      formData.submissionMode,
     ];
 
     if (requiredValues.some((value) => !value.trim())) {
@@ -174,9 +183,46 @@ const GoalCreationForm = ({
         `Planned work days: ${formData.workDays}.`,
         `Why this matters: ${formData.importance}.`,
         `Reminder preference: ${formData.reminderPreference}.`,
+        `Submission mode: ${formData.submissionMode}.`,
         `Token commitment: ${formData.tokenCommitment} tokens.`,
         `If missed: ${formData.tokenFate}.`,
       ].join(" ");
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("tokens")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      const tokenBalance =
+        profile && typeof profile.tokens === "number" ? profile.tokens : 0;
+
+      const tokensToCommit = parseInt(formData.tokenCommitment) || 20;
+
+      if (tokenBalance < tokensToCommit) {
+        setError(`Insufficient tokens! You need ${tokensToCommit} tokens, but you only have ${tokenBalance} tokens.`);
+        setIsLoading(false);
+        return;
+      }
+
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ tokens: tokenBalance - tokensToCommit })
+        .eq("id", user.id);
+
+      if (profileError) {
+        throw new Error(`Profile update failed: ${profileError.message}`);
+      }
+
+      const metadata = {
+        committed_tokens: tokensToCommit,
+        remaining_committed: tokensToCommit,
+        failures_count: 0,
+        failures_logged: [],
+        success_logged: [],
+        deductions_history: [],
+        submission_mode: formData.submissionMode,
+      };
 
       const { error: insertError } = await supabase.from("goals").insert({
         user_id: user.id,
@@ -185,6 +231,7 @@ const GoalCreationForm = ({
         start_date: startDate,
         end_date: endDate,
         description,
+        metadata,
       });
 
       if (insertError) {
@@ -202,6 +249,7 @@ const GoalCreationForm = ({
         reminderPreference: "",
         tokenCommitment: "",
         tokenFate: "",
+        submissionMode: "",
       });
     } finally {
       setIsLoading(false);
@@ -318,6 +366,25 @@ const GoalCreationForm = ({
           className={`${fieldShell} cursor-pointer`}
         >
           {reminderOptions.map((option) => (
+            <option key={option.label} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <label className="text-[14px] font-semibold text-[#262525]">
+          What is the mandatory submission mode for verification?
+        </label>
+        <select
+          name="submissionMode"
+          value={formData.submissionMode}
+          onChange={handleChange}
+          disabled={isLoading}
+          className={`${fieldShell} cursor-pointer`}
+        >
+          {submissionModeOptions.map((option) => (
             <option key={option.label} value={option.value}>
               {option.label}
             </option>

@@ -45,3 +45,8 @@ next-env.d.ts
 
 # scratch directory for temporary scripts
 scratch/
+
+# scratch files in root
+scratch_*
+recovered_*
+/supabase/.temp/

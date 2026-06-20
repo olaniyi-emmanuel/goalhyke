@@ -1,6 +1,6 @@
 "use client";
 
-import React, { type ReactNode, useMemo, useState } from "react";
+import React, { type ReactNode, useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
@@ -397,43 +397,91 @@ function SelectQuestion({
   options: string[];
   placeholder?: string;
 }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
+  const handleSelect = (option: string) => {
+    onChange(option);
+    setIsOpen(false);
+  };
+
   return (
-    <label className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3" ref={containerRef}>
       <span className="text-[18px] font-medium leading-7 text-[#262525] font-secondary">
         {label}
       </span>
-      <div className="relative max-w-[620px]">
-        <select
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className="gh-select h-[58px] w-full rounded-[16px] border-[#ccd2e2] bg-white pr-12 text-[16px] font-secondary shadow-none"
+      <div className="relative w-full max-w-[620px]">
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className={`flex h-[58px] w-full items-center justify-between rounded-[16px] border bg-white px-5 text-[16px] text-left font-secondary outline-none transition-all ${
+            isOpen ? "border-[#7655fb] ring-2 ring-[#f2edff]" : "border-[#ccd2e2]"
+          }`}
         >
-          <option value="">{placeholder}</option>
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <div className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-[#262525]">
-          <svg
-            width="14"
-            height="8"
-            viewBox="0 0 14 8"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1 1L7 7L13 1"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
+          <span className={value ? "text-[#262525]" : "text-[#9fa6bb]"}>
+            {value || placeholder}
+          </span>
+          <div className={`text-[#262525] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>
+            <svg
+              width="14"
+              height="8"
+              viewBox="0 0 14 8"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M1 1L7 7L13 1"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+        </button>
+
+        {isOpen && (
+          <div className="absolute left-0 right-0 top-[66px] z-50 max-h-[260px] overflow-y-auto rounded-[16px] border border-[#ccd2e2] bg-white py-2 shadow-[0_12px_36px_rgba(24,33,77,0.12)]">
+            <button
+              type="button"
+              onClick={() => handleSelect("")}
+              className="flex w-full px-5 py-3 text-left text-[16px] text-[#9fa6bb] hover:bg-[#f7f8ff] transition-colors"
+            >
+              {placeholder}
+            </button>
+            {options.map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => handleSelect(option)}
+                className={`flex w-full items-center justify-between px-5 py-3 text-left text-[16px] transition-colors ${
+                  value === option
+                    ? "bg-[#f2edff] text-[#7655fb] font-medium"
+                    : "text-[#262525] hover:bg-[#f7f8ff]"
+                }`}
+              >
+                <span>{option}</span>
+                {value === option && (
+                  <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 5L5 9L13 1" stroke="#7655fb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
-    </label>
+    </div>
   );
 }
 
@@ -602,17 +650,32 @@ function BmiCard({
       };
     }
 
+    if (bmi < 30) {
+      return {
+        value: bmi,
+        status: "Overweight",
+        guidance: "You’re in the overweight range. Setting a weight-loss goal can help you move into the healthy range.",
+      };
+    }
+
     return {
       value: bmi,
-      status: "Overweight",
-      guidance: "You’re in the overweight range. Setting a weight-loss goal can help you move into the healthy range.",
+      status: "Obese",
+      guidance: "You’re in the obese range. We suggest consulting a professional or adopting a gradual, healthy routine to manage your weight.",
     };
   }, [currentHeight, currentWeight, heightUnit, weightUnit]);
+
+  const percentage = useMemo(() => {
+    if (!bmiData) return 0;
+    const minBmi = 15;
+    const maxBmi = 40;
+    return Math.max(0, Math.min(100, ((bmiData.value - minBmi) / (maxBmi - minBmi)) * 100));
+  }, [bmiData]);
 
   return (
     <div className="rounded-[24px] border border-[#eceff7] bg-white p-6 shadow-[0_20px_45px_rgba(24,33,77,0.08)]">
       <p className="text-[20px] font-semibold text-[#262525] font-secondary">
-        BMI
+        BMI Status
       </p>
       <p className="mt-2 text-[14px] leading-6 text-[#5a6075]">
         Your BMI shows if your weight is healthy for your height.
@@ -623,25 +686,44 @@ function BmiCard({
           <p className="mt-4 text-[44px] font-bold text-[#262525] font-secondary">
             {bmiData.value.toFixed(1)}
           </p>
-          <div className="mt-4 h-3 overflow-hidden rounded-full bg-[#e9edf8]">
+
+          <div className="relative mt-6 h-3 w-full rounded-full bg-transparent">
+            {/* Colored segments */}
+            <div className="absolute inset-0 flex overflow-hidden rounded-full">
+              <div className="h-full bg-[#5aa4ff]" style={{ width: "14%" }} />
+              <div className="h-full bg-[#29b36a]" style={{ width: "26%" }} />
+              <div className="h-full bg-[#ff8c5a]" style={{ width: "20%" }} />
+              <div className="h-full bg-[#ff6f7d]" style={{ width: "40%" }} />
+            </div>
+
+            {/* Sliding pointer */}
             <div
-              className={`h-full ${
-                bmiData.status === "Healthy"
-                  ? "bg-[#29b36a]"
-                  : bmiData.status === "Underweight"
-                    ? "bg-[#5aa4ff]"
-                    : "bg-[#ff8c5a]"
-              }`}
-              style={{
-                width: `${Math.max(18, Math.min((bmiData.value / 35) * 100, 100))}%`,
-              }}
-            />
+              className="absolute top-1/2 -translate-y-1/2 transition-all duration-300 ease-out"
+              style={{ left: `${percentage}%` }}
+            >
+              <div
+                className="h-6 w-6 -translate-x-1/2 rounded-full border-4 border-white shadow-[0_4px_12px_rgba(0,0,0,0.2)]"
+                style={{
+                  backgroundColor:
+                    bmiData.status === "Healthy"
+                      ? "#29b36a"
+                      : bmiData.status === "Underweight"
+                        ? "#5aa4ff"
+                        : bmiData.status === "Overweight"
+                          ? "#ff8c5a"
+                          : "#ff6f7d",
+                }}
+              />
+            </div>
           </div>
-          <div className="mt-3 flex justify-between text-[12px] text-[#7a8198]">
-            <span>Underweight</span>
-            <span>Healthy</span>
-            <span>Overweight</span>
+
+          <div className="mt-3 grid grid-cols-4 text-center text-[10px] font-semibold text-[#7a8198] sm:text-[11px]">
+            <div className="text-left text-[#5aa4ff]">Underweight</div>
+            <div className="text-[#29b36a]">Healthy</div>
+            <div className="text-[#ff8c5a]">Overweight</div>
+            <div className="text-right text-[#ff6f7d]">Obese</div>
           </div>
+
           <div className="mt-5 grid grid-cols-2 gap-3 rounded-[18px] bg-[#f7f8ff] p-4 text-[14px] text-[#4f5670]">
             <div>
               <p className="text-[#8a90a3]">Height</p>
@@ -656,7 +738,20 @@ function BmiCard({
               </p>
             </div>
           </div>
-          <p className="mt-4 text-[16px] font-semibold text-[#262525]">
+
+          <p
+            className="mt-4 text-[16px] font-bold"
+            style={{
+              color:
+                bmiData.status === "Healthy"
+                  ? "#29b36a"
+                  : bmiData.status === "Underweight"
+                    ? "#5aa4ff"
+                    : bmiData.status === "Overweight"
+                      ? "#ff8c5a"
+                      : "#ff6f7d",
+            }}
+          >
             {bmiData.status}
           </p>
           <p className="mt-2 text-[14px] leading-6 text-[#5a6075]">
@@ -699,6 +794,10 @@ export default function LoseWeightWorkflow({
   const [showCommitConfirm, setShowCommitConfirm] = useState(false);
   const [showInsufficientTokens, setShowInsufficientTokens] = useState(false);
   const [showGoalCreated, setShowGoalCreated] = useState(false);
+  const [tokenCommitment, setTokenCommitment] = useState<number>(20);
+  const [isCustomToken, setIsCustomToken] = useState<boolean>(false);
+  const [customTokenValue, setCustomTokenValue] = useState<string>("");
+  const [submissionMode, setSubmissionMode] = useState<string>("image");
 
   const moveToStep = (nextStep: number) => {
     setErrorMessage(null);
@@ -803,7 +902,12 @@ export default function LoseWeightWorkflow({
       const tokenBalance =
         profile && typeof profile.tokens === "number" ? profile.tokens : 0;
 
-      if (tokenBalance < REQUIRED_COMMIT_TOKENS) {
+      if (tokenCommitment < 20) {
+        setErrorMessage("Minimum token commitment is 20 tokens.");
+        return;
+      }
+
+      if (tokenBalance < tokenCommitment) {
         setShowCommitConfirm(false);
         setShowInsufficientTokens(true);
         return;
@@ -860,6 +964,62 @@ export default function LoseWeightWorkflow({
         );
       }
 
+      const metadata = {
+        target: {
+          current_weight: target.currentWeight,
+          weight_unit: target.weightUnit,
+          current_height: target.currentHeight,
+          height_unit: target.heightUnit,
+          target_weight: target.targetWeight,
+          target_weight_unit: target.targetWeightUnit,
+          timeframe_value: target.timeframeValue,
+          timeframe_unit: target.timeframeUnit,
+          starts: target.starts,
+        },
+        why: {
+          primary_reason: why.primaryReason,
+          life_impact: why.lifeImpact,
+          motivation: why.motivation,
+          success_feeling: why.successFeeling,
+        },
+        challenges: challenges.challenges,
+        accountability: {
+          style: accountability.accountabilityStyle,
+          check_in_frequency: accountability.checkInFrequency,
+          motivation_type: accountability.motivationType,
+        },
+        visualization: {
+          desired_feeling: visualization.desiredFeeling,
+          first_reward: visualization.firstReward,
+          biggest_benefit_area: visualization.biggestBenefitArea,
+        },
+        referee: {
+          type: referee.refereeType,
+          contact: referee.refereeContact,
+          self_managed: referee.selfManaged,
+        },
+        supporters: {
+          auto_accept: supporters.autoAccept,
+          names: supporters.supporters.split(/\r?\n/).map((s) => s.trim()).filter(Boolean),
+        },
+        committed_tokens: tokenCommitment,
+        remaining_committed: tokenCommitment,
+        failures_count: 0,
+        failures_logged: [],
+        success_logged: [],
+        deductions_history: [],
+        submission_mode: submissionMode,
+      };
+
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ tokens: tokenBalance - tokenCommitment })
+        .eq("id", user.id);
+
+      if (profileError) {
+        throw new Error(`Profile update failed: ${profileError.message}`);
+      }
+
       const { error } = await supabase.from("goals").insert({
         user_id: user.id,
         title,
@@ -867,6 +1027,7 @@ export default function LoseWeightWorkflow({
         description,
         start_date: startDate,
         end_date: endDate,
+        metadata,
       });
 
       if (error) {
@@ -1367,16 +1528,106 @@ export default function LoseWeightWorkflow({
             </button>
 
             <div className="flex flex-col items-center text-center">
-              <p className="mt-10 text-[24px] font-medium leading-[1.6] text-[#262525] font-secondary sm:text-[28px]">
-                You will be charged {REQUIRED_COMMIT_TOKENS} points if you fail to
-                complete the goal
+              <p className="mt-6 text-[22px] font-medium leading-[1.6] text-[#262525] font-secondary sm:text-[26px]">
+                Commit Tokens to Your Goal
+              </p>
+              
+              <p className="mt-2 text-[14px] text-gray-500 max-w-lg">
+                Your committed tokens are staked. If you fail the weekly consistency target (&gt;= 5 verified check-ins), tokens will be deducted.
               </p>
 
-              <div className="mt-16 flex flex-wrap items-center justify-center gap-6">
+              <div className="w-full max-w-md mx-auto mt-6 p-5 rounded-[18px] border border-gray-100 bg-[#f7f8ff] text-left">
+                <div className="mb-5">
+                  <p className="text-[13px] font-bold text-[#262525] uppercase tracking-wider mb-2">
+                    Mandatory Submission Mode:
+                  </p>
+                  <select
+                    value={submissionMode}
+                    onChange={(e) => setSubmissionMode(e.target.value)}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-white text-[14px] outline-none focus:border-[#7655fb]"
+                  >
+                    <option value="image">Image / Screenshot upload</option>
+                    <option value="video">Video / Screen recording upload</option>
+                    <option value="text">Text Log / Written proof (no file)</option>
+                  </select>
+                </div>
+
+                <p className="text-[13px] font-bold text-[#262525] uppercase tracking-wider mb-3">
+                  Select Token Commitment (Min 20):
+                </p>
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomToken(false);
+                      setTokenCommitment(20);
+                    }}
+                    className={`flex-1 py-3 px-4 rounded-xl border text-[14px] font-semibold transition-all cursor-pointer ${
+                      !isCustomToken
+                        ? "border-[#7655fb] bg-[#7655fb]/5 text-[#7655fb] shadow-sm font-bold"
+                        : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    Standard (20 tokens)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomToken(true);
+                    }}
+                    className={`flex-1 py-3 px-4 rounded-xl border text-[14px] font-semibold transition-all cursor-pointer ${
+                      isCustomToken
+                        ? "border-[#7655fb] bg-[#7655fb]/5 text-[#7655fb] shadow-sm font-bold"
+                        : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    Custom Amount
+                  </button>
+                </div>
+
+                {isCustomToken && (
+                  <div className="mt-4">
+                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                      Enter Custom Tokens (Min 20):
+                    </label>
+                    <input
+                      type="number"
+                      min="20"
+                      value={customTokenValue}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setCustomTokenValue(val);
+                        const num = parseInt(val) || 0;
+                        setTokenCommitment(num);
+                      }}
+                      placeholder="e.g. 50"
+                      className={`w-full px-4 py-2.5 border rounded-xl text-[14px] outline-none focus:border-[#7655fb] ${
+                        customTokenValue && parseInt(customTokenValue) < 20
+                          ? "border-rose-500 focus:border-rose-500 bg-rose-50/10"
+                          : "border-[#ccd2e2]"
+                      }`}
+                    />
+                    {customTokenValue && parseInt(customTokenValue) < 20 && (
+                      <p className="mt-1.5 text-[12px] font-semibold text-rose-600 flex items-center gap-1">
+                        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        Custom commitment must be at least 20 tokens.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <p className="mt-8 text-[18px] font-bold text-[#7655fb]">
+                Total Staked Commitment: {tokenCommitment} tokens
+              </p>
+
+              <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  disabled={isSaving}
+                  disabled={isSaving || (isCustomToken && (!customTokenValue || parseInt(customTokenValue) < 20))}
                   className="gh-btn-primary min-w-[150px] px-8 py-3 text-[18px] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
                 >
                   {isSaving ? "Saving..." : "Yes, commit"}

@@ -76,7 +76,7 @@ export default function Settings() {
     name: "Olaniyi Emmanuel",
     email: "user@example.com",
     username: "goalhyker_emmanuel",
-    avatarUrl: "/images/nav-avatar.png",
+    avatarUrl: "",
   });
 
   const [emailEnabled, setEmailEnabled] = useState(true);
@@ -117,7 +117,7 @@ export default function Settings() {
             name: user.user_metadata?.name || user.user_metadata?.full_name || "Olaniyi Emmanuel",
             email: user.email || "user@example.com",
             username: user.user_metadata?.username || "goalhyker_emmanuel",
-            avatarUrl: user.user_metadata?.avatar_url || "/images/nav-avatar.png",
+            avatarUrl: user.user_metadata?.avatar_url || "",
           });
 
           // Fetch user notification preferences

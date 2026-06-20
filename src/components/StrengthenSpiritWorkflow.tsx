@@ -596,6 +596,10 @@ export default function StrengthenSpiritWorkflow({
   const [showCommitConfirm, setShowCommitConfirm] = useState(false);
   const [showInsufficientTokens, setShowInsufficientTokens] = useState(false);
   const [showGoalCreated, setShowGoalCreated] = useState(false);
+  const [tokenCommitment, setTokenCommitment] = useState<number>(20);
+  const [isCustomToken, setIsCustomToken] = useState<boolean>(false);
+  const [customTokenValue, setCustomTokenValue] = useState<string>("");
+  const [submissionMode, setSubmissionMode] = useState<string>("image");
 
   const moveToStep = (nextStep: number) => {
     setErrorMessage(null);
@@ -721,7 +725,12 @@ export default function StrengthenSpiritWorkflow({
       const tokenBalance =
         profile && typeof profile.tokens === "number" ? profile.tokens : 0;
 
-      if (tokenBalance < REQUIRED_COMMIT_TOKENS) {
+      if (tokenCommitment < 20) {
+        setErrorMessage("Minimum token commitment is 20 tokens.");
+        return;
+      }
+
+      if (tokenBalance < tokenCommitment) {
         setShowCommitConfirm(false);
         setShowInsufficientTokens(true);
         return;
@@ -791,6 +800,25 @@ export default function StrengthenSpiritWorkflow({
         );
       }
 
+      const metadata = {
+        committed_tokens: tokenCommitment,
+        remaining_committed: tokenCommitment,
+        failures_count: 0,
+        failures_logged: [],
+        success_logged: [],
+        deductions_history: [],
+        submission_mode: submissionMode,
+      };
+
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ tokens: tokenBalance - tokenCommitment })
+        .eq("id", user.id);
+
+      if (profileError) {
+        throw new Error(`Profile update failed: ${profileError.message}`);
+      }
+
       const { error } = await supabase.from("goals").insert({
         user_id: user.id,
         title: target.spiritualPractice,
@@ -798,6 +826,7 @@ export default function StrengthenSpiritWorkflow({
         description,
         start_date: startDate,
         end_date: endDate,
+        metadata
       });
 
       if (error) {
@@ -1381,16 +1410,106 @@ export default function StrengthenSpiritWorkflow({
             </button>
 
             <div className="flex flex-col items-center text-center">
-              <p className="mt-10 text-[24px] font-medium leading-[1.6] text-[#262525] font-secondary sm:text-[28px]">
-                You will be charged {REQUIRED_COMMIT_TOKENS} points if you fail to
-                complete the goal
+              <p className="mt-6 text-[22px] font-medium leading-[1.6] text-[#262525] font-secondary sm:text-[26px]">
+                Commit Tokens to Your Goal
+              </p>
+              
+              <p className="mt-2 text-[14px] text-gray-500 max-w-lg">
+                Your committed tokens are staked. If you fail the weekly consistency target (&gt;= 5 verified check-ins), tokens will be deducted.
               </p>
 
-              <div className="mt-16 flex flex-wrap items-center justify-center gap-6">
+              <div className="w-full max-w-md mx-auto mt-6 p-5 rounded-[18px] border border-gray-100 bg-[#f7f8ff] text-left">
+                <div className="mb-5">
+                  <p className="text-[13px] font-bold text-[#262525] uppercase tracking-wider mb-2">
+                    Mandatory Submission Mode:
+                  </p>
+                  <select
+                    value={submissionMode}
+                    onChange={(e) => setSubmissionMode(e.target.value)}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-white text-[14px] outline-none focus:border-[#7655fb]"
+                  >
+                    <option value="image">Image / Screenshot upload</option>
+                    <option value="video">Video / Screen recording upload</option>
+                    <option value="text">Text Log / Written proof (no file)</option>
+                  </select>
+                </div>
+
+                <p className="text-[13px] font-bold text-[#262525] uppercase tracking-wider mb-3">
+                  Select Token Commitment (Min 20):
+                </p>
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomToken(false);
+                      setTokenCommitment(20);
+                    }}
+                    className={`flex-1 py-3 px-4 rounded-xl border text-[14px] font-semibold transition-all cursor-pointer ${
+                      !isCustomToken
+                        ? "border-[#7655fb] bg-[#7655fb]/5 text-[#7655fb] shadow-sm font-bold"
+                        : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    Standard (20 tokens)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomToken(true);
+                    }}
+                    className={`flex-1 py-3 px-4 rounded-xl border text-[14px] font-semibold transition-all cursor-pointer ${
+                      isCustomToken
+                        ? "border-[#7655fb] bg-[#7655fb]/5 text-[#7655fb] shadow-sm font-bold"
+                        : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    Custom Amount
+                  </button>
+                </div>
+
+                {isCustomToken && (
+                  <div className="mt-4">
+                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                      Enter Custom Tokens (Min 20):
+                    </label>
+                    <input
+                      type="number"
+                      min="20"
+                      value={customTokenValue}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setCustomTokenValue(val);
+                        const num = parseInt(val) || 0;
+                        setTokenCommitment(num);
+                      }}
+                      placeholder="e.g. 50"
+                      className={`w-full px-4 py-2.5 border rounded-xl text-[14px] outline-none focus:border-[#7655fb] ${
+                        customTokenValue && parseInt(customTokenValue) < 20
+                          ? "border-rose-500 focus:border-rose-500 bg-rose-50/10"
+                          : "border-[#ccd2e2]"
+                      }`}
+                    />
+                    {customTokenValue && parseInt(customTokenValue) < 20 && (
+                      <p className="mt-1.5 text-[12px] font-semibold text-rose-600 flex items-center gap-1">
+                        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        Custom commitment must be at least 20 tokens.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <p className="mt-8 text-[18px] font-bold text-[#7655fb]">
+                Total Staked Commitment: {tokenCommitment} tokens
+              </p>
+
+              <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  disabled={isSaving}
+                  disabled={isSaving || (isCustomToken && (!customTokenValue || parseInt(customTokenValue) < 20))}
                   className="gh-btn-primary min-w-[150px] px-8 py-3 text-[18px] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
                 >
                   {isSaving ? "Saving..." : "Yes, commit"}

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 export interface ExerciseRefereeFormData {
   refereeType: string;
@@ -35,6 +35,19 @@ const GoalRefereeForm = ({
   refereeOptions = ["Individual referee", "Trusted accountability partner"],
   selfManagedOptionLabel,
 }: GoalRefereeFormProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
   const handleToggleSelfManaged = () => {
     onChange({
       ...value,
@@ -181,46 +194,71 @@ const GoalRefereeForm = ({
               <label className="text-[20px] font-semibold text-[#262525] font-secondary">
                 Who will be your Referee:
               </label>
-              <div className="relative max-w-[478px]">
-                <select
-                  value={value.refereeType}
-                  onChange={(e) =>
-                    onChange({
-                      ...value,
-                      refereeType: e.target.value,
-                      selfManaged:
-                        selfManagedOptionLabel !== undefined &&
-                        e.target.value === selfManagedOptionLabel,
-                      refereeContact:
-                        selfManagedOptionLabel !== undefined &&
-                        e.target.value === selfManagedOptionLabel
-                          ? ""
-                          : value.refereeContact,
-                    })
-                  }
-                  className="gh-select h-[60px] rounded-[14px] border-[#535353] bg-white pr-12 text-[20px] font-secondary shadow-none"
+              <div className="relative max-w-[478px]" ref={containerRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(!isOpen)}
+                  className={`flex h-[60px] w-full items-center justify-between rounded-[14px] border bg-white px-5 text-[20px] text-left font-secondary outline-none transition-all ${
+                    isOpen ? "border-[#7655fb] ring-2 ring-[#f2edff]" : "border-[#ccd2e2]"
+                  }`}
                 >
-                  {refereeOptions.map((option) => (
-                    <option key={option}>{option}</option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2">
-                  <svg
-                    width="16"
-                    height="8"
-                    viewBox="0 0 16 8"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M1 1L8 7L15 1"
-                      stroke="#262525"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
+                  <span className="text-[#262525]">{value.refereeType}</span>
+                  <div className={`text-[#262525] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>
+                    <svg
+                      width="16"
+                      height="8"
+                      viewBox="0 0 16 8"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 1L8 7L15 1"
+                        stroke="#262525"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </button>
+
+                {isOpen && (
+                  <div className="absolute left-0 right-0 top-[68px] z-50 max-h-[200px] overflow-y-auto rounded-[14px] border border-[#ccd2e2] bg-white py-2 shadow-[0_12px_36px_rgba(24,33,77,0.12)]">
+                    {refereeOptions.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => {
+                          onChange({
+                            ...value,
+                            refereeType: option,
+                            selfManaged:
+                              selfManagedOptionLabel !== undefined &&
+                              option === selfManagedOptionLabel,
+                            refereeContact:
+                              selfManagedOptionLabel !== undefined &&
+                              option === selfManagedOptionLabel
+                                ? ""
+                                : value.refereeContact,
+                          });
+                          setIsOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between px-5 py-3 text-left text-[18px] transition-colors ${
+                          value.refereeType === option
+                            ? "bg-[#f2edff] text-[#7655fb] font-medium"
+                            : "text-[#262525] hover:bg-[#f7f8ff]"
+                        }`}
+                      >
+                        <span>{option}</span>
+                        {value.refereeType === option && (
+                          <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 5L5 9L13 1" stroke="#7655fb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

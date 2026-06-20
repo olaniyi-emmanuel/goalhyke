@@ -32,6 +32,21 @@ const GoalSupportersForm = ({
   progressSteps = 7,
   activeIndex = 6,
 }: GoalSupportersFormProps) => {
+  const [copied, setCopied] = React.useState(false);
+
+  const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/invite/${encodeURIComponent(goalTitle)}` : "https://goalhyke.com";
+  const shareText = `Hey! Support my goal "${goalTitle}" on goalHyke and keep me accountable! ${shareUrl}`;
+
+  const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareText).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
     <div className="relative mx-auto flex w-full max-w-[1080px] flex-col items-center">
       <div className="flex w-full items-center justify-between gap-4 px-2">
@@ -179,88 +194,81 @@ const GoalSupportersForm = ({
           </div>
         </div>
 
-        <div className="relative flex flex-col justify-center gap-6 pt-10 lg:pt-24">
-          <div className="flex items-center justify-between gap-6 rounded-[24px] border border-[#eceff7] bg-white px-6 py-6 shadow-[0_12px_34px_rgba(24,33,77,0.05)]">
-            <p className="text-[18px] leading-8 text-[#262525] font-secondary">
-              Invite your
-              <br />
-              friends on
-              <br />
-              Facebook
-            </p>
-            <div className="flex h-[56px] w-[56px] items-center justify-center rounded-full bg-[#4267b2] text-white shadow-[0_12px_22px_rgba(66,103,178,0.24)]">
-              <span className="text-[34px] font-black">f</span>
-            </div>
-          </div>
+        <div className="relative flex flex-col justify-start gap-4 pt-0">
+          <h4 className="text-[15px] font-bold uppercase tracking-wider text-[#555c72] mb-1 font-secondary">
+            Quick Invite
+          </h4>
 
-          <div className="flex items-center justify-between gap-6 rounded-[24px] border border-[#eceff7] bg-white px-6 py-6 shadow-[0_12px_34px_rgba(24,33,77,0.05)]">
-            <p className="text-[18px] leading-8 text-[#262525] font-secondary">
-              Invite your
-              <br />
-              friends on
-              <br />
-              WhatsApp
-            </p>
-            <div className="flex h-[56px] w-[56px] items-center justify-center rounded-full bg-[#4ecb71] text-white shadow-[0_12px_22px_rgba(78,203,113,0.24)]">
-              <svg
-                width="28"
-                height="28"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M20 11.5C20 16.1944 16.1944 20 11.5 20C9.93731 20 8.47311 19.5782 7.21474 18.8427L4 20L5.22201 16.9266C4.44777 15.5657 4 13.9891 4 12.3077C4 7.61331 7.80558 3.80774 12.5 3.80774C17.1944 3.80774 21 7.61331 21 12.3077"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M9 9.5C9 12.1 11.1 14.2 13.7 14.2C14.1 14.2 14.4 14.1 14.7 13.9L16 13.3C16.2 13.2 16.3 12.9 16.2 12.7L15.4 11C15.3 10.8 15.1 10.7 14.9 10.8L13.8 11.2C13.6 11.3 13.4 11.2 13.3 11C12.9 10.4 12.4 9.9 11.8 9.5C11.6 9.4 11.5 9.2 11.6 9L12 7.9C12.1 7.7 12 7.5 11.8 7.4L10.1 6.6C9.9 6.5 9.6 6.6 9.5 6.8L8.9 8.1C8.7 8.4 8.6 8.8 8.6 9.1"
-                  fill="white"
-                />
+          {/* WhatsApp Card */}
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between gap-4 rounded-[22px] border border-[#eceff7] bg-white p-5 shadow-[0_10px_25px_rgba(24,33,77,0.02)] hover:shadow-[0_14px_35px_rgba(37,211,102,0.08)] hover:border-[#25D366]/30 transition-all duration-300 hover:scale-[1.02] cursor-pointer group"
+          >
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 group-hover:text-[#25D366] transition-colors">
+                Invite friends on
+              </p>
+              <p className="text-[17px] font-extrabold text-[#262525] mt-0.5 font-secondary">
+                WhatsApp
+              </p>
+            </div>
+            <div className="flex h-[48px] w-[48px] items-center justify-center rounded-full bg-[#e8faf0] group-hover:bg-[#25D366] text-[#25D366] group-hover:text-white shadow-sm transition-all duration-300 shrink-0">
+              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.717-1.458L0 24zm6.59-4.846c1.6.95 3.16 1.448 4.795 1.449 5.513 0 10.005-4.492 10.007-10.007.001-2.67-1.03-5.181-2.906-7.058-1.877-1.877-4.389-2.906-7.067-2.907-5.523 0-10.016 4.493-10.018 10.012-.001 1.708.452 3.377 1.313 4.887L1.13 22.87l4.316-1.134c1.558.85 3.12 1.296 4.678 1.296h-.002zm11.393-7.618c-.3-.15-1.782-.879-2.057-.979-.275-.1-.475-.15-.675.15-.2.3-.775.979-.95 1.179-.175.2-.35.225-.65.075-3.037-1.518-4.697-3.111-5.4-4.318-.175-.3-.025-.463.125-.613.138-.135.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.675-1.629-.925-2.229-.244-.588-.491-.508-.675-.518-.175-.008-.375-.01-.575-.01-.2 0-.525.075-.8.375-.275.3-1.05 1.025-1.05 2.5s1.075 2.9 1.225 3.1c.15.2 2.11 3.224 5.112 4.521.714.308 1.272.492 1.707.63.717.228 1.37.196 1.887.119.577-.085 1.782-.729 2.032-1.433.25-.704.25-1.309.175-1.433-.075-.125-.275-.2-.575-.35z" />
               </svg>
             </div>
-          </div>
+          </a>
 
-          <div className="pointer-events-none absolute bottom-[-20px] right-0 hidden lg:flex h-[68px] w-[68px] items-center justify-center rounded-full bg-gradient-to-br from-[#8a6dff] to-[#7655fb] shadow-[0_16px_28px_rgba(118,85,251,0.28)]">
-            <svg
-              width="34"
-              height="34"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 3C12 6.31371 9.31371 9 6 9"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <path
-                d="M12 21C12 17.6863 14.6863 15 18 15"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <path
-                d="M15 3H19V7"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M9 21H5V17"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="12" cy="12" r="3" fill="white" fillOpacity="0.9" />
-            </svg>
-          </div>
+          {/* Facebook Card */}
+          <a
+            href={facebookUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between gap-4 rounded-[22px] border border-[#eceff7] bg-white p-5 shadow-[0_10px_25px_rgba(24,33,77,0.02)] hover:shadow-[0_14px_35px_rgba(24,119,242,0.08)] hover:border-[#1877F2]/30 transition-all duration-300 hover:scale-[1.02] cursor-pointer group"
+          >
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 group-hover:text-[#1877F2] transition-colors">
+                Invite friends on
+              </p>
+              <p className="text-[17px] font-extrabold text-[#262525] mt-0.5 font-secondary">
+                Facebook
+              </p>
+            </div>
+            <div className="flex h-[48px] w-[48px] items-center justify-center rounded-full bg-[#eaf2ff] group-hover:bg-[#1877F2] text-[#1877F2] group-hover:text-white shadow-sm transition-all duration-300 shrink-0">
+              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+              </svg>
+            </div>
+          </a>
+
+          {/* Copy Link Card */}
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="flex w-full text-left items-center justify-between gap-4 rounded-[22px] border border-[#eceff7] bg-white p-5 shadow-[0_10px_25px_rgba(24,33,77,0.02)] hover:shadow-[0_14px_35px_rgba(118,85,251,0.08)] hover:border-[#7655fb]/30 transition-all duration-300 hover:scale-[1.02] cursor-pointer group"
+          >
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 group-hover:text-[#7655fb] transition-colors">
+                Invite via link
+              </p>
+              <p className="text-[17px] font-extrabold text-[#262525] mt-0.5 font-secondary">
+                {copied ? "Link Copied!" : "Copy Invite Link"}
+              </p>
+            </div>
+            <div className={`flex h-[48px] w-[48px] items-center justify-center rounded-full transition-all duration-300 shrink-0 ${copied ? 'bg-emerald-100 text-emerald-600' : 'bg-[#f1edff] group-hover:bg-[#7655fb] text-[#7655fb] group-hover:text-white'} shadow-sm`}>
+              {copied ? (
+                <svg className="w-5 h-5 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                </svg>
+              )}
+            </div>
+          </button>
         </div>
       </div>
 

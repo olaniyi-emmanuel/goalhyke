@@ -32,12 +32,14 @@ const GoalTargetForm = ({
   return (
     <div className="w-full max-w-[900px] mx-auto flex flex-col items-center">
       {/* Progress Bar */}
-      <div className="flex gap-2 mb-12 w-full max-w-[400px]">
+      <div className="flex gap-2.5 mb-12 w-full max-w-[400px]">
         {Array.from({ length: progressSteps }).map((_, i) => (
           <div
             key={i}
-            className={`h-1.5 flex-1 rounded-full ${
-              i < currentStep ? "bg-[#4169e1]" : "bg-[#4169e1]/20"
+            className={`h-2 flex-1 rounded-full transition-all duration-300 ${
+              i < currentStep 
+                ? "bg-gradient-to-r from-[#4169e1] to-[#7655fb] shadow-sm" 
+                : "bg-gray-200"
             }`}
           />
         ))}
@@ -63,7 +65,7 @@ const GoalTargetForm = ({
       </div>
 
       {/* Form Card */}
-      <div className="gh-panel w-full p-10 relative overflow-visible">
+      <div className="gh-panel w-full p-10 relative overflow-visible border-t-[5px] border-t-[#7655fb] shadow-[0_20px_50px_rgba(24,33,77,0.06)] hover:shadow-[0_24px_60px_rgba(24,33,77,0.09)] transition-all duration-300">
         <div className="flex flex-col gap-8 max-w-[600px]">
           {/* Question 1 */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -170,16 +172,27 @@ const GoalTargetForm = ({
             <label className="text-[#262525] text-[16px] font-medium font-secondary">
               My Reporting Days will be:
             </label>
-            <span className="text-[#262525] text-[18px] font-medium font-secondary sm:mr-10">
-              {value.reportingDay}
-            </span>
-          </div>
-        </div>
-
-        {/* Floating Mascot */}
-        <div className="absolute right-[-40px] top-[180px] w-[80px] h-[80px] bg-[#7655fb] rounded-full flex items-center justify-center shadow-xl z-20 hidden lg:flex">
-          <div className="relative w-12 h-12">
-            <Image src="/images/nav-avatar.png" alt="Mascot" fill className="object-cover rounded-full" />
+            <div className="relative min-w-[150px]">
+              <select 
+                className="gh-select cursor-pointer text-[15px] font-secondary"
+                value={value.reportingDay}
+                onChange={(e) => onChange({ ...value, reportingDay: e.target.value })}
+              >
+                <option>Everyday</option>
+                <option>Monday</option>
+                <option>Tuesday</option>
+                <option>Wednesday</option>
+                <option>Thursday</option>
+                <option>Friday</option>
+                <option>Saturday</option>
+                <option>Sunday</option>
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L5 5L9 1" stroke="#262525" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>

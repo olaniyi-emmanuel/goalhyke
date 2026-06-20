@@ -7,6 +7,7 @@ import DashboardHeader from "@/components/DashboardHeader";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { processGoalPenalties } from "@/lib/penalties";
 
 interface Goal {
   id: string;
@@ -95,6 +96,29 @@ function formatToday() {
   });
 }
 
+function buildCalendarDaysForMonth(year: number, month: number) {
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const daysInMonth = lastDay.getDate();
+  const startWeekDay = firstDay.getDay();
+  const days: Array<{ day: number; muted: boolean }> = [];
+
+  const prevMonthLastDay = new Date(year, month, 0).getDate();
+  for (let i = startWeekDay - 1; i >= 0; i -= 1) {
+    days.push({ day: prevMonthLastDay - i, muted: true });
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    days.push({ day, muted: false });
+  }
+
+  while (days.length < 35) {
+    days.push({ day: days.length - (startWeekDay + daysInMonth) + 1, muted: true });
+  }
+
+  return days;
+}
+
 export default function Dashboard() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,6 +127,11 @@ export default function Dashboard() {
   const [fullName, setFullName] = useState<string>("");
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [shareToast, setShareToast] = useState<{ show: boolean; message: string } | null>(null);
+
+  // Consistency calendar states
+  const [submissions, setSubmissions] = useState<any[]>([]);
+  const [selectedGoalId, setSelectedGoalId] = useState<string>("all");
+  const [currentCalendarMonth, setCurrentCalendarMonth] = useState<Date>(new Date());
 
   useEffect(() => {
     const fetchGoalsAndBalance = async () => {
@@ -184,23 +213,49 @@ export default function Dashboard() {
         }
 
         // 3. Fetch goals
-        const { data, error } = await supabase
+        const { data: goalsData, error: goalsError } = await supabase
           .from("goals")
           .select("*")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false });
 
-        if (error) {
-          throw error;
+        if (goalsError) {
+          throw goalsError;
         }
 
-        if (!data || data.length === 0) {
-          setGoals(fallbackGoals);
+        if (!goalsData || goalsData.length === 0) {
+          setGoals([]);
           return;
         }
 
+        // 4. Fetch submissions
+        const { data: subsData, error: subsError } = await supabase
+          .from("progress_submissions")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        const fetchedSubs = subsData || [];
+        setSubmissions(fetchedSubs);
+
+        // 5. Evaluate penalties dynamically for each active goal on dashboard mount
+        let anyPenaltiesUpdated = false;
+        const processedGoals = [];
+        for (const goal of goalsData) {
+          if (goal.status === "active") {
+            const goalSubs = fetchedSubs.filter((sub: any) => sub.goal_id === goal.id);
+            const { updatedGoal, wasUpdated } = await processGoalPenalties(goal, goalSubs);
+            processedGoals.push(updatedGoal);
+            if (wasUpdated) {
+              anyPenaltiesUpdated = true;
+            }
+          } else {
+            processedGoals.push(goal);
+          }
+        }
+
         setGoals(
-          data.map((goal: any) => ({
+          processedGoals.map((goal: any) => ({
             id: goal.id,
             title: goal.title,
             category: goal.category,
@@ -212,9 +267,21 @@ export default function Dashboard() {
             streak: goal.streak ?? 0,
           }))
         );
+
+        if (anyPenaltiesUpdated) {
+          // Re-fetch profile token balance
+          const { data: updatedProfile } = await supabase
+            .from("profiles")
+            .select("tokens")
+            .eq("id", user.id)
+            .single();
+          if (updatedProfile) {
+            setTokenBalance(updatedProfile.tokens);
+          }
+        }
       } catch (error) {
         console.error("Failed to fetch dashboard goals/balance.", error);
-        setGoals(fallbackGoals);
+        setGoals([]);
       } finally {
         setLoading(false);
       }
@@ -241,13 +308,16 @@ export default function Dashboard() {
   }, [goals]);
 
   const weeklyTrend = useMemo(() => {
-    const base = completionRate || 42;
+    if (goals.length === 0) {
+      return trendLabels.map((label) => ({ label, value: 0 }));
+    }
+    const base = completionRate;
     return trendLabels.map((label, index) => ({
       label,
       value: Math.max(
-        18,
+        0,
         Math.min(
-          95,
+          100,
           Math.round(
             base * 0.45 +
               (index % 2 === 0 ? 10 : 20) +
@@ -257,14 +327,100 @@ export default function Dashboard() {
         )
       ),
     }));
-  }, [completionRate, activeGoals.length]);
+  }, [goals.length, completionRate, activeGoals.length]);
 
   const featuredHabits = activeGoals.slice(0, 3);
   const focusCategory = featuredHabits[0]?.category ?? "No active focus";
 
   const longestStreakLabel =
     streakDays > 0 ? `${streakDays} Days` : "Start today";
-  const consistencyChange = completionRate >= 50 ? "+24%" : "+12%";
+  const consistencyChange =
+    goals.length === 0
+      ? "0%"
+      : completionRate >= 50
+      ? "+24%"
+      : "+12%";
+  const handlePrevMonth = () => {
+    setCurrentCalendarMonth(new Date(currentCalendarMonth.getFullYear(), currentCalendarMonth.getMonth() - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentCalendarMonth(new Date(currentCalendarMonth.getFullYear(), currentCalendarMonth.getMonth() + 1, 1));
+  };
+
+  const calendarDays = useMemo(() => {
+    const year = currentCalendarMonth.getFullYear();
+    const month = currentCalendarMonth.getMonth();
+    const days = buildCalendarDaysForMonth(year, month);
+    
+    return days.map(item => {
+      if (item.muted) {
+        return { ...item, status: "none" };
+      }
+      
+      const itemDate = new Date(year, month, item.day);
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      
+      // Filter goals that are active on this day
+      const activeGoalsOnDay = goals.filter(g => {
+        if (selectedGoalId !== "all" && g.id !== selectedGoalId) {
+          return false;
+        }
+        const start = new Date(g.start_date);
+        start.setHours(0,0,0,0);
+        const end = new Date(g.end_date);
+        end.setHours(23,59,59,999);
+        return itemDate >= start && itemDate <= end;
+      });
+      
+      if (activeGoalsOnDay.length === 0) {
+        return { ...item, status: "none", date: itemDate };
+      }
+      
+      // Filter submissions for active goals on this day
+      const daySubmissions = submissions.filter(sub => {
+        const subDate = new Date(sub.created_at);
+        const isSameDay = subDate.getFullYear() === itemDate.getFullYear() &&
+                          subDate.getMonth() === itemDate.getMonth() &&
+                          subDate.getDate() === itemDate.getDate();
+        if (!isSameDay) return false;
+        
+        if (selectedGoalId !== "all") {
+          return sub.goal_id === selectedGoalId;
+        } else {
+          return goals.some(g => g.id === sub.goal_id);
+        }
+      });
+      
+      const hasVerified = daySubmissions.some(s => s.verified === "verified");
+      const hasFailed = daySubmissions.some(s => s.verified === "failed");
+      const hasPending = daySubmissions.some(s => s.verified === "pending");
+      
+      if (hasVerified) {
+        return { ...item, status: "verified", date: itemDate };
+      }
+      
+      if (itemDate <= today) {
+        if (hasFailed) {
+          return { ...item, status: "failed", date: itemDate };
+        }
+        if (hasPending) {
+          return { ...item, status: "pending", date: itemDate };
+        }
+        if (itemDate < today) {
+          return { ...item, status: "missed", date: itemDate };
+        }
+      }
+      
+      return { ...item, status: "none", date: itemDate };
+    });
+  }, [goals, submissions, selectedGoalId, currentCalendarMonth]);
+
+  const monthLabel = currentCalendarMonth.toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
 
   const shareText = `I am on a ${longestStreakLabel} habit streak on GoalHyke! 🚀 Keeping my commitments alive and building consistency. Join me!`;
   const shareUrl = "https://goalhyke.com"; // Fallback/default URL
@@ -460,7 +616,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between rounded-[24px] bg-gradient-to-br from-[#4169e1] via-[#5c61f2] to-[#7655fb] p-6 text-white shadow-[0_18px_36px_rgba(118,85,251,0.28)]">
                       <div>
                         <p className="text-[46px] font-black leading-none">
-                          {streakDays || 12}
+                          {streakDays}
                         </p>
                         <p className="mt-1 text-[18px] font-semibold">days</p>
                         <p className="mt-3 max-w-[220px] text-[14px] text-white/85">
@@ -616,6 +772,102 @@ export default function Dashboard() {
                           </span>
                         </div>
                       ))}
+                    </div>
+                  </div>
+
+                  {/* Consistency Calendar Widget */}
+                  <div className="rounded-[30px] border border-white/60 bg-white p-6 shadow-[0_24px_70px_rgba(24,33,77,0.08)]">
+                    <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div>
+                        <h3 className="text-[22px] font-bold text-[#262525]">
+                          Consistency Calendar
+                        </h3>
+                        <p className="text-[12px] text-gray-500 font-secondary mt-0.5">
+                          Track daily show-up history
+                        </p>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        {/* Goal selector filter */}
+                        <select
+                          value={selectedGoalId}
+                          onChange={(e) => setSelectedGoalId(e.target.value)}
+                          className="h-[38px] rounded-[10px] border border-[#ccd2e2] bg-white px-3 text-[12px] font-semibold text-[#262525] outline-none focus:border-[#7655fb] cursor-pointer"
+                        >
+                          <option value="all">All Goals</option>
+                          {goals.map(g => (
+                            <option key={g.id} value={g.id}>{g.title}</option>
+                          ))}
+                        </select>
+
+                        {/* Month navigation */}
+                        <div className="flex items-center gap-1.5 bg-[#f4f6fb] p-1 rounded-full">
+                          <button
+                            type="button"
+                            onClick={handlePrevMonth}
+                            className="flex h-7 w-7 items-center justify-center rounded-full bg-white hover:bg-gray-100 text-[#7655fb] shadow-sm transition-all cursor-pointer font-bold"
+                          >
+                            ‹
+                          </button>
+                          <span className="text-[12px] font-bold text-[#262525] px-1 whitespace-nowrap">
+                            {monthLabel}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={handleNextMonth}
+                            className="flex h-7 w-7 items-center justify-center rounded-full bg-white hover:bg-gray-100 text-[#7655fb] shadow-sm transition-all cursor-pointer font-bold"
+                          >
+                            ›
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-2 text-center text-[10px] uppercase text-[#9a99a3] font-bold border-t border-gray-100 pt-4">
+                      {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                        <span key={day}>{day}</span>
+                      ))}
+                    </div>
+
+                    <div className="mt-3 grid grid-cols-7 gap-y-3 text-center text-[12px] text-[#3f3e4a]">
+                      {calendarDays.map((item, index) => {
+                        let cellClass = "relative flex flex-col items-center justify-center h-9 w-9 mx-auto rounded-full transition-all ";
+                        let statusIndicator = null;
+                        
+                        if (item.muted) {
+                          cellClass += "text-[#c8c7cf] cursor-default";
+                        } else {
+                          cellClass += "hover:bg-gray-100 cursor-pointer ";
+                          if (item.status === "verified") {
+                            cellClass += "bg-green-50 text-green-700 font-bold border border-green-200";
+                            statusIndicator = <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />;
+                          } else if (item.status === "failed" || item.status === "missed") {
+                            cellClass += "bg-red-50 text-red-700 font-medium border border-red-200";
+                            statusIndicator = <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />;
+                          } else if (item.status === "pending") {
+                            cellClass += "bg-amber-50 text-amber-700 font-medium border border-amber-200";
+                            statusIndicator = <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />;
+                          }
+                        }
+
+                        return (
+                          <div
+                            key={`${item.day}-${index}`}
+                            className={cellClass}
+                            title={
+                              item.status === "verified" ? "Verified Check-in" :
+                              item.status === "failed" ? "Failed Verification" :
+                              item.status === "missed" ? "Missed Day" :
+                              item.status === "pending" ? "Pending AI Review" : undefined
+                            }
+                          >
+                            <span className={item.status !== "none" && !item.muted ? "translate-y-[-2px]" : ""}>
+                              {item.day}
+                            </span>
+                            {statusIndicator}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
