@@ -1,0 +1,47 @@
+<div style="background-color: #f4f5f7; padding: 40px 20px; font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
+        
+        <!-- Resized Logo Container -->
+        <div style="text-align: center; padding: 30px 20px 15px;">
+            <img src="https://cxqqgmkrvwrqkfipazfn.supabase.co/storage/v1/object/public/assets/nav-logo.png" alt="Goalhyke Logo" style="width: 60px; max-width: 100%; height: auto; display: inline-block; vertical-align: middle; border: none; outline: none; text-decoration: none;">
+        </div>
+        <div style="padding: 20px 40px 40px; color: #1f2937; line-height: 1.6; font-size: 16px;">
+            <p style="margin-top: 0;">Dear {{ or .Data.full_name "there" }},</p>
+            <p>Welcome to <strong>Goalhyke</strong>!</p>
+            
+            <p>To complete your onboarding and secure your account, please use the One-Time Password (OTP) below:</p>
+            
+            <div style="background-color: #eef2ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0;">
+                <span style="font-family: 'Courier New', Courier, monospace; font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #111827;">
+                    {{ .Token }}
+                </span>
+            </div>
+            
+            <p>This OTP is valid for the next <strong>3 minutes</strong>. If you didn't request this code, please ignore this email or contact our support team immediately.</p>
+            
+            <p style="margin-top: 25px; margin-bottom: 5px;"><strong>For your security:</strong></p>
+            <ul style="margin-top: 0; padding-left: 20px; color: #4b5563;">
+                <li style="margin-bottom: 8px;">Do not share this code with anyone.</li>
+                <li>Goalhyke will never ask for your password or OTP via email, phone, or chat.</li>
+            </ul>
+            
+            <p style="margin-top: 25px;">For inquiries, kindly reach out to us at <a href="mailto:support@goalhyke.com" style="color: #5477F5; text-decoration: none; font-weight: 500;">support@goalhyke.com</a> or call us at <strong style="color: #5477F5;">08146456544</strong>.</p>
+            
+            <p style="margin-top: 30px; margin-bottom: 5px;">Thank you for choosing Goalhyke!</p>
+            <p style="margin-top: 0;">
+                Best regards,<br>
+                <strong>The Goalhyke Team</strong>
+            </p>
+        </div>
+        <div style="background-color: #1f2430; padding: 30px 40px; text-align: center;">
+            <p style="font-size: 13px; color: #e5e7eb; margin-top: 0; margin-bottom: 15px; font-weight: 500;">Stay connected with us</p>
+            
+            <p style="font-size: 11px; color: #9ca3af; line-height: 1.5; margin: 0;">
+                Copyright &copy; 2026 Goalhyke, All rights reserved.<br><br>
+                Goalhyke does not accept cash and will never ask you to make payments to a personal bank account on its behalf, nor ask you for personal account details, card details or passwords to your account. The acceptable means of payment are bank transfers & online transfers. If you suspect any unusual activity on your account or in your dealings with Goalhyke, we advise that you kindly call 08146456544 or contact our support team.<br><br>
+                <a href="#" style="color: #6b7280; text-decoration: underline;">Want to change how you receive these emails? Unsubscribe</a>
+            </p>
+        </div>
+        
+    </div>
+</div>
