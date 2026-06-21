@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function VerifyEmail() {
   const [email, setEmail] = useState("your email");
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", "", "", "", "", ""]);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,8 +31,8 @@ export default function VerifyEmail() {
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = otp.join("");
-    if (token.length !== 6) {
-      setError("Please enter the 6-digit verification code.");
+    if (token.length !== otp.length) {
+      setError(`Please enter the ${otp.length}-digit verification code.`);
       return;
     }
 
@@ -107,7 +107,7 @@ export default function VerifyEmail() {
     setOtp(newOtp);
 
     // Move to next input if value is entered
-    if (value && index < 5) {
+    if (value && index < otp.length - 1) {
       inputRefs.current[index + 1]?.focus();
     }
   };
@@ -124,15 +124,15 @@ export default function VerifyEmail() {
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const pastedData = e.clipboardData.getData("text").slice(0, 6);
+    const pastedData = e.clipboardData.getData("text").slice(0, otp.length);
     if (!/^\d+$/.test(pastedData)) return;
 
     const newOtp = [...otp];
     pastedData.split("").forEach((char, i) => {
-      if (i < 6) newOtp[i] = char;
+      if (i < otp.length) newOtp[i] = char;
     });
     setOtp(newOtp);
-    inputRefs.current[Math.min(pastedData.length, 5)]?.focus();
+    inputRefs.current[Math.min(pastedData.length, otp.length - 1)]?.focus();
   };
 
   return (
@@ -181,7 +181,7 @@ export default function VerifyEmail() {
                     <div className="mb-4 text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
                       Verification code
                     </div>
-                    <div className="flex justify-between gap-2 sm:gap-4">
+                    <div className="grid grid-cols-8 gap-1.5 sm:gap-3">
                       {otp.map((digit, index) => (
                         <input
                           key={index}
@@ -194,7 +194,7 @@ export default function VerifyEmail() {
                           onChange={(e) => handleChange(index, e.target.value)}
                           onKeyDown={(e) => handleKeyDown(index, e)}
                           onPaste={index === 0 ? handlePaste : undefined}
-                          className="h-[54px] w-[44px] rounded-[16px] border border-[#dde3f2] bg-white text-center text-[18px] font-bold text-[#262525] outline-none transition-[border,box-shadow] focus:border-[#7655fb] focus:shadow-[0_0_0_4px_rgba(118,85,251,0.10)] sm:h-[62px] sm:w-[58px]"
+                          className="h-[48px] w-full min-w-0 sm:h-[62px] rounded-[12px] sm:rounded-[16px] border border-[#dde3f2] bg-white text-center text-[16px] sm:text-[18px] font-bold text-[#262525] outline-none transition-[border,box-shadow] focus:border-[#7655fb] focus:shadow-[0_0_0_4px_rgba(118,85,251,0.10)]"
                         />
                       ))}
                     </div>
