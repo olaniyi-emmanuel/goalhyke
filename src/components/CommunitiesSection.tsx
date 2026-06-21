@@ -12,7 +12,7 @@ const CommunitiesSection = () => {
     <section className="w-full bg-[#4169e1] py-16 px-4">
       <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-start justify-between gap-12 lg:gap-20">
         {/* Left: Communities Icon */}
-        <div className="flex flex-col items-center gap-4 min-w-[150px]">
+        <div className="flex flex-col items-start lg:items-center gap-4 lg:min-w-[150px]">
           <div className="w-[80px] h-[80px] bg-white/20 rounded-full flex items-center justify-center border border-white/30 backdrop-blur-sm shadow-lg">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
               <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
