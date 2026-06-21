@@ -73,68 +73,82 @@ export default function GetToken() {
   useEffect(() => {
     const supabase = createClient();
     
-    // 1. Fetch user session and token balance
-    const fetchUser = async () => {
+    const initializePage = async () => {
+      let resolvedCountry = "";
+      
+      // 1. Fetch user session and token balance & country preference
       try {
         const { data: { user: currentUser } } = await supabase.auth.getUser();
         setUser(currentUser);
         if (currentUser) {
           const { data: profile } = await supabase
             .from("profiles")
-            .select("tokens")
+            .select("tokens, country")
             .eq("id", currentUser.id)
             .single();
           setTokenBalance(profile?.tokens ?? 0);
+          if (profile?.country) {
+            resolvedCountry = profile.country;
+          }
           fetchTransactions(currentUser.id);
         } else {
           setIsTxLoading(false);
         }
       } catch (e) {
-        console.error(e);
+        console.error("Error loading user profile:", e);
         setIsTxLoading(false);
       }
-    };
-    fetchUser();
 
-    // 2. Perform Geolocation Lookup
-    const detectLocation = async () => {
-      try {
-        const res = await fetch("https://ipapi.co/json/");
-        if (res.ok) {
-          const data = await res.json();
-          if (data.country === "NG") {
-            setCurrency("NGN");
-            setDetectedCountry("Nigeria");
-          } else {
-            setCurrency("USD");
-            setDetectedCountry(data.country_name || "Global");
-          }
+      // 2. Perform Geolocation Lookup if no profile country is found
+      if (resolvedCountry) {
+        if (resolvedCountry === "Nigeria") {
+          setCurrency("NGN");
+          setDetectedCountry("Nigeria");
         } else {
-          // Fallback based on timezone
+          setCurrency("USD");
+          setDetectedCountry(resolvedCountry);
+        }
+        setIsDetectingLocation(false);
+      } else {
+        try {
+          const res = await fetch("https://ipapi.co/json/");
+          if (res.ok) {
+            const data = await res.json();
+            if (data.country === "NG") {
+              setCurrency("NGN");
+              setDetectedCountry("Nigeria");
+            } else {
+              setCurrency("USD");
+              setDetectedCountry(data.country_name || "Global");
+            }
+          } else {
+            // Fallback based on timezone
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            if (tz.includes("Lagos") || tz.includes("Africa/Lagos") || tz.includes("Africa/Abidjan")) {
+              setCurrency("NGN");
+              setDetectedCountry("Nigeria (Timezone resolved)");
+            } else {
+              setCurrency("USD");
+              setDetectedCountry("Global (Timezone resolved)");
+            }
+          }
+        } catch (e) {
+          console.warn("Location detection failed, defaulting to USD.", e);
           const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          if (tz.includes("Lagos") || tz.includes("Africa/Lagos") || tz.includes("Africa/Abidjan")) {
+          if (tz.includes("Lagos") || tz.includes("Africa/Lagos")) {
             setCurrency("NGN");
             setDetectedCountry("Nigeria (Timezone resolved)");
           } else {
             setCurrency("USD");
-            setDetectedCountry("Global (Timezone resolved)");
+            setDetectedCountry("Global (Fallback)");
           }
+        } finally {
+          setIsDetectingLocation(false);
         }
-      } catch (e) {
-        console.warn("Location detection failed, defaulting to USD.", e);
-        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        if (tz.includes("Lagos") || tz.includes("Africa/Lagos")) {
-          setCurrency("NGN");
-          setDetectedCountry("Nigeria (Timezone resolved)");
-        } else {
-          setCurrency("USD");
-          setDetectedCountry("Global (Fallback)");
-        }
-      } finally {
-        setIsDetectingLocation(false);
       }
     };
-    detectLocation();
+
+    initializePage();
   }, []);
 
   const selectedPackage = tokenPackages.find((p) => p.id === selectedId);
@@ -211,49 +225,26 @@ export default function GetToken() {
                   >
                     Transaction History
                   </button>
-                  <div className="text-[11px] text-[#8b93a7] font-semibold">
-                    Detected Region: <span className="text-[#7655fb] font-bold">{isDetectingLocation ? "Detecting..." : detectedCountry}</span>
+                  <div className="text-[11px] text-[#8b93a7] font-semibold flex items-center gap-1.5">
+                    Region: <span className="text-[#7655fb] font-bold flex items-center gap-1">
+                      {isDetectingLocation ? (
+                        "Detecting..."
+                      ) : (
+                        <>
+                          <span>{detectedCountry.toLowerCase().includes("nigeria") ? "🇳🇬" : "🌐"}</span>
+                          <span>{detectedCountry}</span>
+                        </>
+                      )}
+                    </span>
                   </div>
                 </div>
               </div>
 
 
 
-              {/* Grid Header & Switcher */}
+              {/* Grid Header */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
                 <h2 className="text-[22px] font-bold text-[#262525]">Select a package</h2>
-                
-                {/* Currency Switcher */}
-                <div className="flex items-center gap-1.5 rounded-full border border-[#e4e8f2] bg-[#fbfbff] p-1 shadow-sm">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setCurrency("NGN");
-                      setDetectedCountry("Nigeria (Manual)");
-                    }}
-                    className={`rounded-full px-4 py-1.5 text-[12px] font-bold transition-all cursor-pointer ${
-                      currency === "NGN"
-                        ? "bg-gradient-to-r from-[#4169e1] to-[#7655fb] text-white shadow-sm"
-                        : "text-[#7a7f90] hover:text-[#4f5b7f]"
-                    }`}
-                  >
-                    NGN (Paystack)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setCurrency("USD");
-                      setDetectedCountry("Global (Manual)");
-                    }}
-                    className={`rounded-full px-4 py-1.5 text-[12px] font-bold transition-all cursor-pointer ${
-                      currency === "USD"
-                        ? "bg-gradient-to-r from-[#4169e1] to-[#7655fb] text-white shadow-sm"
-                        : "text-[#7a7f90] hover:text-[#4f5b7f]"
-                    }`}
-                  >
-                    USD (Paystack)
-                  </button>
-                </div>
               </div>
 
               {/* Package cards */}
@@ -378,9 +369,6 @@ export default function GetToken() {
             <div>
               <span className="gh-badge mb-4">Billing</span>
               <h2 className="text-[22px] font-bold text-[#262525]">Transaction History</h2>
-              <p className="mt-1 text-[14px] leading-6 text-[#666f85]">
-                Log of your token purchases and wallet top-ups.
-              </p>
             </div>
 
             {isTxLoading ? (

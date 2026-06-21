@@ -7,6 +7,8 @@ import DashboardHeader from "@/components/DashboardHeader";
 import Footer from "@/components/Footer";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
+import SearchableCountrySelect from "@/components/SearchableCountrySelect";
+import { countries, countryStates } from "@/lib/countries";
 
 const resizeImage = (file: File): Promise<Blob> => {
   return new Promise((resolve, reject) => {
@@ -73,10 +75,13 @@ function urlBase64ToUint8Array(base64String: string) {
 
 export default function Settings() {
   const [profile, setProfile] = useState({
-    name: "Olaniyi Emmanuel",
-    email: "user@example.com",
-    username: "goalhyker_emmanuel",
+    name: "",
+    email: "",
+    username: "",
     avatarUrl: "",
+    country: "Nigeria",
+    phoneNumber: "",
+    state: "",
   });
 
   const [emailEnabled, setEmailEnabled] = useState(true);
@@ -88,6 +93,9 @@ export default function Settings() {
     defaultRefereeEmail: "referee@goalhyke.com",
     gracePeriod: 24, // hours
   });
+
+  const [statesList, setStatesList] = useState<string[]>([]);
+  const [isStatesLoading, setIsStatesLoading] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -113,11 +121,33 @@ export default function Settings() {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
+          const { data: dbProfile } = await supabase
+            .from("profiles")
+            .select("country, full_name, username, avatar_url, phone_number, state")
+            .eq("id", user.id)
+            .maybeSingle();
+
+          const dbPhone = dbProfile?.phone_number || user.user_metadata?.phone_number || "";
+          let parsedPhone = dbPhone;
+          let matchedCountryName = dbProfile?.country || user.user_metadata?.country || "Nigeria";
+
+          if (dbPhone.startsWith("+")) {
+            const sortedCountriesByPrefix = [...countries].sort((a, b) => b.dial_code.length - a.dial_code.length);
+            const matchedCountry = sortedCountriesByPrefix.find(c => dbPhone.startsWith(c.dial_code));
+            if (matchedCountry) {
+              matchedCountryName = matchedCountry.name;
+              parsedPhone = dbPhone.substring(matchedCountry.dial_code.length).trim();
+            }
+          }
+
           setProfile({
-            name: user.user_metadata?.name || user.user_metadata?.full_name || "Olaniyi Emmanuel",
-            email: user.email || "user@example.com",
-            username: user.user_metadata?.username || "goalhyker_emmanuel",
-            avatarUrl: user.user_metadata?.avatar_url || "",
+            name: dbProfile?.full_name || user.user_metadata?.name || user.user_metadata?.full_name || "",
+            email: user.email || "",
+            username: dbProfile?.username || user.user_metadata?.username || "",
+            avatarUrl: dbProfile?.avatar_url || user.user_metadata?.avatar_url || "",
+            country: matchedCountryName,
+            phoneNumber: parsedPhone,
+            state: dbProfile?.state || user.user_metadata?.state || "",
           });
 
           // Fetch user notification preferences
@@ -147,6 +177,62 @@ export default function Settings() {
     };
     fetchProfileAndPrefs();
   }, []);
+
+  // Synchronize country selection changes and sanitize state/province values
+  useEffect(() => {
+    let active = true;
+    const fetchStates = async () => {
+      const localPresets = countryStates[profile.country] || [];
+      setStatesList(localPresets);
+      
+      if (localPresets.length > 0 && !localPresets.includes(profile.state)) {
+        setProfile(prev => ({ ...prev, state: localPresets[0] }));
+      } else if (localPresets.length === 0) {
+        const isPreset = Object.values(countryStates).some(list => list.includes(profile.state));
+        if (isPreset) {
+          setProfile(prev => ({ ...prev, state: "" }));
+        }
+      }
+
+      setIsStatesLoading(true);
+      try {
+        const res = await fetch("https://countriesnow.space/api/v0.1/countries/states", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ country: profile.country }),
+        });
+        const data = await res.json();
+        
+        if (active && !data.error && data.data?.states) {
+          const fetchedList = data.data.states.map((s: any) => s.name);
+          setStatesList(fetchedList);
+          if (fetchedList.length > 0) {
+            if (!fetchedList.includes(profile.state)) {
+              setProfile(prev => ({ ...prev, state: fetchedList[0] }));
+            }
+          } else {
+            const isPreset = Object.values(countryStates).some(list => list.includes(profile.state));
+            if (isPreset) {
+              setProfile(prev => ({ ...prev, state: "" }));
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("API state fetch failed, using local fallback or text input:", e);
+      } finally {
+        if (active) {
+          setIsStatesLoading(false);
+        }
+      }
+    };
+
+    fetchStates();
+    return () => {
+      active = false;
+    };
+  }, [profile.country]);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -212,6 +298,10 @@ export default function Settings() {
         throw new Error("No active user session found.");
       }
 
+      const selectedCountryObj = countries.find(c => c.name === profile.country) || countries.find(c => c.name === "Nigeria") || countries[0];
+      const dialCode = selectedCountryObj.dial_code;
+      const fullPhoneNumber = `${dialCode} ${profile.phoneNumber}`.trim();
+
       // 1. Update Supabase Auth Session Metadata
       const { error: authError } = await supabase.auth.updateUser({
         data: {
@@ -219,6 +309,9 @@ export default function Settings() {
           full_name: profile.name,
           username: profile.username,
           avatar_url: profile.avatarUrl,
+          country: profile.country,
+          phone_number: fullPhoneNumber,
+          state: profile.state,
         },
       });
 
@@ -233,6 +326,9 @@ export default function Settings() {
           full_name: profile.name,
           username: profile.username,
           avatar_url: profile.avatarUrl,
+          country: profile.country,
+          phone_number: fullPhoneNumber,
+          state: profile.state,
           updated_at: new Date().toISOString(),
         })
         .eq("id", user.id);
@@ -493,14 +589,84 @@ export default function Settings() {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-2 text-[13px]">
-                  <label className="font-bold uppercase tracking-[0.12em] text-[#7a7f90]">Email Address</label>
-                  <input
-                    type="email"
-                    value={profile.email}
-                    disabled
-                    className="gh-input cursor-not-allowed bg-[#f1f3f8] text-[#717070]"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-2 text-[13px]">
+                    <label className="font-bold uppercase tracking-[0.12em] text-[#7a7f90]">Email Address</label>
+                    <input
+                      type="email"
+                      value={profile.email}
+                      disabled
+                      className="gh-input cursor-not-allowed bg-[#f1f3f8] text-[#717070]"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2 text-[13px]">
+                    <label className="font-bold uppercase tracking-[0.12em] text-[#7a7f90]">Country / Region</label>
+                    <SearchableCountrySelect
+                      value={profile.country}
+                      onChange={(val) => setProfile({ ...profile, country: val })}
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2 text-[13px]">
+                    <label className="font-bold uppercase tracking-[0.12em] text-[#7a7f90]">State / Province</label>
+                    {isStatesLoading ? (
+                      <div className="relative flex items-center">
+                        <select disabled className="gh-select cursor-not-allowed w-full bg-[#f8fafc] text-gray-400">
+                          <option>Loading states from API...</option>
+                        </select>
+                        <div className="absolute right-10 animate-spin rounded-full h-4 w-4 border-b-2 border-[#7655fb]" />
+                      </div>
+                    ) : statesList.length > 0 ? (
+                      <select
+                        value={profile.state}
+                        onChange={(e) => setProfile({ ...profile, state: e.target.value })}
+                        disabled={isLoading}
+                        className="gh-select cursor-pointer w-full"
+                        required
+                      >
+                        {statesList.map((state) => (
+                          <option key={state} value={state}>
+                            {state}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        value={profile.state}
+                        onChange={(e) => setProfile({ ...profile, state: e.target.value })}
+                        placeholder="e.g. Lagos"
+                        className="gh-input"
+                        required
+                      />
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-2 text-[13px]">
+                    <label className="font-bold uppercase tracking-[0.12em] text-[#7a7f90]">Phone Number</label>
+                    {(() => {
+                      const selectedCountryObj = countries.find(c => c.name === profile.country) || countries.find(c => c.name === "Nigeria") || countries[0];
+                      const dialCode = selectedCountryObj.dial_code;
+                      return (
+                        <div className="relative flex items-center">
+                          <span className="absolute left-4 text-[14px] font-bold text-[#8b93a7] select-none border-r border-[#e4e8f2] pr-3 h-5 flex items-center justify-center font-mono">
+                            {dialCode}
+                          </span>
+                          <input
+                            type="tel"
+                            value={profile.phoneNumber}
+                            onChange={(e) => setProfile({ ...profile, phoneNumber: e.target.value.replace(/\D/g, "") })}
+                            placeholder="Enter your phone number"
+                            className="gh-input w-full"
+                            style={{ paddingLeft: `${(dialCode.length * 9) + 40}px` }}
+                            required
+                          />
+                        </div>
+                      );
+                    })()}
+                  </div>
                 </div>
 
                 <div className="flex justify-end mt-2">

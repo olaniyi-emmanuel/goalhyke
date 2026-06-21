@@ -33,6 +33,12 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+// Public routes that do not require authentication
+const publicRoutes = ['/', '/login', '/signup', '/verify-email', '/auth/callback'];
+if (publicRoutes.includes(request.nextUrl.pathname)) {
+  return supabaseResponse;
+}
+
   // If page requires authentication, redirect if user is not authenticated:
   const isProtectedRoute = request.nextUrl.pathname.startsWith('/set-goal') || 
                           request.nextUrl.pathname.startsWith('/dashboard') ||

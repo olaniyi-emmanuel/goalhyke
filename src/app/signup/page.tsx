@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { createClient, getRedirectUrl } from "@/lib/supabase/client";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SearchableCountrySelect from "@/components/SearchableCountrySelect";
+import { countries, countryStates } from "@/lib/countries";
 
 export default function Signup() {
   const router = useRouter();
@@ -14,9 +16,87 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [country, setCountry] = useState("Nigeria");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [stateName, setStateName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const selectedCountryObj = countries.find(c => c.name === country) || countries.find(c => c.name === "Nigeria") || countries[0];
+  const dialCode = selectedCountryObj.dial_code;
+
+  const [statesList, setStatesList] = useState<string[]>([]);
+  const [isStatesLoading, setIsStatesLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+
+  const rules = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[^A-Za-z0-9]/.test(password),
+  };
+  const score = Object.values(rules).filter(Boolean).length;
+
+  // Determine which password criteria are not yet met
+  const unmetCriteria = [];
+  if (!rules.length) unmetCriteria.push("8+ characters");
+  if (!rules.uppercase) unmetCriteria.push("1+ uppercase letter");
+  if (!rules.lowercase) unmetCriteria.push("1+ lowercase letter");
+  if (!rules.number) unmetCriteria.push("1+ number digit");
+  if (!rules.special) unmetCriteria.push("1+ special character (e.g. @$!%*?&)");
+
+  useEffect(() => {
+    let active = true;
+    const fetchStates = async () => {
+      const localPresets = countryStates[country] || [];
+      setStatesList(localPresets);
+      
+      if (localPresets.length > 0 && !localPresets.includes(stateName)) {
+        setStateName(localPresets[0]);
+      } else if (localPresets.length === 0) {
+        setStateName("");
+      }
+
+      setIsStatesLoading(true);
+      try {
+        const res = await fetch("https://countriesnow.space/api/v0.1/countries/states", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ country: country }),
+        });
+        const data = await res.json();
+        
+        if (active && !data.error && data.data?.states) {
+          const fetchedList = data.data.states.map((s: any) => s.name);
+          setStatesList(fetchedList);
+          if (fetchedList.length > 0) {
+            if (!fetchedList.includes(stateName)) {
+              setStateName(fetchedList[0]);
+            }
+          } else {
+            setStateName("");
+          }
+        }
+      } catch (e) {
+        console.warn("API state fetch failed, using local fallback or text input:", e);
+      } finally {
+        if (active) {
+          setIsStatesLoading(false);
+        }
+      }
+    };
+
+    fetchStates();
+    return () => {
+      active = false;
+    };
+  }, [country]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -25,6 +105,26 @@ export default function Signup() {
         router.push("/dashboard");
       }
     });
+
+    const detectLocation = async () => {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.country !== "NG") {
+            setCountry("Global");
+          }
+        } else {
+          const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          if (!tz.includes("Lagos") && !tz.includes("Africa/Lagos") && !tz.includes("Africa/Abidjan")) {
+            setCountry("Global");
+          }
+        }
+      } catch (e) {
+        console.warn("Location detection failed, defaulting to Nigeria.", e);
+      }
+    };
+    detectLocation();
   }, [router]);
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -37,14 +137,15 @@ export default function Signup() {
       setError("Passwords do not match.");
       return;
     }
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long.");
+    if (score !== 5) {
+      setError("Please create a strong password that meets all complexity requirements.");
       return;
     }
 
     setError(null);
     setIsLoading(true);
     const supabase = createClient();
+    const fullPhoneNumber = `${dialCode} ${phoneNumber}`.trim();
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
@@ -52,6 +153,10 @@ export default function Signup() {
         data: {
           full_name: fullName,
           username: email.split("@")[0],
+          country: country,
+          phone_number: fullPhoneNumber,
+          state: stateName,
+          avatar_url: "/images/nav-avatar.png",
         },
         emailRedirectTo: getRedirectUrl(),
       },
@@ -170,6 +275,8 @@ export default function Signup() {
                       </label>
                       <input
                         type="email"
+                        name="email"
+                        autoComplete="username"
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -183,30 +290,169 @@ export default function Signup() {
                       <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
                         Password
                       </label>
-                      <input
-                        type="password"
-                        placeholder="Create a password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        disabled={isLoading}
-                        className="gh-input"
-                        required
-                      />
+                      <div className="relative flex items-center">
+  <input
+    type={showPassword ? "text" : "password"}
+    name="password"
+    autoComplete="new-password"
+    placeholder="Create a password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    onFocus={() => setIsPasswordFocused(true)}
+    onBlur={() => setIsPasswordFocused(false)}
+    disabled={isLoading}
+    className={`gh-input w-full pr-12 transition-all ${
+      password.length > 0
+        ? score === 5
+          ? "border-green-500 focus:border-green-600 focus:ring-green-600"
+          : score >= 3
+          ? "border-amber-400 focus:border-amber-500 focus:ring-amber-500"
+          : "border-red-500 focus:border-red-500 focus:ring-red-500"
+        : ""
+    }`}
+    required
+  />
+
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          onMouseDown={(e) => e.preventDefault()}
+                          className="absolute right-4 text-[#7a7f90] hover:text-[#7655fb] focus:outline-none transition-colors cursor-pointer"
+                        >
+                          {showPassword ? (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                          ) : (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+
+                      {isPasswordFocused && password.length > 0 && unmetCriteria.length > 0 && (
+                        <ul className="mt-2 list-disc list-inside text-sm text-red-600">
+                          {unmetCriteria.map((c, i) => (
+                            <li key={i}>{c}</li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
 
                     <div className="flex flex-col gap-1.5">
                       <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
                         Confirm password
                       </label>
-                      <input
-                        type="password"
-                        placeholder="Confirm your password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
+                      <div className="relative flex items-center">
+                        <input
+                          type={showConfirmPassword ? "text" : "password"}
+                          name="confirm-password"
+                          autoComplete="new-password"
+                          placeholder="Confirm your password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          disabled={isLoading}
+                          className={`gh-input w-full pr-12 transition-all ${
+                            confirmPassword.length > 0
+                              ? password === confirmPassword
+                                ? "border-green-500 focus:border-green-600 focus:ring-green-600"
+                                : "border-red-400 focus:border-red-500 focus:ring-red-500"
+                              : ""
+                          }`}
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-4 text-[#7a7f90] hover:text-[#7655fb] focus:outline-none transition-colors cursor-pointer"
+                        >
+                          {showConfirmPassword ? (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                          ) : (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                      {confirmPassword.length > 0 && password !== confirmPassword && (
+                        <span className="text-[11px] font-bold text-red-500 mt-1 animate-fadeIn">
+                          Passwords do not match
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-1.5 md:col-span-2">
+                      <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                        Country / Region
+                      </label>
+                      <SearchableCountrySelect
+                        value={country}
+                        onChange={(val) => setCountry(val)}
                         disabled={isLoading}
-                        className="gh-input"
-                        required
                       />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5 md:col-span-2">
+                      <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                        State / Province
+                      </label>
+                      {isStatesLoading ? (
+                        <div className="relative flex items-center">
+                          <span className="text-sm text-gray-500">Loading states...</span>
+                          <div className="absolute right-10 animate-spin rounded-full h-4 w-4 border-b-2 border-[#7655fb]" />
+                        </div>
+                      ) : statesList.length > 0 ? (
+                        <select
+                          value={stateName}
+                          onChange={(e) => setStateName(e.target.value)}
+                          disabled={isLoading}
+                          className="gh-select cursor-pointer w-full"
+                          required
+                        >
+                          {statesList.map((state) => (
+                            <option key={state} value={state}>
+                              {state}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          placeholder="e.g. Lagos or California"
+                          value={stateName}
+                          onChange={(e) => setStateName(e.target.value)}
+                          disabled={isLoading}
+                          className="gh-input"
+                          required
+                        />
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-1.5 md:col-span-2">
+                      <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                        Phone Number
+                      </label>
+                      <div className="relative flex items-center">
+                        <span className="absolute left-4 text-[14px] font-bold text-[#8b93a7] select-none border-r border-[#e4e8f2] pr-3 h-5 flex items-center justify-center font-mono">
+                          {dialCode}
+                        </span>
+                        <input
+                          type="tel"
+                          placeholder="Enter your phone number"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
+                          disabled={isLoading}
+                          className="gh-input w-full"
+                          style={{ paddingLeft: `${(dialCode.length * 9) + 40}px` }}
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
 

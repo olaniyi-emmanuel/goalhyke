@@ -199,11 +199,13 @@ const NavigationRegistered = () => {
                 <div className="rounded-[22px] border border-[#eceff7] bg-white p-4 shadow-[0_10px_30px_rgba(24,33,77,0.1)]">
                   <div className="px-3 py-2 border-b border-gray-100 mb-2">
                     <p className="text-[14px] font-bold text-[#262525] truncate">
-                      {user?.user_metadata?.full_name || user?.user_metadata?.name || "Olaniyi Emmanuel"}
+                      {user?.user_metadata?.full_name || user?.user_metadata?.name || "User"}
                     </p>
-                    <p className="text-[11px] text-[#8f8e98] truncate">
-                      {user?.email || "user@example.com"}
-                    </p>
+                    {user?.email && (
+                      <p className="text-[11px] text-[#8f8e98] truncate">
+                        {user.email}
+                      </p>
+                    )}
                   </div>
                   <Link 
                     href="/settings"
@@ -349,7 +351,7 @@ const NavigationRegistered = () => {
                 </div>
                 <div className="text-center">
                   <p className="text-[#262525] text-[16px] font-bold font-secondary">
-                    {user?.user_metadata?.full_name || user?.user_metadata?.name || "Olaniyi Emmanuel"}
+                    {user?.user_metadata?.full_name || user?.user_metadata?.name || "User"}
                   </p>
                   <p className="text-[12px] text-gray-500">
                     @{user?.user_metadata?.username || "goalhyker"}

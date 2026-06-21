@@ -162,50 +162,42 @@ export default function Dashboard() {
         const params = new URLSearchParams(window.location.search);
         const isSuccess = params.get("payment") === "success";
         const amountStr = params.get("amount");
-        const reference = params.get("reference") || params.get("trxref") || params.get("mock") || `mock-ref-${Date.now()}`;
+        const reference = params.get("reference") || params.get("trxref") || (params.get("mock") === "paystack" ? `mock-ref-${Date.now()}` : null);
 
-        if (isSuccess && amountStr) {
+        if (isSuccess && amountStr && reference) {
           const amount = Number(amountStr);
           const txKey = `goalhyke_tx_processed_${reference}`;
           
           if (!localStorage.getItem(txKey)) {
             localStorage.setItem(txKey, "true");
             
-            const newBalance = currentTokens + amount;
-            
-            const { error: updateError } = await supabase
-              .from("profiles")
-              .update({ tokens: newBalance })
-              .eq("id", user.id);
-
-            if (!updateError) {
-              setTokenBalance(newBalance);
-              setRechargeToast({ show: true, amount });
-              setTimeout(() => setRechargeToast(null), 5000);
-
-              // Log the transaction in the transactions table
-              const priceStr = params.get("price");
-              const pricePaid = priceStr ? Number(priceStr) : 0;
-              const txCurrency = params.get("currency") || "USD";
-
-              supabase
-                .from("transactions")
-                .insert({
-                  user_id: user.id,
-                  amount_tokens: amount,
-                  price_paid: pricePaid,
-                  currency: txCurrency,
-                  reference: reference,
-                  status: "success",
-                })
-                .then(({ error: txError }) => {
-                  if (txError) {
-                    console.error("Failed to record transaction history:", txError);
-                  }
-                });
-            } else {
-              console.error("Failed to credit tokens in database:", updateError);
-            }
+            // Invoke server-side checkout verification API
+            fetch("/api/checkout/verify", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                reference,
+                amount,
+                price: params.get("price") ? Number(params.get("price")) : 0,
+                currency: params.get("currency") || "USD",
+              }),
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.success) {
+                  setTokenBalance(data.balance);
+                  setRechargeToast({ show: true, amount: data.amount || amount });
+                  setTimeout(() => setRechargeToast(null), 5000);
+                } else {
+                  console.error("Failed to verify transaction securely:", data.error);
+                  alert(`Payment verification failed: ${data.error}`);
+                }
+              })
+              .catch((err) => {
+                console.error("Verification connection error:", err);
+              });
           }
           
           // Clear query parameters from URL
