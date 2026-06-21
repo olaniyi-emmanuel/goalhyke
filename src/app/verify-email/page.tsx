@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function VerifyEmail() {
   const [email, setEmail] = useState("your email");
-  const [otp, setOtp] = useState(["", "", "", "", "", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +50,7 @@ export default function VerifyEmail() {
       const { data, error: verifyError } = await supabase.auth.verifyOtp({
         email,
         token,
-        type: "signup",
+        type: "email",
       });
 
       if (verifyError) {
@@ -81,8 +81,7 @@ export default function VerifyEmail() {
 
     try {
       const supabase = createClient();
-      const { error: resendError } = await supabase.auth.resend({
-        type: "signup",
+      const { error: resendError } = await supabase.auth.signInWithOtp({
         email,
       });
 
@@ -181,7 +180,7 @@ export default function VerifyEmail() {
                     <div className="mb-4 text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
                       Verification code
                     </div>
-                    <div className="grid grid-cols-8 gap-1.5 sm:gap-3">
+                    <div className="grid grid-cols-6 gap-2 sm:gap-4">
                       {otp.map((digit, index) => (
                         <input
                           key={index}
@@ -194,7 +193,7 @@ export default function VerifyEmail() {
                           onChange={(e) => handleChange(index, e.target.value)}
                           onKeyDown={(e) => handleKeyDown(index, e)}
                           onPaste={index === 0 ? handlePaste : undefined}
-                          className="h-[48px] w-full min-w-0 sm:h-[62px] rounded-[12px] sm:rounded-[16px] border border-[#dde3f2] bg-white text-center text-[16px] sm:text-[18px] font-bold text-[#262525] outline-none transition-[border,box-shadow] focus:border-[#7655fb] focus:shadow-[0_0_0_4px_rgba(118,85,251,0.10)]"
+                          className="h-[54px] w-full min-w-0 sm:h-[62px] rounded-[16px] border border-[#dde3f2] bg-white text-center text-[18px] font-bold text-[#262525] outline-none transition-[border,box-shadow] focus:border-[#7655fb] focus:shadow-[0_0_0_4px_rgba(118,85,251,0.10)]"
                         />
                       ))}
                     </div>
