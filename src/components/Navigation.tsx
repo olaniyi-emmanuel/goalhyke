@@ -18,6 +18,17 @@ const Navigation = () => {
     checkUser();
   }, []);
 
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
+
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -25,7 +36,7 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-white/60 bg-white/82 backdrop-blur-xl">
+    <nav className="sticky top-0 z-[100] border-b border-white/60 bg-white/82 backdrop-blur-xl">
       <div className="gh-shell relative flex h-[82px] items-center justify-between px-6 lg:px-12">
         {/* Logo */}
         <div className="relative w-[120px] lg:w-[150px] h-[32px] lg:h-[40px] shrink-0">
@@ -135,9 +146,9 @@ const Navigation = () => {
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[60] flex flex-col bg-white animate-in slide-in-from-right duration-300">
+        <div className="fixed inset-0 z-[110] flex flex-col bg-white overflow-y-auto animate-in slide-in-from-right duration-300">
           {/* Mobile Header */}
-          <div className="flex h-[82px] items-center justify-between border-b border-gray-100 px-[20px] py-4">
+          <div className="flex h-[82px] items-center justify-between border-b border-gray-100 px-[20px] py-4 shrink-0">
             {/* Logo */}
             <div className="relative w-[120px] h-[32px]">
               <Link href="/" onClick={() => setIsMenuOpen(false)}>
@@ -174,7 +185,7 @@ const Navigation = () => {
           </div>
 
           {/* Mobile Content */}
-          <div className="flex flex-col items-center justify-center flex-1 gap-8 pb-20">
+          <div className="flex flex-col items-center justify-center flex-1 gap-8 py-10 min-h-[calc(100vh-100px)]">
             {/* Links */}
             <div className="flex flex-col items-center gap-8">
               {[
@@ -194,7 +205,7 @@ const Navigation = () => {
             </div>
 
             {/* Auth Buttons */}
-            <div className="flex flex-col items-center gap-5 mt-8 w-full px-10 max-w-[350px]">
+            <div className="flex flex-col items-center gap-5 mt-8 w-full px-10 max-w-[350px] shrink-0">
               {user ? (
                 <>
                   <Link
