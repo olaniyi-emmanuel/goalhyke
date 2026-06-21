@@ -79,7 +79,7 @@ const NavigationRegistered = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-[100] border-b border-white/60 bg-white/82 backdrop-blur-xl">
+    <nav className={`sticky top-0 z-[100] ${isMenuOpen ? "" : "border-b border-white/60 bg-white/82 backdrop-blur-xl"}`}>
       <div className="gh-shell relative flex h-[110px] items-center justify-between px-[20px] lg:px-[100px]">
         {/* Logo */}
         <div className="relative w-[150px] lg:w-[198px] h-[42px] lg:h-[56px] shrink-0">

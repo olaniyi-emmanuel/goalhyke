@@ -36,7 +36,7 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-[100] border-b border-white/60 bg-white/82 backdrop-blur-xl">
+    <nav className={`sticky top-0 z-[100] ${isMenuOpen ? "" : "border-b border-white/60 bg-white/82 backdrop-blur-xl"}`}>
       <div className="gh-shell relative flex h-[82px] items-center justify-between px-6 lg:px-12">
         {/* Logo */}
         <div className="relative w-[120px] lg:w-[150px] h-[32px] lg:h-[40px] shrink-0">
