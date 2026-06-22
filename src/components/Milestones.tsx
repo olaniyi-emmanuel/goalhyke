@@ -1,9 +1,38 @@
-import React from 'react';
+"use client";
+
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 const Milestones = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <section className="w-full max-w-[960px] mx-auto bg-[#4169e1] rounded-[10px] overflow-hidden flex flex-col lg:flex-row min-h-[280px]">
+    <section
+      ref={ref}
+      className={`w-full max-w-[960px] mx-auto bg-[#4169e1] rounded-[10px] overflow-hidden flex flex-col lg:flex-row min-h-[280px] transition-all duration-[1000ms] ease-out ${
+        isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'
+      }`}
+    >
       {/* Left Section - Yellow with Curved Edge */}
       <div className="relative w-full lg:w-[40%] bg-[#ffd54f] rounded-tr-[80px] lg:rounded-tr-[140px] flex items-end justify-center pt-8 px-4">
         <div className="relative w-[200px] h-[200px] lg:w-[260px] lg:h-[260px]">

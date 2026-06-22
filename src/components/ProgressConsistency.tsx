@@ -1,9 +1,38 @@
-import React from 'react';
+"use client";
+
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 const ProgressConsistency = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <section className="w-full max-w-[960px] mx-auto bg-[#7152ed] rounded-[10px] overflow-hidden flex flex-col-reverse lg:flex-row min-h-[280px]">
+    <section
+      ref={ref}
+      className={`w-full max-w-[960px] mx-auto bg-[#7152ed] rounded-[10px] overflow-hidden flex flex-col-reverse lg:flex-row min-h-[280px] transition-all duration-[1000ms] ease-out ${
+        isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
+      }`}
+    >
       {/* Left Section - Content */}
       <div className="flex-1 flex flex-col justify-center p-6 lg:pl-[40px] gap-[16px] lg:gap-[24px]">
         <h2 className="text-white font-primary text-[24px] lg:text-[28px] font-medium leading-[34px]">

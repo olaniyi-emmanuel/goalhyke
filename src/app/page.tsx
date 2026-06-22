@@ -74,7 +74,7 @@ export default async function Home() {
         </div>
 
         {/* Feature Cards */}
-        <div className="px-4 flex flex-col gap-6">
+        <div className="px-4 flex flex-col gap-6 overflow-hidden">
           <Milestones />
           <ProgressConsistency />
         </div>
