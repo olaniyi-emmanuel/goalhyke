@@ -78,7 +78,7 @@ const GoalSupportersForm = ({
             <div
               key={index}
               className={`h-2 flex-1 rounded-full border border-[#4169e1] ${
-                index === activeIndex ? "bg-[#4169e1]" : "bg-transparent"
+                index <= activeIndex ? "bg-[#4169e1]" : "bg-transparent"
               }`}
             />
           ))}

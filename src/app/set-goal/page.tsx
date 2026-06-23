@@ -5,17 +5,8 @@ import { useRouter } from "next/navigation";
 import NavigationRegistered from "@/components/NavigationRegistered";
 import Sidebar from "@/components/Sidebar";
 import GoalCreationForm from "@/components/GoalCreationForm";
-import GoalTargetForm, {
-  type ExerciseTargetFormData,
-} from "@/components/GoalTargetForm";
-import GoalChallengesForm from "@/components/GoalChallengesForm";
-import GoalRefereeForm, {
-  type ExerciseRefereeFormData,
-} from "@/components/GoalRefereeForm";
-import GoalSupportersForm, {
-  type ExerciseSupportersFormData,
-} from "@/components/GoalSupportersForm";
 import ExcelAcademicallyWorkflow from "@/components/ExcelAcademicallyWorkflow";
+import ExerciseRegularlyWorkflow from "@/components/ExerciseRegularlyWorkflow";
 import GrowWealthWorkflow from "@/components/GrowWealthWorkflow";
 import LevelUpCareerWorkflow from "@/components/LevelUpCareerWorkflow";
 import LoseWeightWorkflow from "@/components/LoseWeightWorkflow";
@@ -24,49 +15,11 @@ import StayHealthyWorkflow from "@/components/StayHealthyWorkflow";
 import StrengthenSpiritWorkflow from "@/components/StrengthenSpiritWorkflow";
 import Footer from "@/components/Footer";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/client";
 
 interface GoalTemplate {
   title: string;
   imageSrc: string;
   category: string;
-}
-
-const DEFAULT_EXERCISE_TARGET: ExerciseTargetFormData = {
-  daysPerWeek: "3 days",
-  sessionDuration: "15 minutes",
-  exerciseType: "Cardio",
-  startDate: "Today",
-  reportingDay: "Tuesday",
-};
-
-const DEFAULT_EXERCISE_REFEREE: ExerciseRefereeFormData = {
-  refereeType: "Individual referee",
-  refereeContact: "",
-  selfManaged: false,
-};
-
-const DEFAULT_EXERCISE_SUPPORTERS: ExerciseSupportersFormData = {
-  autoAccept: false,
-  supporters: "",
-};
-
-const REQUIRED_COMMIT_TOKENS = 50;
-
-function resolveStartDate(label: string) {
-  const date = new Date();
-
-  if (label === "Tomorrow") {
-    date.setDate(date.getDate() + 1);
-  } else if (label === "Next Week") {
-    date.setDate(date.getDate() + 7);
-  }
-
-  return date;
-}
-
-function formatDateForInput(date: Date) {
-  return date.toISOString().split("T")[0];
 }
 
 export default function SetGoal() {
@@ -76,29 +29,7 @@ export default function SetGoal() {
     "featured",
   );
   const [searchQuery, setSearchQuery] = useState("");
-  const [step, setStep] = useState<number>(1);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [exerciseTarget, setExerciseTarget] = useState<ExerciseTargetFormData>(
-    DEFAULT_EXERCISE_TARGET,
-  );
-  const [exerciseChallenges, setExerciseChallenges] = useState<string[]>([]);
-  const [exerciseReferee, setExerciseReferee] =
-    useState<ExerciseRefereeFormData>(DEFAULT_EXERCISE_REFEREE);
-  const [exerciseSupporters, setExerciseSupporters] =
-    useState<ExerciseSupportersFormData>(DEFAULT_EXERCISE_SUPPORTERS);
-  const [isSavingExerciseGoal, setIsSavingExerciseGoal] = useState(false);
-  const [showExerciseCommitConfirm, setShowExerciseCommitConfirm] =
-    useState(false);
-  const [showExerciseInsufficientTokens, setShowExerciseInsufficientTokens] =
-    useState(false);
-  const [showExerciseGoalCreated, setShowExerciseGoalCreated] = useState(false);
-  const [exerciseGoalError, setExerciseGoalError] = useState<string | null>(
-    null,
-  );
-  const [exerciseTokenCommitment, setExerciseTokenCommitment] = useState<number>(20);
-  const [isExerciseCustomToken, setIsExerciseCustomToken] = useState<boolean>(false);
-  const [exerciseCustomTokenValue, setExerciseCustomTokenValue] = useState<string>("");
-  const [exerciseSubmissionMode, setExerciseSubmissionMode] = useState<string>("image");
 
   const templates: GoalTemplate[] = [
     {
@@ -170,15 +101,6 @@ export default function SetGoal() {
     }
 
     setSelectedCategory(category);
-    setStep(1);
-    setExerciseTarget(DEFAULT_EXERCISE_TARGET);
-    setExerciseChallenges([]);
-    setExerciseReferee(DEFAULT_EXERCISE_REFEREE);
-    setExerciseSupporters(DEFAULT_EXERCISE_SUPPORTERS);
-    setExerciseGoalError(null);
-    setShowExerciseCommitConfirm(false);
-    setShowExerciseInsufficientTokens(false);
-    setShowExerciseGoalCreated(false);
     setView("form");
   };
 
@@ -186,151 +108,6 @@ export default function SetGoal() {
     setSelectedCategory("");
     setTargetMode("featured");
     setView("select");
-  };
-
-  const handleGoToDashboard = () => {
-    setShowExerciseGoalCreated(false);
-    router.push("/dashboard");
-  };
-
-  const handleGoToGetToken = () => {
-    setShowExerciseInsufficientTokens(false);
-    router.push("/get-token");
-  };
-
-  const handleOpenExerciseCommitConfirm = () => {
-    setExerciseGoalError(null);
-    setShowExerciseInsufficientTokens(false);
-    setShowExerciseCommitConfirm(true);
-  };
-
-  const handleExerciseGoalSubmit = async () => {
-    setIsSavingExerciseGoal(true);
-    setExerciseGoalError(null);
-
-    try {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        setExerciseGoalError("You must be logged in to create a goal.");
-        return;
-      }
-
-      if (
-        !exerciseReferee.selfManaged &&
-        exerciseReferee.refereeContact.trim().length === 0
-      ) {
-        setExerciseGoalError(
-          "Enter your referee email or choose to do it on your own.",
-        );
-        return;
-      }
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("tokens")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      const tokenBalance =
-        profile && typeof profile.tokens === "number" ? profile.tokens : 0;
-
-      if (exerciseTokenCommitment < 20) {
-        setExerciseGoalError("Minimum token commitment is 20 tokens.");
-        return;
-      }
-
-      if (tokenBalance < exerciseTokenCommitment) {
-        setShowExerciseCommitConfirm(false);
-        setShowExerciseInsufficientTokens(true);
-        return;
-      }
-
-      const startDate = resolveStartDate(exerciseTarget.startDate);
-      const endDate = new Date(startDate);
-      endDate.setDate(endDate.getDate() + 84);
-
-      const description = [
-        `Exercise ${exerciseTarget.daysPerWeek}.`,
-        `Each session lasts ${exerciseTarget.sessionDuration}.`,
-        `Focus area: ${exerciseTarget.exerciseType}.`,
-        `Reporting day: ${exerciseTarget.reportingDay}.`,
-        exerciseChallenges.length > 0
-          ? `Challenges: ${exerciseChallenges.join(", ")}.`
-          : null,
-        exerciseReferee.selfManaged
-          ? "Referee preference: self-managed accountability."
-          : `Referee type: ${exerciseReferee.refereeType}. Referee contact: ${exerciseReferee.refereeContact}.`,
-        exerciseSupporters.autoAccept
-          ? "Supporters setting: auto-accept supporters enabled."
-          : null,
-        exerciseSupporters.supporters.trim().length > 0
-          ? `Invited supporters: ${exerciseSupporters.supporters
-              .split(/\r?\n/)
-              .map((entry) => entry.trim())
-              .filter(Boolean)
-              .join(", ")}.`
-          : null,
-      ]
-        .filter(Boolean)
-        .join(" ");
-
-      if (!exerciseReferee.selfManaged) {
-        localStorage.setItem(
-          "goalhyke_referee",
-          JSON.stringify({
-            name: exerciseReferee.refereeContact,
-            email: exerciseReferee.refereeContact,
-            avatar: "/images/nav-avatar.png",
-          }),
-        );
-      }
-
-      const metadata = {
-        committed_tokens: exerciseTokenCommitment,
-        remaining_committed: exerciseTokenCommitment,
-        failures_count: 0,
-        failures_logged: [],
-        success_logged: [],
-        deductions_history: [],
-        submission_mode: exerciseSubmissionMode,
-      };
-
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update({ tokens: tokenBalance - exerciseTokenCommitment })
-        .eq("id", user.id);
-
-      if (profileError) {
-        throw new Error(`Profile update failed: ${profileError.message}`);
-      }
-
-      const { error } = await supabase.from("goals").insert({
-        user_id: user.id,
-        title: selectedCategory,
-        category: selectedCategory,
-        description,
-        start_date: formatDateForInput(startDate),
-        end_date: formatDateForInput(endDate),
-        metadata,
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      setShowExerciseCommitConfirm(false);
-      setShowExerciseGoalCreated(true);
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Could not save this goal.";
-      setExerciseGoalError(message);
-    } finally {
-      setIsSavingExerciseGoal(false);
-    }
   };
 
   return (
@@ -496,53 +273,10 @@ export default function SetGoal() {
               ) : (
                 <div className="gh-panel px-6 py-8 md:px-10 md:py-10 shadow-[0_24px_70px_rgba(24,33,77,0.08)]">
                   {selectedCategory === "Exercise regularly" ? (
-                    <>
-                      {exerciseGoalError && (
-                        <div className="mb-6 w-full max-w-[900px] rounded-[10px] border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-                          {exerciseGoalError}
-                        </div>
-                      )}
-                      {step === 1 && (
-                        <GoalTargetForm
-                          goalTitle={selectedCategory}
-                          value={exerciseTarget}
-                          onChange={setExerciseTarget}
-                          onCancel={handleBackToFeatured}
-                          onNext={() => setStep(2)}
-                        />
-                      )}
-                      {step === 2 && (
-                        <GoalChallengesForm
-                          goalTitle={selectedCategory}
-                          value={exerciseChallenges}
-                          onChange={setExerciseChallenges}
-                          onCancel={handleBackToFeatured}
-                          onNext={() => setStep(3)}
-                        />
-                      )}
-                      {step === 3 && (
-                        <GoalRefereeForm
-                          goalTitle={selectedCategory}
-                          value={exerciseReferee}
-                          onChange={setExerciseReferee}
-                          onCancel={handleBackToFeatured}
-                          onBack={() => setStep(2)}
-                          onNext={() => setStep(4)}
-                        />
-                      )}
-                      {step === 4 && (
-                        <GoalSupportersForm
-                          goalTitle={selectedCategory}
-                          value={exerciseSupporters}
-                          onChange={setExerciseSupporters}
-                          onCancel={handleBackToFeatured}
-                          onBack={() => setStep(3)}
-                          onSubmit={handleOpenExerciseCommitConfirm}
-                          isSubmitting={isSavingExerciseGoal}
-                          submitLabel="Next"
-                        />
-                      )}
-                    </>
+                    <ExerciseRegularlyWorkflow
+                      goalTitle={selectedCategory}
+                      onCancel={handleBackToFeatured}
+                    />
                   ) : selectedCategory === "Stay healthy" ? (
                     <StayHealthyWorkflow
                       goalTitle={selectedCategory}
@@ -592,250 +326,6 @@ export default function SetGoal() {
       </div>
 
       <Footer />
-
-      {showExerciseGoalCreated && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#1b1a1a]/55 backdrop-blur-sm px-4">
-          <div className="relative w-full max-w-[820px] rounded-[28px] border border-white/80 bg-white/95 px-8 py-10 shadow-[0_32px_80px_rgba(24,33,77,0.16)] sm:px-14 sm:py-12">
-            <button
-              type="button"
-              onClick={() => setShowExerciseGoalCreated(false)}
-              className="absolute right-6 top-6 flex h-11 w-11 items-center justify-center rounded-full text-[#262525] transition-colors hover:bg-[#f4f6fb]"
-              aria-label="Close success dialog"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6 6L18 18M18 6L6 18"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-
-            <div className="flex flex-col items-center text-center">
-              <div className="relative h-[112px] w-[150px]">
-                <Image
-                  src="/images/progress-consistency-character.png"
-                  alt="Goal created"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-              <h2 className="mt-7 text-[28px] font-bold text-[#262525] font-secondary">
-                Goal created
-              </h2>
-              <button
-                type="button"
-                onClick={handleGoToDashboard}
-                className="gh-btn-primary mt-14 min-w-[185px] px-8 py-3 text-[18px] cursor-pointer"
-              >
-                Go To Dashboard
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showExerciseCommitConfirm && (
-        <div className="fixed inset-0 z-[79] flex items-center justify-center bg-[#1b1a1a]/55 backdrop-blur-sm px-4">
-          <div className="relative w-full max-w-[820px] rounded-[28px] border border-white/80 bg-white/95 px-8 py-10 shadow-[0_32px_80px_rgba(24,33,77,0.16)] sm:px-14 sm:py-12">
-            <button
-              type="button"
-              onClick={() => setShowExerciseCommitConfirm(false)}
-              className="absolute right-6 top-6 flex h-11 w-11 items-center justify-center rounded-full text-[#262525] transition-colors hover:bg-[#f4f6fb]"
-              aria-label="Close commit dialog"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6 6L18 18M18 6L6 18"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-
-            <div className="flex flex-col items-center text-center">
-              <p className="mt-6 text-[22px] font-medium leading-[1.6] text-[#262525] font-secondary sm:text-[26px]">
-                Commit Tokens to Your Goal
-              </p>
-              
-              <p className="mt-2 text-[14px] text-gray-500 max-w-lg">
-                Your committed tokens are staked. If you fail the weekly consistency target (&gt;= 5 verified check-ins), tokens will be deducted.
-              </p>
-
-              <div className="w-full max-w-md mx-auto mt-6 p-5 rounded-[18px] border border-gray-100 bg-[#f7f8ff] text-left">
-                <div className="mb-5">
-                  <p className="text-[13px] font-bold text-[#262525] uppercase tracking-wider mb-2">
-                    Mandatory Submission Mode:
-                  </p>
-                  <select
-                    value={exerciseSubmissionMode}
-                    onChange={(e) => setExerciseSubmissionMode(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-white text-[14px] outline-none focus:border-[#7655fb]"
-                  >
-                    <option value="image">Image / Screenshot upload</option>
-                    <option value="video">Video / Screen recording upload</option>
-                    <option value="text">Text Log / Written proof (no file)</option>
-                  </select>
-                </div>
-
-                <p className="text-[13px] font-bold text-[#262525] uppercase tracking-wider mb-3">
-                  Select Token Commitment (Min 20):
-                </p>
-                <div className="flex gap-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsExerciseCustomToken(false);
-                      setExerciseTokenCommitment(20);
-                    }}
-                    className={`flex-1 py-3 px-4 rounded-xl border text-[14px] font-semibold transition-all cursor-pointer ${
-                      !isExerciseCustomToken
-                        ? "border-[#7655fb] bg-[#7655fb]/5 text-[#7655fb] shadow-sm font-bold"
-                        : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    Standard (20 tokens)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsExerciseCustomToken(true);
-                    }}
-                    className={`flex-1 py-3 px-4 rounded-xl border text-[14px] font-semibold transition-all cursor-pointer ${
-                      isExerciseCustomToken
-                        ? "border-[#7655fb] bg-[#7655fb]/5 text-[#7655fb] shadow-sm font-bold"
-                        : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    Custom Amount
-                  </button>
-                </div>
-
-                {isExerciseCustomToken && (
-                  <div className="mt-4">
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                      Enter Custom Tokens (Min 20):
-                    </label>
-                    <input
-                      type="number"
-                      min="20"
-                      value={exerciseCustomTokenValue}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setExerciseCustomTokenValue(val);
-                        const num = parseInt(val) || 0;
-                        setExerciseTokenCommitment(num);
-                      }}
-                      placeholder="e.g. 50"
-                      className={`w-full px-4 py-2.5 border rounded-xl text-[14px] outline-none focus:border-[#7655fb] ${
-                        exerciseCustomTokenValue && parseInt(exerciseCustomTokenValue) < 20
-                          ? "border-rose-500 focus:border-rose-500 bg-rose-50/10"
-                          : "border-[#ccd2e2]"
-                      }`}
-                    />
-                    {exerciseCustomTokenValue && parseInt(exerciseCustomTokenValue) < 20 && (
-                      <p className="mt-1.5 text-[12px] font-semibold text-rose-600 flex items-center gap-1">
-                        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                        </svg>
-                        Custom commitment must be at least 20 tokens.
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <p className="mt-8 text-[18px] font-bold text-[#7655fb]">
-                Total Staked Commitment: {exerciseTokenCommitment} tokens
-              </p>
-
-              <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
-                <button
-                  type="button"
-                  onClick={handleExerciseGoalSubmit}
-                  disabled={isSavingExerciseGoal || (isExerciseCustomToken && (!exerciseCustomTokenValue || parseInt(exerciseCustomTokenValue) < 20))}
-                  className="gh-btn-primary min-w-[150px] px-8 py-3 text-[18px] cursor-pointer disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
-                >
-                  {isSavingExerciseGoal ? "Saving..." : "Yes, commit"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowExerciseCommitConfirm(false)}
-                  disabled={isSavingExerciseGoal}
-                  className="flex min-w-[150px] items-center justify-center rounded-full border border-[#ff8b97] bg-white px-8 py-3 text-[18px] font-medium text-[#ff6f7d] transition-colors hover:bg-[#fff5f7] disabled:opacity-50 cursor-pointer"
-                >
-                  No, Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showExerciseInsufficientTokens && (
-        <div className="fixed inset-0 z-[81] flex items-center justify-center bg-[#1b1a1a]/55 backdrop-blur-sm px-4">
-          <div className="relative w-full max-w-[820px] rounded-[28px] border border-white/80 bg-white/95 px-8 py-10 shadow-[0_32px_80px_rgba(24,33,77,0.16)] sm:px-14 sm:py-12">
-            <button
-              type="button"
-              onClick={() => setShowExerciseInsufficientTokens(false)}
-              className="absolute right-6 top-6 flex h-11 w-11 items-center justify-center rounded-full text-[#262525] transition-colors hover:bg-[#f4f6fb]"
-              aria-label="Close insufficient tokens dialog"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6 6L18 18M18 6L6 18"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-
-            <div className="flex flex-col items-center text-center">
-              <p className="mt-10 text-[24px] font-bold leading-[1.6] text-[#262525] font-secondary sm:text-[28px]">
-                You don&apos;t have enough tokens to activate this goal
-              </p>
-
-              <div className="mt-16 flex flex-wrap items-center justify-center gap-6">
-                <button
-                  type="button"
-                  onClick={handleGoToGetToken}
-                  className="gh-btn-primary min-w-[150px] px-8 py-3 text-[18px] cursor-pointer"
-                >
-                  Get token
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowExerciseInsufficientTokens(false)}
-                  className="flex min-w-[150px] items-center justify-center rounded-full border border-[#ff8b97] bg-white px-8 py-3 text-[18px] font-medium text-[#ff6f7d] transition-colors hover:bg-[#fff5f7] cursor-pointer"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 }

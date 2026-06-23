@@ -8,6 +8,8 @@ import Milestones from "@/components/Milestones";
 import ProgressConsistency from "@/components/ProgressConsistency";
 import WhatsGoalHyke from "@/components/WhatsGoalHyke";
 import WhosItFor from "@/components/WhosItFor";
+import PricingSection from "@/components/PricingSection";
+import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
@@ -15,7 +17,9 @@ import { redirect } from "next/navigation";
 
 export default async function Home() {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   if (session) {
     redirect("/dashboard");
   }
@@ -69,7 +73,10 @@ export default async function Home() {
         </div>
 
         {/* How It Works Section */}
-        <div id="how-it-works" className="mt-16 mb-8 flex flex-col items-center gap-4 scroll-mt-20">
+        <div
+          id="how-it-works"
+          className="mt-16 mb-8 flex flex-col items-center gap-4 scroll-mt-20"
+        >
           <HowItWorksLabel />
         </div>
 
@@ -88,11 +95,15 @@ export default async function Home() {
         <WhosItFor />
       </div>
 
+      <PricingSection />
+
       {/* Habit Solutions Section */}
       <div className="max-w-[1024px] mx-auto py-12 flex flex-col items-center gap-8">
         <OurHabitSolutions />
         <BehaviouralSolution />
       </div>
+
+      <FAQSection />
 
       {/* Footer */}
       <Footer />
