@@ -13,7 +13,7 @@ interface PricingPlan {
 const plans: PricingPlan[] = [
   {
     name: "Free plan",
-    price: "#800",
+    price: "₦800",
     features: [
       "Goal & habits tracking",
       "Basic reminders (push/email)",
@@ -24,7 +24,7 @@ const plans: PricingPlan[] = [
   },
   {
     name: "Pro plan",
-    price: "#1500",
+    price: "₦1,500",
     highlighted: true,
     features: [
       "Everything in Free",
@@ -36,7 +36,7 @@ const plans: PricingPlan[] = [
   },
   {
     name: "Premium plan",
-    price: "#3000",
+    price: "₦3,000",
     features: [
       "Everything in Pro plan",
       "Unlimited AI coach interactions",
