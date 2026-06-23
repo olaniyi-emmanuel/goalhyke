@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
 interface PricingPlan {
@@ -69,6 +70,8 @@ function CheckIcon() {
 }
 
 export default function PricingSection() {
+  const [selectedPlan, setSelectedPlan] = useState<string>("Pro plan");
+
   return (
     <section className="w-full bg-white px-4 py-[56px] sm:py-[72px]">
       <div className="mx-auto max-w-[1160px]">
@@ -82,40 +85,49 @@ export default function PricingSection() {
           </p>
         </div>
 
-        <div className="relative mt-16 rounded-[24px] border border-[#11111133] bg-white px-5 pb-5 pt-8 shadow-[0_12px_32px_rgba(17,17,17,0.04)] sm:px-8 sm:pb-8 lg:px-0 lg:pb-0 lg:pt-0">
-          <div className="absolute left-1/2 top-0 hidden -translate-x-1/2 -translate-y-1/2 rounded-t-[6px] rounded-b-[2px] bg-[#7655fb] px-6 py-2 lg:block">
-            <span className="font-secondary text-[18px] font-semibold text-white">
-              POPULAR PLAN
-            </span>
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-3 lg:gap-0">
-            {plans.map((plan) => (
+        <div className="mt-16 grid gap-8 lg:grid-cols-3">
+          {plans.map((plan) => {
+            const isSelected = selectedPlan === plan.name;
+            return (
               <div
                 key={plan.name}
-                className={`relative flex h-full flex-col rounded-[20px] px-4 py-8 sm:px-8 lg:min-h-[618px] lg:rounded-none lg:px-6 lg:py-[58px] xl:px-10 ${
-                  plan.highlighted
-                    ? "border-[3px] border-[#7655fb] bg-white shadow-[0_18px_40px_rgba(118,85,251,0.08)] lg:-my-[1px] lg:rounded-[16px]"
-                    : ""
+                onClick={() => setSelectedPlan(plan.name)}
+                className={`relative flex h-full cursor-pointer flex-col rounded-[24px] border-[3px] bg-white px-6 py-10 transition-all duration-300 hover:-translate-y-1 ${
+                  isSelected
+                    ? "border-[#7655fb] shadow-[0_20px_48px_rgba(118,85,251,0.12)] scale-[1.01]"
+                    : "border-[#11111114] hover:border-[#11111129] hover:shadow-[0_12px_32px_rgba(17,17,17,0.04)]"
                 }`}
               >
                 {plan.highlighted && (
-                  <div className="mb-5 flex justify-center lg:hidden">
-                    <span className="rounded-[8px] bg-[#7655fb] px-4 py-2 font-secondary text-[14px] font-semibold tracking-[0.02em] text-white">
+                  <div className="absolute -top-[16px] left-1/2 -translate-x-1/2 rounded-full bg-[#7655fb] px-5 py-1.5 shadow-[0_6px_20px_rgba(118,85,251,0.25)]">
+                    <span className="font-secondary text-[11px] font-bold tracking-widest text-white uppercase">
                       POPULAR PLAN
                     </span>
                   </div>
                 )}
 
-                <h3 className="text-center font-secondary text-[34px] font-semibold text-[#262525] sm:text-[30px]">
-                  {plan.name}
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="font-secondary text-[30px] font-semibold text-[#262525]">
+                    {plan.name}
+                  </h3>
+                  <div
+                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
+                      isSelected
+                        ? "border-[#7655fb] bg-[#7655fb]"
+                        : "border-[#11111133] bg-transparent"
+                    }`}
+                  >
+                    {isSelected && (
+                      <div className="h-2 w-2 rounded-full bg-white" />
+                    )}
+                  </div>
+                </div>
 
-                <div className="mt-4 text-center font-secondary font-bold text-[#262525]">
+                <div className="mt-6 font-secondary font-bold text-[#262525]">
                   <span className="text-[46px] leading-none sm:text-[58px]">
                     {plan.price}
                   </span>
-                  <span className="text-[30px] text-[#7b7474] sm:text-[44px]">
+                  <span className="text-[24px] font-normal text-[#7b7474] sm:text-[30px]">
                     /month
                   </span>
                 </div>
@@ -123,7 +135,7 @@ export default function PricingSection() {
                 <Link
                   href="/signup"
                   className={`mt-10 flex h-[54px] w-full items-center justify-center rounded-full border text-[18px] font-bold font-secondary transition-all ${
-                    plan.highlighted
+                    isSelected
                       ? "border-[#7655fb] bg-[#7655fb] text-white shadow-[0_12px_30px_rgba(118,85,251,0.24)] hover:bg-[#6445e0]"
                       : "border-[#d7d7d7] bg-white text-[#262525] shadow-[0_0_4px_rgba(0,0,0,0.08)] hover:border-[#7655fb] hover:text-[#7655fb]"
                   }`}
@@ -131,15 +143,15 @@ export default function PricingSection() {
                   Get Started
                 </Link>
 
-                <div className="mt-10">
-                  <p className="font-secondary text-[25px] font-bold text-[#262525]">
+                <div className="mt-10 flex-grow">
+                  <p className="font-secondary text-[22px] font-bold text-[#262525]">
                     Benefits
                   </p>
                   <div className="mt-5 flex flex-col gap-4">
                     {plan.features.map((feature) => (
                       <div
                         key={feature}
-                        className="flex items-start gap-3 font-secondary text-[18px] leading-[1.4] text-[#262525]"
+                        className="flex items-start gap-3 font-secondary text-[16px] leading-[1.4] text-[#262525]"
                       >
                         <CheckIcon />
                         <span>{feature}</span>
@@ -148,8 +160,8 @@ export default function PricingSection() {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>
