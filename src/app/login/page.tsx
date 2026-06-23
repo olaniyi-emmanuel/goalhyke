@@ -29,6 +29,13 @@ function LoginContent() {
     });
   }, [router, redirectTo]);
 
+  useEffect(() => {
+    const err = searchParams.get("error");
+    if (err) {
+      setError(err);
+    }
+  }, [searchParams]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
