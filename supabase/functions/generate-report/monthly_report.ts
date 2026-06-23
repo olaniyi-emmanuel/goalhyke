@@ -1,0 +1,430 @@
+export const monthlyHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Progress Report</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+  <div style="background-color: #f8fafc; padding: 40px 20px;">
+    <div style="max-width: 680px; margin: 0 auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04); border: 1px solid #e2e8f0; padding: 35px; box-sizing: border-box;">
+      
+      <!-- Premium Light Header -->
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+        <tr>
+          <td>
+            <div style="font-size: 11px; font-weight: 800; color: #94a3b8; letter-spacing: 2px; text-transform: uppercase;">GOALHYKE</div>
+            <div style="font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 4px; letter-spacing: -0.5px;">Monthly Reports</div>
+          </td>
+          <td style="text-align: right; vertical-align: middle;">
+            <span style="font-size: 11px; font-weight: 700; color: #10b981; background-color: #ecfdf5; border: 1px solid #a7f3d0; padding: 6px 14px; border-radius: 9999px; display: inline-block;">
+              {{ .ReportMonth }}
+            </span>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Greeting & Outperformance Card -->
+      <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 25px;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="vertical-align: middle; width: 48px; padding-right: 14px;">
+              <div style="width: 48px; height: 48px; border-radius: 50%; background-color: #10b981; color: #ffffff; font-size: 16px; font-weight: 800; line-height: 48px; text-align: center; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);">
+                {{ .AvatarInitials }}
+              </div>
+            </td>
+            <td style="vertical-align: middle;">
+              <div style="font-size: 16px; font-weight: 700; color: #0f172a;">Hello, {{ .FullName }}!</div>
+              <div style="font-size: 13px; color: #64748b; margin-top: 3px;">
+                🏆 You outperformed <strong style="color: #10b981; font-weight: 700;">{{ .OutperformPct }}%</strong> of Goalhyke users this month.
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- KPI User Monthly (2x2 Grid) -->
+      <div style="margin-bottom: 30px;">
+        <div style="font-size: 11px; font-weight: 800; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;">KPI User Monthly</div>
+        <table style="width: 100%; border-collapse: separate; border-spacing: 12px; margin: 0 -12px;">
+          <tr>
+            <!-- Card 1: Best Streak -->
+            <td style="width: 50%; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; box-sizing: border-box; vertical-align: top;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="vertical-align: top;">
+                    <div style="font-size: 12px; font-weight: 600; color: #64748b;">Best Streak</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #0f172a; margin-top: 6px; letter-spacing: -1px;">{{ .MaxStreak }} <span style="font-size: 18px; font-weight: normal; color: #f59e0b;">🔥</span></div>
+                    <div style="font-size: 11px; color: #10b981; font-weight: 700; margin-top: 4px; display: inline-block;">
+                      ▲ 24% <span style="color: #94a3b8; font-weight: 500;">vs last month</span>
+                    </div>
+                  </td>
+                  <td style="width: 44px; text-align: right; vertical-align: middle;">
+                    <!-- SVG Circular Progress Donut -->
+                    <svg width="40" height="40" viewBox="0 0 36 36">
+                      <circle cx="18" cy="18" r="15.915" fill="none" stroke="#e2e8f0" stroke-width="4"/>
+                      <circle cx="18" cy="18" r="15.915" fill="none" stroke="#10b981" stroke-width="4"
+                              stroke-dasharray="{{ .StreakDonutPct }} 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                    </svg>
+                  </td>
+                </tr>
+              </table>
+              <div style="border-top: 1px solid #f1f5f9; margin-top: 15px; padding-top: 10px; font-size: 11px; font-weight: 700;">
+                <a href="https://goalhyke.com/goals" style="color: #10b981; text-decoration: none;">See Details →</a>
+              </div>
+            </td>
+            <!-- Card 2: XP Gained -->
+            <td style="width: 50%; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; box-sizing: border-box; vertical-align: top;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="vertical-align: top;">
+                    <div style="font-size: 12px; font-weight: 600; color: #64748b;">XP Gained</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #0f172a; margin-top: 6px; letter-spacing: -1px;">{{ .Tokens }}</div>
+                    <div style="font-size: 11px; color: #10b981; font-weight: 700; margin-top: 4px; display: inline-block;">
+                      ▲ 38% <span style="color: #94a3b8; font-weight: 500;">vs last month</span>
+                    </div>
+                  </td>
+                  <td style="width: 50px; text-align: right; vertical-align: bottom;">
+                    <!-- Mini Vertical Bar Chart -->
+                    <table style="height: 40px; display: inline-block; border-collapse: collapse; border-spacing: 2px;">
+                      <tr style="vertical-align: bottom;">
+                        <td style="padding: 0 1px;"><div style="background-color: #a7f3d0; height: 14px; width: 4px; border-radius: 2px;"></div></td>
+                        <td style="padding: 0 1px;"><div style="background-color: #a7f3d0; height: 22px; width: 4px; border-radius: 2px;"></div></td>
+                        <td style="padding: 0 1px;"><div style="background-color: #a7f3d0; height: 18px; width: 4px; border-radius: 2px;"></div></td>
+                        <td style="padding: 0 1px;"><div style="background-color: #10b981; height: 30px; width: 4px; border-radius: 2px;"></div></td>
+                        <td style="padding: 0 1px;"><div style="background-color: #10b981; height: 40px; width: 4px; border-radius: 2px;"></div></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              <div style="border-top: 1px solid #f1f5f9; margin-top: 15px; padding-top: 10px; font-size: 11px; font-weight: 700;">
+                <a href="https://goalhyke.com/dashboard" style="color: #10b981; text-decoration: none;">See Details →</a>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <!-- Card 3: Deep Work -->
+            <td style="width: 50%; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; box-sizing: border-box; vertical-align: top;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="vertical-align: top;">
+                    <div style="font-size: 12px; font-weight: 600; color: #64748b;">Deep Work Done</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #0f172a; margin-top: 6px; letter-spacing: -1px;">{{ .DeepWorkHours }}h</div>
+                    <div style="font-size: 11px; color: #10b981; font-weight: 700; margin-top: 4px; display: inline-block;">
+                      ▲ 15% <span style="color: #94a3b8; font-weight: 500;">vs last month</span>
+                    </div>
+                  </td>
+                  <td style="width: 60px; text-align: right; vertical-align: middle;">
+                    <!-- Mini Line Graph SVG -->
+                    <svg width="55" height="28" viewBox="0 0 50 25" style="overflow: visible;">
+                      <path d="M0 15 Q15 22, 28 8 T50 2" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/>
+                      <circle cx="50" cy="2" r="3" fill="#10b981"/>
+                    </svg>
+                  </td>
+                </tr>
+              </table>
+              <div style="border-top: 1px solid #f1f5f9; margin-top: 15px; padding-top: 10px; font-size: 11px; font-weight: 700;">
+                <a href="https://goalhyke.com/goals" style="color: #10b981; text-decoration: none;">See Details →</a>
+              </div>
+            </td>
+            <!-- Card 4: Productive Grade -->
+            <td style="width: 50%; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; box-sizing: border-box; vertical-align: top;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="vertical-align: top;">
+                    <div style="font-size: 12px; font-weight: 600; color: #64748b;">Productivity Rank</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #0f172a; margin-top: 6px; letter-spacing: -1px;">{{ .Grade }}</div>
+                    <div style="font-size: 11px; color: #10b981; font-weight: 700; margin-top: 4px; display: inline-block;">
+                      ★ Top Tier <span style="color: #94a3b8; font-weight: 500;">status active</span>
+                    </div>
+                  </td>
+                  <td style="width: 50px; text-align: right; vertical-align: bottom;">
+                    <!-- Step-Up Bar Chart -->
+                    <table style="height: 35px; display: inline-block; border-collapse: collapse; border-spacing: 2px;">
+                      <tr style="vertical-align: bottom;">
+                        <td style="padding: 0 1px;"><div style="background-color: #10b981; height: 18px; width: 5px; border-radius: 1px;"></div></td>
+                        <td style="padding: 0 1px;"><div style="background-color: #10b981; height: 28px; width: 5px; border-radius: 1px;"></div></td>
+                        <td style="padding: 0 1px;"><div style="background-color: #a7f3d0; height: 35px; width: 5px; border-radius: 1px;"></div></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              <div style="border-top: 1px solid #f1f5f9; margin-top: 15px; padding-top: 10px; font-size: 11px; font-weight: 700;">
+                <a href="https://goalhyke.com/buddies" style="color: #10b981; text-decoration: none;">See Details →</a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Section: Report Monthly (Performance & Analytics) -->
+      <div style="margin-bottom: 30px;">
+        <div style="font-size: 11px; font-weight: 800; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;">Report Monthly</div>
+        <table style="width: 100%; border-collapse: collapse; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background-color: #ffffff;">
+          <tr>
+            <!-- Left: User Performance (Gauge) -->
+            <td style="width: 42%; padding: 25px; border-right: 1px solid #e2e8f0; vertical-align: top; box-sizing: border-box; text-align: center;">
+              <div style="font-size: 13px; font-weight: 700; color: #0f172a; text-align: left; margin-bottom: 20px;">User Performance</div>
+              
+              <!-- Semi-circle Gauge Container -->
+              <div style="position: relative; height: 105px; width: 160px; margin: 0 auto 10px;">
+                <svg width="160" height="105" viewBox="0 0 100 65" style="display: block;">
+                  <path d="M 10,60 A 40,40 0 0,1 90,60" fill="none" stroke="#f1f5f9" stroke-width="12" stroke-linecap="round"/>
+                  <path d="M 10,60 A 40,40 0 0,1 90,60" fill="none" stroke="#10b981" stroke-width="12" stroke-linecap="round"
+                        stroke-dasharray="125.6" stroke-dashoffset="{{ .GaugeDashoffset }}"/>
+                </svg>
+                <div style="position: absolute; bottom: 8px; left: 0; right: 0; text-align: center;">
+                  <div style="font-size: 26px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px;">{{ .GoalAlignScore }}%</div>
+                  <div style="font-size: 10px; color: #64748b; font-weight: 600; margin-top: 2px;">of 100 points</div>
+                </div>
+              </div>
+              
+              <div style="text-align: left; margin-top: 15px;">
+                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Your performance is great!</div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+                  You had high consistency levels across tasks, accountability circles, and milestone goals this month.
+                </div>
+              </div>
+              
+              <div style="border-top: 1px solid #f1f5f9; margin-top: 20px; padding-top: 12px; text-align: left; font-size: 11px; font-weight: 700;">
+                <a href="https://goalhyke.com/" style="color: #10b981; text-decoration: none;">Improve Score →</a>
+              </div>
+            </td>
+
+            <!-- Right: Monthly Habit Analytics (4-Week Block Bar Chart) -->
+            <td style="width: 58%; padding: 25px; vertical-align: top; box-sizing: border-box;">
+              <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                <tr>
+                  <td><div style="font-size: 13px; font-weight: 700; color: #0f172a;">Habit Analytics</div></td>
+                  <td style="text-align: right;">
+                    <span style="font-size: 10px; font-weight: 700; color: #64748b; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 10px; background-color: #f8fafc;">
+                      Last Monthly
+                    </span>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Stacked Grid of Squares (generated dynamically in index.ts for 4 weeks) -->
+              <div style="margin: 20px 0 10px;">
+                {{ .AnalyticsChartHtml }}
+              </div>
+
+              <!-- Legend -->
+              <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 10px; color: #64748b;">
+                <tr>
+                  <td style="text-align: right;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background-color: #f1f5f9; border-radius: 2px; margin-right: 4px; vertical-align: middle;"></span>Not Started
+                    <span style="display: inline-block; width: 8px; height: 8px; background-color: #10b981; border-radius: 2px; margin-left: 10px; margin-right: 4px; vertical-align: middle;"></span>In-Progress
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Section: Scorecard Metrics -->
+      <div style="margin-bottom: 30px;">
+        <div style="font-size: 11px; font-weight: 800; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;">Monthly Scorecard</div>
+        
+        <table style="width: 100%; border-collapse: separate; border-spacing: 10px; margin: 0 -10px;">
+          <!-- Row 1 -->
+          <tr>
+            <td style="width: 33.3%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; box-sizing: border-box; text-align: left;">
+              <div style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Goal Completion</div>
+              <div style="font-size: 18px; font-weight: 800; color: #1e293b;">{{ .GoalCompPct }}% <span style="font-size: 11px; color: #10b981; font-weight: bold;">▲</span></div>
+            </td>
+            <td style="width: 33.3%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; box-sizing: border-box; text-align: left;">
+              <div style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Habit Consistency</div>
+              <div style="font-size: 18px; font-weight: 800; color: #1e293b;">{{ .HabitConstPct }}% <span style="font-size: 11px; color: #10b981; font-weight: bold;">▲</span></div>
+            </td>
+            <td style="width: 33.3%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; box-sizing: border-box; text-align: left;">
+              <div style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Tasks Completed</div>
+              <div style="font-size: 18px; font-weight: 800; color: #1e293b;">{{ .TasksCompletedCount }} <span style="font-size: 11px; color: #10b981; font-weight: bold;">▲</span></div>
+            </td>
+          </tr>
+          <!-- Row 2 -->
+          <tr>
+            <td style="width: 33.3%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; box-sizing: border-box; text-align: left;">
+              <div style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Focus Score</div>
+              <div style="font-size: 18px; font-weight: 800; color: #1e293b;">{{ .FocusScore }} <span style="font-size: 10px; color: #94a3b8; font-weight: normal;">/100</span></div>
+              <div style="background-color: #e2e8f0; height: 4px; border-radius: 2px; margin-top: 8px; overflow: hidden;">
+                <div style="background-color: #10b981; height: 100%; width: {{ .FocusScore }}%;"></div>
+              </div>
+            </td>
+            <td style="width: 33.3%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; box-sizing: border-box; text-align: left;">
+              <div style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Mindfulness</div>
+              <div style="font-size: 18px; font-weight: 800; color: #1e293b;">{{ .MindfulnessScore }} <span style="font-size: 10px; color: #94a3b8; font-weight: normal;">/100</span></div>
+              <div style="background-color: #e2e8f0; height: 4px; border-radius: 2px; margin-top: 8px; overflow: hidden;">
+                <div style="background-color: #10b981; height: 100%; width: {{ .MindfulnessScore }}%;"></div>
+              </div>
+            </td>
+            <td style="width: 33.3%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; box-sizing: border-box; text-align: left;">
+              <div style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Accountability</div>
+              <div style="font-size: 18px; font-weight: 800; color: #1e293b;">{{ .AccountabilityScore }}%</div>
+              <div style="background-color: #e2e8f0; height: 4px; border-radius: 2px; margin-top: 8px; overflow: hidden;">
+                <div style="background-color: #10b981; height: 100%; width: {{ .AccountabilityScore }}%;"></div>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Section: Goal Progress (Monthly Tracker) -->
+      <div style="margin-bottom: 30px;">
+        <div style="font-size: 11px; font-weight: 800; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;">Goal Progress</div>
+        <div style="border: 1px solid #e2e8f0; border-radius: 16px; padding: 25px; background-color: #ffffff;">
+          {{ .GoalProgressListHtml }}
+        </div>
+      </div>
+
+      <!-- Section: AI Coach Analysis & Prediction -->
+      <div style="margin-bottom: 30px;">
+        <div style="font-size: 11px; font-weight: 800; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;">AI Coach Analysis</div>
+        
+        <!-- AI Insight cards -->
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px; text-align: left;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="vertical-align: top; width: 75px;">
+                <span style="background-color: #ecfdf5; color: #10b981; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; display: inline-block;">Strength</span>
+              </td>
+              <td style="vertical-align: top; padding-left: 12px;">
+                <div style="font-size: 13px; color: #334155; font-weight: 600; line-height: 1.45;">
+                  Your focus and execution levels peaked strongly during Week 2, completing {{ .StreakWeeklyMax }} goals. You show great resilience under loaded schedules.
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px; text-align: left;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="vertical-align: top; width: 75px;">
+                <span style="background-color: #fffbeb; color: #d97706; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; display: inline-block;">Advice</span>
+              </td>
+              <td style="vertical-align: top; padding-left: 12px;">
+                <div style="font-size: 13px; color: #334155; font-weight: 600; line-height: 1.45;">
+                  Consistency analytics show your task completion rate drops when deep work check-ins occur after 1:00 PM. Lock in morning hours to boost outcomes.
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; text-align: left;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="vertical-align: top; width: 75px;">
+                <span style="background-color: #f5f3ff; color: #7c3aed; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; display: inline-block;">Trend</span>
+              </td>
+              <td style="vertical-align: top; padding-left: 12px;">
+                <div style="font-size: 13px; color: #334155; font-weight: 600; line-height: 1.45;">
+                  Goals categorized under 'Career' progressed 42% faster than goals in 'Fitness' this month. Allocating balanced buddy support might help close the gap.
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section: Prediction Engine -->
+      <div style="margin-bottom: 30px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 25px; text-align: center;">
+        <div style="font-size: 11px; font-weight: 800; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px;">Prediction Engine</div>
+        <p style="margin: 0 0 20px 0; font-size: 12px; color: #64748b;">Projected overall goal completion based on your monthly consistency.</p>
+        
+        <div style="display: inline-block; margin-bottom: 10px;">
+          <div style="font-size: 42px; font-weight: 900; color: #10b981; letter-spacing: -1.5px;">{{ .PredictionPct }}%</div>
+          <div style="font-size: 12px; font-weight: 700; color: #475569; margin-top: 2px;">chance of finishing on time</div>
+        </div>
+        
+        <div style="background-color: #e2e8f0; height: 8px; border-radius: 4px; max-width: 350px; margin: 15px auto 0; overflow: hidden;">
+          <div style="background-color: #10b981; height: 100%; width: {{ .PredictionPct }}%;"></div>
+        </div>
+      </div>
+
+      <!-- Section: Accountability Circle & Month Wins -->
+      <div style="margin-bottom: 25px;">
+        <table style="width: 100%; border-collapse: separate; border-spacing: 12px; margin: 0 -12px;">
+          <tr>
+            <!-- Accountability Standing table -->
+            <td style="width: 50%; vertical-align: top; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; box-sizing: border-box;">
+              <div style="font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 15px;">Buddy Standings</div>
+              <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                {{ .BuddyStandingsHtml }}
+              </table>
+            </td>
+            
+            <!-- Monthly Wins Grid -->
+            <td style="width: 50%; vertical-align: top; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; box-sizing: border-box;">
+              <div style="font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 15px;">This Month's Wins</div>
+              
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 6px 0; vertical-align: middle; font-size: 12px; color: #334155;">
+                    🏆 <strong style="color: #0f172a;">Monthly Champ</strong><br>
+                    <span style="color: #64748b; font-size: 10px;">Completed 5 major goals</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 6px 0; vertical-align: middle; font-size: 12px; color: #334155; border-top: 1px solid #f1f5f9;">
+                    ⚡ <strong style="color: #0f172a;">Deep Work Guru</strong><br>
+                    <span style="color: #64748b; font-size: 10px;">Logged 60h focus work</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 6px 0; vertical-align: middle; font-size: 12px; color: #334155; border-top: 1px solid #f1f5f9;">
+                    🤝 <strong style="color: #0f172a;">Super Buddy</strong><br>
+                    <span style="color: #64748b; font-size: 10px;">Sent 12 buddy updates</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Minimal CTA & Footer Section -->
+      <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 30px; text-align: center; margin-top: 10px;">
+        <div style="font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 20px;">
+          📈 In this new month, you start in **Community #1**. Keep pushing limits!
+        </div>
+        
+        <div style="margin-bottom: 25px;">
+          <a href="https://goalhyke.com/" style="background-color: #10b981; color: #ffffff; text-decoration: none; padding: 12px 32px; font-weight: 700; border-radius: 10px; font-size: 14px; display: inline-block; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);">
+            Open Goalhyke
+          </a>
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 11px;">
+          <tr>
+            <td>
+              <a href="https://goalhyke.com/goals" style="color: #64748b; text-decoration: none; font-weight: 700;">Review Goals</a>
+              <span style="color: #e2e8f0; margin: 0 10px;">|</span>
+              <a href="https://goalhyke.com/buddies" style="color: #64748b; text-decoration: none; font-weight: 700;">Challenge Buddies</a>
+              <span style="color: #e2e8f0; margin: 0 10px;">|</span>
+              <a href="https://goalhyke.com/settings" style="color: #64748b; text-decoration: none; font-weight: 700;">Unsubscribe</a>
+            </td>
+          </tr>
+        </table>
+        
+        <p style="font-size: 10px; color: #94a3b8; line-height: 1.6; margin: 25px 0 0 0;">
+          Copyright &copy; 2026 Goalhyke, All rights reserved. Registered trademark. <br>
+          For help or questions, reach out to <a href="mailto:support@goalhyke.com" style="color: #64748b; text-decoration: underline;">support@goalhyke.com</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
+`;

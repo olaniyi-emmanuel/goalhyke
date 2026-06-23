@@ -1,17 +1,20 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient, getRedirectUrl } from "@/lib/supabase/client";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SearchableCountrySelect from "@/components/SearchableCountrySelect";
 import { countries, countryStates } from "@/lib/countries";
 
-export default function Signup() {
+function SignupContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo");
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,7 +44,6 @@ export default function Signup() {
   };
   const score = Object.values(rules).filter(Boolean).length;
 
-  // Determine which password criteria are not yet met
   const unmetCriteria = [];
   if (!rules.length) unmetCriteria.push("8+ characters");
   if (!rules.uppercase) unmetCriteria.push("1+ uppercase letter");
@@ -102,7 +104,8 @@ export default function Signup() {
     const supabase = createClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        router.push("/dashboard");
+        const target = redirectTo || "/dashboard";
+        router.push(target);
       }
     });
 
@@ -125,7 +128,7 @@ export default function Signup() {
       }
     };
     detectLocation();
-  }, [router]);
+  }, [router, redirectTo]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -169,7 +172,8 @@ export default function Signup() {
       setSuccess(true);
       setIsLoading(false);
       if (signUpData?.session) {
-        router.push("/dashboard");
+        const target = redirectTo || "/dashboard";
+        router.push(target);
         router.refresh();
       } else {
         if (typeof window !== "undefined") {
@@ -183,10 +187,18 @@ export default function Signup() {
   const handleGoogleLogin = async () => {
     setError(null);
     const supabase = createClient();
+    
+    let redirectUrl = getRedirectUrl();
+    if (redirectTo) {
+      const urlObj = new URL(redirectUrl);
+      urlObj.searchParams.set("next", redirectTo);
+      redirectUrl = urlObj.toString();
+    }
+
     const { error: oAuthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: getRedirectUrl(),
+        redirectTo: redirectUrl,
       },
     });
     if (oAuthError) {
@@ -197,10 +209,18 @@ export default function Signup() {
   const handleAppleLogin = async () => {
     setError(null);
     const supabase = createClient();
+    
+    let redirectUrl = getRedirectUrl();
+    if (redirectTo) {
+      const urlObj = new URL(redirectUrl);
+      urlObj.searchParams.set("next", redirectTo);
+      redirectUrl = urlObj.toString();
+    }
+
     const { error: oAuthError } = await supabase.auth.signInWithOAuth({
       provider: "apple",
       options: {
-        redirectTo: getRedirectUrl(),
+        redirectTo: redirectUrl,
       },
     });
     if (oAuthError) {
@@ -291,27 +311,27 @@ export default function Signup() {
                         Password
                       </label>
                       <div className="relative flex items-center">
-  <input
-    type={showPassword ? "text" : "password"}
-    name="password"
-    autoComplete="new-password"
-    placeholder="Create a password"
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-    onFocus={() => setIsPasswordFocused(true)}
-    onBlur={() => setIsPasswordFocused(false)}
-    disabled={isLoading}
-    className={`gh-input w-full pr-12 transition-all ${
-      password.length > 0
-        ? score === 5
-          ? "border-green-500 focus:border-green-600 focus:ring-green-600"
-          : score >= 3
-          ? "border-amber-400 focus:border-amber-500 focus:ring-amber-500"
-          : "border-red-500 focus:border-red-500 focus:ring-red-500"
-        : ""
-    }`}
-    required
-  />
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          autoComplete="new-password"
+                          placeholder="Create a password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          onFocus={() => setIsPasswordFocused(true)}
+                          onBlur={() => setIsPasswordFocused(false)}
+                          disabled={isLoading}
+                          className={`gh-input w-full pr-12 transition-all ${
+                            password.length > 0
+                              ? score === 5
+                                ? "border-green-500 focus:border-green-600 focus:ring-green-600"
+                                : score >= 3
+                                ? "border-amber-400 focus:border-amber-500 focus:ring-amber-500"
+                                : "border-red-500 focus:border-red-500 focus:ring-red-500"
+                              : ""
+                          }`}
+                          required
+                        />
 
                         <button
                           type="button"
@@ -409,11 +429,11 @@ export default function Signup() {
                         </div>
                       ) : statesList.length > 0 ? (
                         <select
-                          value={stateName}
-                          onChange={(e) => setStateName(e.target.value)}
-                          disabled={isLoading}
-                          className="gh-select cursor-pointer w-full"
-                          required
+                           value={stateName}
+                           onChange={(e) => setStateName(e.target.value)}
+                           disabled={isLoading}
+                           className="gh-select cursor-pointer w-full"
+                           required
                         >
                           {statesList.map((state) => (
                             <option key={state} value={state}>
@@ -495,7 +515,10 @@ export default function Signup() {
 
                   <p className="mt-4 text-center text-[14px] text-[#666f85] lg:text-left">
                     Already have an account?{" "}
-                    <Link href="/login" className="font-bold text-[#7655fb] hover:underline">
+                    <Link 
+                      href={`/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ""}`} 
+                      className="font-bold text-[#7655fb] hover:underline"
+                    >
                       Login
                     </Link>
                   </p>
@@ -508,5 +531,17 @@ export default function Signup() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function Signup() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen gh-page-bg flex items-center justify-center">
+        <div className="text-xl font-semibold text-[#7655fb]">Loading...</div>
+      </main>
+    }>
+      <SignupContent />
+    </Suspense>
   );
 }

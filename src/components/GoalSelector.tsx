@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 const ChevronDown = ({ className }: { className?: string }) => (
   <svg
@@ -60,6 +61,7 @@ const goalsList = [
 ];
 
 const GoalSelector = () => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -89,6 +91,7 @@ const GoalSelector = () => {
     setSelectedGoal(goal);
     setIsOpen(false);
     setSearchQuery(""); // Reset search on select
+    router.push(`/login?redirectTo=${encodeURIComponent(`/set-goal?category=${encodeURIComponent(goal)}`)}`);
   };
 
   const filteredGoals = goalsList.filter((goal) =>
@@ -160,7 +163,7 @@ const GoalSelector = () => {
       <button
         onClick={() => {
           if (selectedGoal) {
-            window.location.href = `/set-goal?category=${encodeURIComponent(selectedGoal)}`;
+            router.push(`/login?redirectTo=${encodeURIComponent(`/set-goal?category=${encodeURIComponent(selectedGoal)}`)}`);
           } else {
             alert("Please select a goal first!");
           }

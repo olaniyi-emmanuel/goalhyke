@@ -1,15 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient, getRedirectUrl } from "@/lib/supabase/client";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
-export default function Login() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -20,10 +23,11 @@ export default function Login() {
     const supabase = createClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        router.push("/dashboard");
+        const target = redirectTo || "/dashboard";
+        router.push(target);
       }
     });
-  }, [router]);
+  }, [router, redirectTo]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +57,8 @@ export default function Login() {
         router.push("/verify-email");
       }
     } else {
-      router.push("/dashboard");
+      const target = redirectTo || "/dashboard";
+      router.push(target);
       router.refresh();
     }
   };
@@ -61,10 +66,18 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     setError(null);
     const supabase = createClient();
+    
+    let redirectUrl = getRedirectUrl();
+    if (redirectTo) {
+      const urlObj = new URL(redirectUrl);
+      urlObj.searchParams.set("next", redirectTo);
+      redirectUrl = urlObj.toString();
+    }
+
     const { error: oAuthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: getRedirectUrl(),
+        redirectTo: redirectUrl,
       },
     });
     if (oAuthError) {
@@ -75,10 +88,18 @@ export default function Login() {
   const handleAppleLogin = async () => {
     setError(null);
     const supabase = createClient();
+    
+    let redirectUrl = getRedirectUrl();
+    if (redirectTo) {
+      const urlObj = new URL(redirectUrl);
+      urlObj.searchParams.set("next", redirectTo);
+      redirectUrl = urlObj.toString();
+    }
+
     const { error: oAuthError } = await supabase.auth.signInWithOAuth({
       provider: "apple",
       options: {
-        redirectTo: getRedirectUrl(),
+        redirectTo: redirectUrl,
       },
     });
     if (oAuthError) {
@@ -125,7 +146,7 @@ export default function Login() {
                     </div>
                   )}
 
-                   <div className="flex flex-col gap-1.5">
+                  <div className="flex flex-col gap-1.5">
                     <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
                       Email
                     </label>
@@ -230,7 +251,10 @@ export default function Login() {
                     </Link>
                     <p>
                       Don&apos;t have an account?{" "}
-                      <Link href="/signup" className="font-bold text-[#7655fb] hover:underline">
+                      <Link 
+                        href={`/signup${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ""}`} 
+                        className="font-bold text-[#7655fb] hover:underline"
+                      >
                         Sign up
                       </Link>
                     </p>
@@ -244,5 +268,17 @@ export default function Login() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen gh-page-bg flex items-center justify-center">
+        <div className="text-xl font-semibold text-[#7655fb]">Loading...</div>
+      </main>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
