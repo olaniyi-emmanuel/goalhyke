@@ -104,6 +104,11 @@ const Sidebar = () => {
             <Link
               key={index}
               href={item.href}
+              onClick={() => {
+                if (item.label === "Links") {
+                  window.dispatchEvent(new CustomEvent("nav-links-clicked"));
+                }
+              }}
               className={`flex items-center justify-center w-[54px] h-[54px] rounded-[18px] transition-all duration-300 relative group ${
                 isActive 
                   ? "bg-gradient-to-br from-[#4169e1] to-[#7655fb] text-white shadow-[0_10px_25px_rgba(118,85,251,0.25)]" 
