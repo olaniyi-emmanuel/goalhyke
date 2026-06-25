@@ -608,7 +608,7 @@ export default function StayHealthyWorkflow({
           JSON.stringify({
             name: referee.refereeContact,
             email: referee.refereeContact,
-            avatar: "/images/nav-avatar.png",
+            avatar: "",
           }),
         );
       }

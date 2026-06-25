@@ -34,7 +34,7 @@ const GoalSupportersForm = ({
 }: GoalSupportersFormProps) => {
   const [copied, setCopied] = React.useState(false);
 
-  const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/invite/${encodeURIComponent(goalTitle)}` : "https://goalhyke.com";
+  const shareUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/invite/${encodeURIComponent(goalTitle)}`;
   const shareText = `Hey! Support my goal "${goalTitle}" on goalHyke and keep me accountable! ${shareUrl}`;
 
   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;

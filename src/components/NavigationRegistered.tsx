@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import InitialsAvatar from "@/components/InitialsAvatar";
 
 const NavigationRegistered = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -182,15 +183,18 @@ const NavigationRegistered = () => {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-[10px] rounded-[48px] bg-gradient-to-r from-[#4169e1] to-[#7655fb] p-[4px] pr-[16px] shadow-[0_12px_30px_rgba(118,85,251,0.22)] cursor-pointer select-none hover:shadow-[0_12px_35px_rgba(118,85,251,0.3)] hover:translate-y-[-1px] transition-all duration-300"
             >
-              <div className="relative w-[38px] h-[38px] rounded-[19px] border border-white overflow-hidden shrink-0">
-                <Image
-                  src={user?.user_metadata?.avatar_url || "/images/nav-avatar.png"}
-                  alt="User Avatar"
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
-              </div>
+              <InitialsAvatar
+                src={user?.user_metadata?.avatar_url}
+                name={
+                  user?.user_metadata?.full_name ||
+                  user?.user_metadata?.name ||
+                  user?.email ||
+                  "User"
+                }
+                seed={user?.id}
+                size={38}
+                className="shrink-0 border border-white"
+              />
               <span className="text-white text-[13px] font-bold tracking-wide font-secondary truncate max-w-[100px]">
                 {user?.user_metadata?.full_name?.split(" ")[0] || user?.user_metadata?.name?.split(" ")[0] || "Account"}
               </span>
@@ -352,12 +356,16 @@ const NavigationRegistered = () => {
                 className="flex flex-col items-center gap-2 cursor-pointer mb-2"
               >
                 <div className="relative w-[60px] h-[60px] rounded-full overflow-hidden border-2 border-[#7655fb]/20 shadow-sm">
-                    <Image
-                        src={user?.user_metadata?.avatar_url || "/images/nav-avatar.png"}
-                        alt="User Avatar"
-                        fill
-                        className="object-cover"
-                        unoptimized
+                    <InitialsAvatar
+                      src={user?.user_metadata?.avatar_url}
+                      name={
+                        user?.user_metadata?.full_name ||
+                        user?.user_metadata?.name ||
+                        user?.email ||
+                        "User"
+                      }
+                      seed={user?.id}
+                      size={60}
                     />
                 </div>
                 <div className="text-center">

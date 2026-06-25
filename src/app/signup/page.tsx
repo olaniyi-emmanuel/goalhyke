@@ -166,7 +166,7 @@ function SignupContent() {
           country: country,
           phone_number: fullPhoneNumber,
           state: stateName,
-          avatar_url: "/images/nav-avatar.png",
+          avatar_url: "",
         },
         emailRedirectTo: getRedirectUrl(),
       },

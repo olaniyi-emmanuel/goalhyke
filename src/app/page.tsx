@@ -7,26 +7,34 @@ import BehaviouralSolution from "@/components/BehaviouralSolution";
 import Milestones from "@/components/Milestones";
 import ProgressConsistency from "@/components/ProgressConsistency";
 import WhatsGoalHyke from "@/components/WhatsGoalHyke";
+import AboutUsSection from "@/components/AboutUsSection";
 import WhosItFor from "@/components/WhosItFor";
 import PricingSection from "@/components/PricingSection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function Home() {
   const supabase = await createClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  if (session) {
-    redirect("/dashboard");
-  }
 
   return (
     <main className="min-h-screen bg-white">
       <Navigation />
+      {session ? (
+        <div className="gh-shell px-4 pt-4 md:px-6 lg:px-10">
+          <Link
+            href="/dashboard"
+            className="gh-btn-secondary inline-flex px-6 py-2.5 text-[14px]"
+          >
+            Go to Dashboard
+          </Link>
+        </div>
+      ) : null}
 
       {/* Hero & Features Section */}
       <div className="max-w-[1024px] mx-auto pb-12">
@@ -89,6 +97,8 @@ export default async function Home() {
 
       {/* Full Width Section */}
       <WhatsGoalHyke />
+
+      <AboutUsSection />
 
       {/* Who's It For Section */}
       <div className="max-w-[1280px] mx-auto">

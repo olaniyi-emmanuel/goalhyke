@@ -415,7 +415,7 @@ export default function Dashboard() {
   });
 
   const shareText = `I am on a ${longestStreakLabel} habit streak on GoalHyke! 🚀 Keeping my commitments alive and building consistency. Join me!`;
-  const shareUrl = "https://goalhyke.com"; // Fallback/default URL
+  const shareUrl = typeof window !== "undefined" ? window.location.origin : "";
 
   const encodedText = encodeURIComponent(shareText);
   const encodedUrl = encodeURIComponent(shareUrl);
@@ -526,11 +526,11 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className="mx-auto flex max-w-[1280px] min-h-[calc(100vh-110px)]">
+      <div className="gh-page-end-gap mx-auto flex max-w-[1280px] min-h-[calc(100vh-110px)]">
         <Sidebar />
 
         <div className="flex-1 bg-[#f4f6fb]">
-          <div className="px-8 py-8 pb-12">
+          <div className="px-8 py-8">
             <div className="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border-b border-gray-100 pb-6">
               <div>
                 <h1 className="text-[32px] font-bold text-[#262525]">

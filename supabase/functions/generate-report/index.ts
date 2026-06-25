@@ -311,6 +311,14 @@ async function generateEmailTemplate(data: {
   profile: any;
 }) {
   const isMonthly = data.schedule === "monthly";
+  const envUrl =
+    Deno.env.get("SITE_URL") ??
+    Deno.env.get("PUBLIC_SITE_URL") ??
+    Deno.env.get("NEXT_PUBLIC_SITE_URL") ??
+    Deno.env.get("APP_URL") ??
+    "";
+
+  const appUrl = envUrl ? envUrl.replace(/\/$/, "") : "https://goalhyke.com";
 
   // 1. Calculate initials
   const avatarInitials = data.fullName
@@ -547,6 +555,7 @@ async function generateEmailTemplate(data: {
   let html = isMonthly ? monthlyHtml : weeklyHtml;
 
   // Replace placeholders
+  html = html.replaceAll("{{ .AppUrl }}", String(appUrl));
   html = html.replaceAll("{{ .FullName }}", String(data.fullName));
   html = html.replaceAll("{{ .WeekNumber }}", String(weekNumber));
   html = html.replaceAll("{{ .ReportMonth }}", String(reportMonth));

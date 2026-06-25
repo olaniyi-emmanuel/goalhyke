@@ -638,7 +638,7 @@ export default function ReadMoreWorkflow({
           JSON.stringify({
             name: referee.refereeContact,
             email: referee.refereeContact,
-            avatar: "/images/nav-avatar.png",
+            avatar: "",
           }),
         );
       }

@@ -24,7 +24,7 @@ begin
       new.raw_user_meta_data->>'name',
       split_part(new.email, '@', 1)
     ),
-    coalesce(new.raw_user_meta_data->>'avatar_url', '/images/nav-avatar.png'),
+    nullif(new.raw_user_meta_data->>'avatar_url', ''),
     new.raw_user_meta_data->>'country',
     new.raw_user_meta_data->>'phone_number',
     new.raw_user_meta_data->>'state'

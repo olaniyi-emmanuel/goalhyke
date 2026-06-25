@@ -1,11 +1,16 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import CommunitiesSection from "./CommunitiesSection";
 
-const Footer = () => {
+interface FooterProps {
+  showCommunities?: boolean;
+}
+
+const Footer = ({ showCommunities = true }: FooterProps) => {
   return (
     <>
-      <CommunitiesSection />
+      {showCommunities ? <CommunitiesSection /> : null}
       <footer className="w-full bg-[#0f1420] px-4 py-[52px]">
         <div className="gh-shell flex flex-col justify-between gap-12 rounded-[28px] border border-white/8 bg-[#12171d] px-6 py-10 lg:flex-row lg:gap-0 lg:px-12">
           {/* Left Section - Logo & Copyright */}
@@ -45,12 +50,12 @@ const Footer = () => {
                 General
               </h3>
               <div className="flex flex-col gap-2.5">
-                <a
+                <Link
                   href="/#about-us"
                   className="text-white/82 font-secondary text-[14px] transition-colors hover:text-white"
                 >
                   About us
-                </a>
+                </Link>
                 <a
                   href="mailto:support@goalhyke.com"
                   className="text-white/82 font-secondary text-[14px] transition-colors hover:text-white"
@@ -69,18 +74,18 @@ const Footer = () => {
             {/* Legal Column */}
             <div className="flex flex-col gap-4 mt-0 md:mt-[44px]">
               <div className="flex flex-col gap-2.5">
-                <a
-                  href="#"
+                <Link
+                  href="/terms"
                   className="text-white/82 font-secondary text-[14px] transition-colors hover:text-white"
                 >
                   Terms of Use
-                </a>
-                <a
-                  href="#"
+                </Link>
+                <Link
+                  href="/privacy"
                   className="text-white/82 font-secondary text-[14px] transition-colors hover:text-white"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </div>
             </div>
           </div>

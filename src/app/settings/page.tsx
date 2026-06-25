@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import SearchableCountrySelect from "@/components/SearchableCountrySelect";
 import { countries, countryStates } from "@/lib/countries";
+import InitialsAvatar from "@/components/InitialsAvatar";
 
 const resizeImage = (file: File): Promise<Blob> => {
   return new Promise((resolve, reject) => {
@@ -361,7 +362,7 @@ export default function Settings() {
     const refereeObj = {
       name: refereePrefs.defaultRefereeName,
       email: refereePrefs.defaultRefereeEmail,
-      avatar: "/images/nav-avatar.png",
+      avatar: "",
     };
     localStorage.setItem("goalhyke_referee", JSON.stringify(refereeObj));
 
@@ -533,12 +534,11 @@ export default function Settings() {
                 {/* Avatar Uploader Grid */}
                 <div className="flex flex-col sm:flex-row items-center gap-6 pb-4 border-b border-gray-100">
                   <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#7655fb]/20 bg-gray-50 flex items-center justify-center group shadow-sm">
-                    <Image
-                      src={profile.avatarUrl || "/images/nav-avatar.png"}
-                      alt="Avatar Preview"
-                      fill
-                      className="object-cover"
-                      unoptimized
+                    <InitialsAvatar
+                      src={profile.avatarUrl}
+                      name={profile.name || profile.username || user?.email || "User"}
+                      seed={user?.id}
+                      size={96}
                     />
                     <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-[11px] font-bold uppercase tracking-wider">
                       Upload

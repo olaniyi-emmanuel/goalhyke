@@ -111,7 +111,12 @@ const GoalChallengesForm = ({
         {/* Floating Mascot */}
         <div className="absolute right-[-40px] top-[180px] w-[80px] h-[80px] bg-[#7655fb] rounded-full flex items-center justify-center shadow-xl z-20 hidden lg:flex">
           <div className="relative w-12 h-12">
-            <Image src="/images/nav-avatar.png" alt="Mascot" fill className="object-cover rounded-full" />
+            <Image
+              src="/images/progress-consistency-character.png"
+              alt="Mascot"
+              fill
+              className="object-contain"
+            />
           </div>
         </div>
       </div>

@@ -249,12 +249,18 @@ JSON schema:
       });
     }
 
+    const referer =
+      Deno.env.get("SITE_URL") ??
+      Deno.env.get("PUBLIC_SITE_URL") ??
+      Deno.env.get("NEXT_PUBLIC_SITE_URL") ??
+      "https://goalhyke.com";
+
     const response = await fetch(openrouterUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${API_KEY}`,
-        "HTTP-Referer": "http://localhost:3000",
+        "HTTP-Referer": referer,
         "X-Title": "GoalHyke"
       },
       body: JSON.stringify({

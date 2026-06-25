@@ -150,7 +150,7 @@ export default function Goals() {
     <main className="min-h-screen bg-[#f4f6fb]">
       <NavigationRegistered />
 
-      <div className="flex max-w-[1280px] mx-auto min-h-[calc(100vh-110px)]">
+      <div className="gh-page-end-gap flex max-w-[1280px] mx-auto min-h-[calc(100vh-110px)]">
         {/* Sidebar */}
         <Sidebar />
 

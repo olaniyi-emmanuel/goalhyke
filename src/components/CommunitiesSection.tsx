@@ -1,5 +1,5 @@
 import React from "react";
-import Image from "next/image";
+import Link from "next/link";
 
 const CommunitiesSection = () => {
   const categories = [
@@ -29,13 +29,13 @@ const CommunitiesSection = () => {
           {categories.map((group, i) => (
             <div key={i} className="flex flex-col gap-4">
               {group.map((category) => (
-                <a
+                <Link
                   key={category}
-                  href="#"
+                  href="/links"
                   className="text-white/90 font-secondary text-[15px] hover:text-white hover:translate-x-1 transition-all inline-block"
                 >
                   {category}
-                </a>
+                </Link>
               ))}
             </div>
           ))}
