@@ -15,8 +15,32 @@ import Footer from "@/components/Footer";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default async function Home() {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }> | { [key: string]: string | string[] | undefined };
+}
+
+export default async function Home({ searchParams }: PageProps) {
+  const resolvedParams = searchParams instanceof Promise ? await searchParams : searchParams;
+  const error = resolvedParams?.error;
+  const errorCode = resolvedParams?.error_code;
+  const errorDescription = resolvedParams?.error_description;
+  const code = resolvedParams?.code;
+
+  if (error || errorCode || errorDescription) {
+    const errorMsg = errorDescription || error || `Authentication failed: ${errorCode || "unknown error"}`;
+    const errorString = Array.isArray(errorMsg) ? errorMsg[0] : errorMsg;
+    redirect(`/login?error=${encodeURIComponent(errorString)}`);
+  }
+
+  if (code) {
+    const codeString = Array.isArray(code) ? code[0] : code;
+    const next = resolvedParams?.next;
+    const nextString = Array.isArray(next) ? next[0] : next;
+    redirect(`/auth/callback?code=${encodeURIComponent(codeString)}${nextString ? `&next=${encodeURIComponent(nextString)}` : ""}`);
+  }
+
   const supabase = await createClient();
   const {
     data: { session },

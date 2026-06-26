@@ -213,7 +213,7 @@ function SignupContent() {
     }
   };
 
-  const handleAppleLogin = async () => {
+  const handleLinkedInLogin = async () => {
     setError(null);
     const supabase = createClient();
     
@@ -225,7 +225,7 @@ function SignupContent() {
     }
 
     const { error: oAuthError } = await supabase.auth.signInWithOAuth({
-      provider: "apple",
+      provider: "linkedin_oidc",
       options: {
         redirectTo: redirectUrl,
       },
@@ -511,12 +511,14 @@ function SignupContent() {
                     </button>
                     <button
                       type="button"
-                      onClick={handleAppleLogin}
+                      onClick={handleLinkedInLogin}
                       disabled={isLoading}
-                      className="flex h-[58px] items-center justify-center gap-3 rounded-[22px] bg-[#20232d] px-4 text-[14px] font-semibold text-white transition-colors hover:bg-[#161922] disabled:opacity-50"
+                      className="flex h-[58px] items-center justify-center gap-3 rounded-[22px] bg-[#0077b5] px-4 text-[14px] font-semibold text-white transition-colors hover:bg-[#005987] disabled:opacity-50"
                     >
-                      <Image src="/images/apple-icon.svg" width={20} height={24} alt="Apple" />
-                      Sign in with Apple
+                      <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.23 0H1.77C.8 0 0 .77 0 1.72v20.56C0 23.23.8 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.2 0 22.23 0zM7.12 20.45H3.56V9H7.12v11.45zM5.34 7.43c-1.14 0-2.06-.92-2.06-2.06 0-1.14.92-2.06 2.06-2.06 1.14 0 2.06.92 2.06 2.06 0 1.14-.92 2.06-2.06 2.06zm15.11 13.02h-3.56v-5.6c0-1.34-.03-3.05-1.86-3.05-1.86 0-2.14 1.45-2.14 2.95v5.7H9.33V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29z"/>
+                      </svg>
+                      Sign in with LinkedIn
                     </button>
                   </div>
 

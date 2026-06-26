@@ -237,6 +237,7 @@ export default function Links() {
   };
 
   const fetchConversations = async () => {
+    if (!user) return;
     try {
       const supabase = createClient();
       const list = await ChatService.getConversations(supabase, user.id);
@@ -387,6 +388,7 @@ export default function Links() {
 
   // Load messages on active conversation shift
   useEffect(() => {
+    if (!user) return;
     if (activeConvId) {
       fetchMessagesForActiveConv(activeConvId);
       setTypingUsers({});
@@ -535,6 +537,7 @@ export default function Links() {
 
   // DM trigger from connections list
   const handleStartDM = async (buddyId: string) => {
+    if (!user) return;
     try {
       const supabase = createClient();
       const conv = await ChatService.getOrCreateDM(supabase, user.id, buddyId);
@@ -856,6 +859,7 @@ export default function Links() {
 
   // Toggle emoji reaction
   const handleToggleReaction = async (msgId: string, emoji: string) => {
+    if (!user) return;
     try {
       const supabase = createClient();
       await ChatService.toggleReaction(supabase, msgId, user.id, emoji);
@@ -935,6 +939,7 @@ export default function Links() {
   };
 
   const handleAcceptRequest = async (connectionId: string) => {
+    if (!user) return;
     try {
       const supabase = createClient();
       await supabase.from("accountability_connections").update({ status: "active" }).eq("id", connectionId);
@@ -945,6 +950,7 @@ export default function Links() {
   };
 
   const handleRejectRequest = async (connectionId: string) => {
+    if (!user) return;
     try {
       const supabase = createClient();
       await supabase.from("accountability_connections").delete().eq("id", connectionId);
@@ -955,6 +961,7 @@ export default function Links() {
   };
 
   const handleDisconnect = async (connectionId: string) => {
+    if (!user) return;
     if (!confirm("Are you sure?")) return;
     try {
       const supabase = createClient();
@@ -966,6 +973,7 @@ export default function Links() {
   };
 
   const handleToggleComplete = async (meetingId: string, currentCompleted: boolean) => {
+    if (!user) return;
     if (meetingId.startsWith("mock-")) {
       setMeetings(prev => prev.map(m => m.id === meetingId ? { ...m, isCompleted: !currentCompleted } : m));
       return;
@@ -980,6 +988,7 @@ export default function Links() {
   };
 
   const handleToggleActive = async (meetingId: string, currentActive: boolean) => {
+    if (!user) return;
     if (meetingId.startsWith("mock-")) {
       setMeetings(prev => prev.map(m => m.id === meetingId ? { ...m, isActive: !currentActive } : m));
       return;
@@ -2309,7 +2318,7 @@ export default function Links() {
                         {/* Messages Area Feed */}
                         <div className="flex-1 p-5 overflow-y-auto flex flex-col gap-4 bg-white noise-bg">
                           {messages.map((msg, index) => {
-                            const isMe = msg.sender_id === user.id;
+                            const isMe = msg.sender_id === user?.id;
                             const hasFailed = msg.is_failed;
                             const isSystem = msg.message_type === "system";
 
@@ -2390,7 +2399,7 @@ export default function Links() {
                               );
                             }
 
-                            const myAppliedReactions = msg.reactions?.filter(r => r.user_id === user.id).map(r => r.emoji) || [];
+                            const myAppliedReactions = msg.reactions?.filter(r => r.user_id === user?.id).map(r => r.emoji) || [];
 
                             return (
                               <React.Fragment key={msg.id}>

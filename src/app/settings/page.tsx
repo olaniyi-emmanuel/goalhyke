@@ -75,6 +75,7 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 export default function Settings() {
+  const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -121,6 +122,7 @@ export default function Settings() {
       try {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
+        setUser(user);
         if (user) {
           const { data: dbProfile } = await supabase
             .from("profiles")
