@@ -152,7 +152,7 @@ const GoalSelector = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onClick={(e) => e.stopPropagation()}
-                  className="bg-transparent border-none outline-none text-[15px] text-[#262525] placeholder-[#878484] w-full font-secondary"
+                  className="bg-transparent border-none outline-none text-[15px] text-[#262525] placeholder-[#878484] w-full font-secondary text-left"
                   autoFocus
                 />
               </div>
@@ -164,7 +164,7 @@ const GoalSelector = () => {
                     <div
                       key={goal}
                       onClick={() => handleSelect(goal)}
-                      className="px-3.5 py-2.5 hover:bg-[#F9FAFF] hover:text-[#7655fb] rounded-[10px] cursor-pointer font-secondary text-[15px] font-medium text-[#262525] transition-colors"
+                      className="px-3.5 py-2.5 hover:bg-[#F9FAFF] hover:text-[#7655fb] rounded-[10px] cursor-pointer font-secondary text-[15px] font-medium text-[#262525] transition-colors text-left w-full"
                     >
                       {goal}
                     </div>
