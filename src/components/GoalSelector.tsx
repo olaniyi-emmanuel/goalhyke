@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 const ChevronDown = ({ className }: { className?: string }) => (
   <svg
@@ -91,7 +92,22 @@ const GoalSelector = () => {
     setSelectedGoal(goal);
     setIsOpen(false);
     setSearchQuery(""); // Reset search on select
-    router.push(`/login?redirectTo=${encodeURIComponent(`/set-goal?category=${encodeURIComponent(goal)}`)}`);
+  };
+
+  const handleHykeClick = async () => {
+    if (!selectedGoal) {
+      alert("Please select a goal first!");
+      return;
+    }
+    const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    const targetPath = `/set-goal?category=${encodeURIComponent(selectedGoal)}`;
+    if (session) {
+      router.push(targetPath);
+    } else {
+      router.push(`/login?redirectTo=${encodeURIComponent(targetPath)}`);
+    }
   };
 
   const filteredGoals = goalsList.filter((goal) =>
@@ -161,13 +177,7 @@ const GoalSelector = () => {
 
       {/* Action Button */}
       <button
-        onClick={() => {
-          if (selectedGoal) {
-            router.push(`/login?redirectTo=${encodeURIComponent(`/set-goal?category=${encodeURIComponent(selectedGoal)}`)}`);
-          } else {
-            alert("Please select a goal first!");
-          }
-        }}
+        onClick={handleHykeClick}
         className="flex items-center justify-center w-[110px] h-[52px] bg-[#7655fb] rounded-full text-white font-secondary text-[15px] font-bold hover:bg-[#6445e0] hover:shadow-[0_12px_24px_rgba(118,85,251,0.24)] transition-all cursor-pointer shadow-md hover:translate-y-[-1px] shrink-0"
       >
         HYKE
