@@ -227,49 +227,49 @@ const NavigationRegistered = () => {
                     <Link 
                       href="/dashboard"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#262525] hover:bg-[#f4f2ff] hover:text-[#7655fb] rounded-full transition-colors font-primary"
                     >
                       Dashboard
                     </Link>
                     <Link 
                       href="/settings"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#262525] hover:bg-[#f4f2ff] hover:text-[#7655fb] rounded-full transition-colors font-primary"
                     >
                       My Profile
                     </Link>
                     <Link 
                       href="/links"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#262525] hover:bg-[#f4f2ff] hover:text-[#7655fb] rounded-full transition-colors font-primary"
                     >
                       Hyke Circle
                     </Link>
                     <Link 
                       href="/stats"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#262525] hover:bg-[#f4f2ff] hover:text-[#7655fb] rounded-full transition-colors font-primary"
                     >
                       Progress & Analytics
                     </Link>
                     <Link 
                       href="/settings"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#262525] hover:bg-[#f4f2ff] hover:text-[#7655fb] rounded-full transition-colors font-primary"
                     >
                       Settings
                     </Link>
                     <Link 
                       href="/settings#billing"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#262525] hover:bg-[#f4f2ff] hover:text-[#7655fb] rounded-full transition-colors font-primary"
                     >
                       Billing
                     </Link>
                     <a 
                       href="mailto:support@goalhyke.com"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#262525] hover:bg-[#f4f2ff] hover:text-[#7655fb] rounded-full transition-colors font-primary"
                     >
                       Help & Support
                     </a>
