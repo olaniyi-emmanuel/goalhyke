@@ -227,71 +227,71 @@ const NavigationRegistered = () => {
                     <Link 
                       href="/dashboard"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
                     >
-                      <span>🏠</span> Dashboard
+                      Dashboard
                     </Link>
                     <Link 
                       href="/settings"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
                     >
-                      <span>👤</span> My Profile
+                      My Profile
                     </Link>
                     <Link 
                       href="/goals"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
                     >
-                      <span>🎯</span> My Goals
+                      My Goals
                     </Link>
                     <Link 
                       href="/dashboard"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
                     >
-                      <span>✅</span> My Tasks
+                      My Tasks
                     </Link>
                     <Link 
                       href="/dashboard"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
                     >
-                      <span>📅</span> Planner / Calendar
+                      Planner / Calendar
                     </Link>
                     <Link 
                       href="/stats"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
                     >
-                      <span>📊</span> Progress & Analytics
+                      Progress & Analytics
                     </Link>
                     <Link 
                       href="/settings"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
                     >
-                      <span>⚙️</span> Settings
+                      Settings
                     </Link>
                     <Link 
                       href="/settings#billing"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
                     >
-                      <span>💳</span> Billing
+                      Billing
                     </Link>
                     <a 
                       href="mailto:support@goalhyke.com"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                      className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
                     >
-                      <span>❓</span> Help & Support
+                      Help & Support
                     </a>
                     <button 
                       onClick={handleLogout}
-                      className="w-full text-left flex items-center gap-3 px-3 py-2 text-[13px] font-bold text-red-500 hover:bg-red-50 rounded-full transition-colors cursor-pointer mt-1 border-none bg-transparent font-secondary"
+                      className="w-full text-left flex items-center px-4 py-2 text-[13px] font-bold text-red-500 hover:bg-red-50 rounded-full transition-colors cursor-pointer mt-1 border-none bg-transparent font-secondary"
                     >
-                      <span>🚪</span> Logout
+                      Logout
                     </button>
                   </div>
                 </div>
