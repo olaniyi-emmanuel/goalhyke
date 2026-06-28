@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito_Sans, Inter } from "next/font/google"; // Using Inter as a placeholder for Poligon
 import "./globals.css";
+import CrushITAI from "@/components/CrushITAI";
 
 const nunitoSans = Nunito_Sans({
   variable: "--font-secondary", // Mapped to Secondary
@@ -37,6 +38,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {children}
+        <CrushITAI />
       </body>
     </html>
   );

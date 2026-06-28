@@ -46,24 +46,44 @@ export default async function Home({ searchParams }: PageProps) {
     data: { session },
   } = await supabase.auth.getSession();
 
+  const user = session?.user;
+  const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0] || "GoalHyker";
+
   return (
     <main className="min-h-screen bg-white">
       <Navigation />
-      {session ? (
-        <div className="gh-shell px-4 pt-4 md:px-6 lg:px-10">
-          <Link
-            href="/dashboard"
-            className="gh-btn-secondary inline-flex px-6 py-2.5 text-[14px]"
-          >
-            Go to Dashboard
-          </Link>
-        </div>
-      ) : null}
 
       {/* Hero & Features Section */}
       <div className="max-w-[1024px] mx-auto pb-12">
-        <HeroHeadline />
-        <GoalSelector />
+        {session ? (
+          <div className="gh-shell px-4 pt-12 flex flex-col items-center gap-4 text-center mt-6">
+            <h2 className="text-[26px] sm:text-[34px] md:text-[38px] lg:text-[44px] leading-[1.2] font-medium font-primary text-[#262525]">
+              Welcome back, <span className="text-[#7655fb] font-semibold">{userName}</span> 👋
+            </h2>
+            <p className="text-[14px] sm:text-[16px] text-gray-500 max-w-[600px] leading-relaxed font-secondary">
+              Continue your journey. Establish your daily habits, lock token stakes, and conquer your milestones with accountability.
+            </p>
+            <div className="flex gap-4 mt-4 flex-wrap justify-center">
+              <Link
+                href="/dashboard"
+                className="gh-btn-primary px-8 py-3 text-[14px] font-bold"
+              >
+                CONTINUE TO DASHBOARD
+              </Link>
+              <Link
+                href="/set-goal"
+                className="gh-btn-secondary px-8 py-3 text-[14px] font-bold"
+              >
+                SET NEW GOAL
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <>
+            <HeroHeadline />
+            <GoalSelector />
+          </>
+        )}
 
         {/* Dashboard Preview */}
         <div className="relative w-full max-w-[960px] mx-auto mt-[20px] lg:mt-[24px] px-4">

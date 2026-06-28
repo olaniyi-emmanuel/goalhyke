@@ -179,7 +179,7 @@ function SignupContent() {
       setSuccess(true);
       setIsLoading(false);
       if (signUpData?.session) {
-        const target = redirectTo || "/dashboard";
+        const target = redirectTo || "/";
         router.push(target);
         router.refresh();
       } else {

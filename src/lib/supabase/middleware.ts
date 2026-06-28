@@ -45,11 +45,13 @@ if (publicRoutes.includes(request.nextUrl.pathname)) {
                           request.nextUrl.pathname.startsWith('/goals') ||
                           request.nextUrl.pathname.startsWith('/links') ||
                           request.nextUrl.pathname.startsWith('/stats') ||
-                          request.nextUrl.pathname.startsWith('/settings');
+                          request.nextUrl.pathname.startsWith('/settings') ||
+                          request.nextUrl.pathname.startsWith('/get-token');
 
   if (isProtectedRoute && !user) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
+    url.searchParams.set("redirectTo", request.nextUrl.pathname + request.nextUrl.search);
     return NextResponse.redirect(url);
   }
 

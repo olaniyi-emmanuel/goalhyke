@@ -23,7 +23,7 @@ function LoginContent() {
     const supabase = createClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        const target = redirectTo || "/dashboard";
+        const target = redirectTo || "/";
         router.push(target);
       }
     });
@@ -64,7 +64,7 @@ function LoginContent() {
         router.push("/verify-email");
       }
     } else {
-      const target = redirectTo || "/dashboard";
+      const target = redirectTo || "/";
       router.push(target);
       router.refresh();
     }

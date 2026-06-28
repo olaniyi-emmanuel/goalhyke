@@ -419,3 +419,41 @@ body {
     @apply inline-flex items-center rounded-full bg-[#eef2ff] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[#7655fb];
   }
 }
+
+/* ──────────────────────────────────────────────
+   Global Font Scaling Overrides (+3% from baseline)
+   ────────────────────────────────────────────── */
+html, body {
+  font-size: 103% !important;
+}
+
+.text-sm { font-size: 14.42px !important; }
+.text-\[8px\] { font-size: 8.24px !important; }
+.text-\[9px\] { font-size: 9.27px !important; }
+.text-\[9\.5px\] { font-size: 9.785px !important; }
+.text-\[10px\] { font-size: 10.3px !important; }
+.text-\[11px\] { font-size: 11.33px !important; }
+.text-\[12px\] { font-size: 12.36px !important; }
+.text-\[13px\] { font-size: 13.39px !important; }
+.text-\[14px\] { font-size: 14.42px !important; }
+.text-\[15px\] { font-size: 15.45px !important; }
+.text-\[16px\] { font-size: 16.48px !important; }
+.text-\[17px\] { font-size: 17.51px !important; }
+.text-\[18px\] { font-size: 18.54px !important; }
+.text-\[19px\] { font-size: 19.57px !important; }
+.text-\[20px\] { font-size: 20.6px !important; }
+.text-\[22px\] { font-size: 22.66px !important; }
+.text-\[24px\] { font-size: 24.72px !important; }
+.text-\[26px\] { font-size: 26.78px !important; }
+.text-\[28px\] { font-size: 28.84px !important; }
+.text-\[30px\] { font-size: 30.9px !important; }
+.text-\[32px\] { font-size: 32.96px !important; }
+.text-\[34px\] { font-size: 35.02px !important; }
+.text-\[35px\] { font-size: 36.05px !important; }
+.text-\[38px\] { font-size: 39.14px !important; }
+.text-\[40px\] { font-size: 41.2px !important; }
+.text-\[44px\] { font-size: 45.32px !important; }
+.text-\[45px\] { font-size: 46.35px !important; }
+.text-\[46px\] { font-size: 47.38px !important; }
+.text-\[48px\] { font-size: 49.44px !important; }
+
