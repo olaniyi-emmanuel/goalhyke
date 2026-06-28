@@ -116,7 +116,7 @@ const GoalSelector = () => {
 
   return (
     <div className="flex flex-col items-center w-full mt-[24px] lg:mt-[36px]">
-      <p className="font-secondary text-[18px] md:text-[20px] text-[#262525] mb-4 font-medium">
+      <p className="font-primary text-[18px] md:text-[20px] text-[#262525] mb-4 font-medium">
         I pursue to
       </p>
       <div className="flex flex-col md:flex-row items-center justify-center gap-[15px] md:gap-[24px] px-4 w-full relative z-50">
@@ -127,7 +127,7 @@ const GoalSelector = () => {
             className="flex items-center justify-between w-full h-[52px] px-4 border border-[#e4e8f2] bg-[#fbfbff] rounded-[18px] cursor-pointer hover:border-[#7655fb] transition-colors"
           >
             <span
-              className={`font-secondary text-[15px] ${
+              className={`font-primary text-[15px] ${
                 selectedGoal ? "text-[#262525] font-bold" : "text-[#717070]"
               }`}
             >
@@ -152,7 +152,7 @@ const GoalSelector = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onClick={(e) => e.stopPropagation()}
-                  className="bg-transparent border-none outline-none text-[15px] text-[#262525] placeholder-[#878484] w-full font-secondary text-left"
+                  className="bg-transparent border-none outline-none text-[15px] text-[#262525] placeholder-[#878484] w-full font-primary text-left"
                   autoFocus
                 />
               </div>
@@ -164,13 +164,13 @@ const GoalSelector = () => {
                     <div
                       key={goal}
                       onClick={() => handleSelect(goal)}
-                      className="px-3.5 py-2.5 hover:bg-[#F9FAFF] hover:text-[#7655fb] rounded-[10px] cursor-pointer font-secondary text-[15px] font-medium text-[#262525] transition-colors text-left w-full"
+                      className="px-3.5 py-2.5 hover:bg-[#F9FAFF] hover:text-[#7655fb] rounded-[10px] cursor-pointer font-primary text-[15px] font-medium text-[#262525] transition-colors text-left w-full"
                     >
                       {goal}
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-3 text-gray-500 font-secondary text-sm">
+                  <div className="text-center py-3 text-gray-500 font-primary text-sm">
                     No goals found
                   </div>
                 )}
@@ -182,7 +182,7 @@ const GoalSelector = () => {
         {/* Action Button */}
         <button
           onClick={handleHykeClick}
-          className="flex items-center justify-center w-[110px] h-[52px] bg-[#7655fb] rounded-full text-white font-secondary text-[15px] font-bold hover:bg-[#6445e0] hover:shadow-[0_12px_24px_rgba(118,85,251,0.24)] transition-all cursor-pointer shadow-md hover:translate-y-[-1px] shrink-0"
+          className="flex items-center justify-center w-[110px] h-[52px] bg-[#7655fb] rounded-full text-white font-primary text-[15px] font-bold hover:bg-[#6445e0] hover:shadow-[0_12px_24px_rgba(118,85,251,0.24)] transition-all cursor-pointer shadow-md hover:translate-y-[-1px] shrink-0"
         >
           HYKE
         </button>

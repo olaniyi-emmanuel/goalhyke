@@ -198,7 +198,7 @@ const Navigation = () => {
                     size={36}
                     className="shrink-0 border border-white"
                   />
-                  <span className="text-white text-[13px] font-bold tracking-wide font-secondary truncate max-w-[100px]">
+                  <span className="text-white text-[13px] font-bold tracking-wide font-primary truncate max-w-[100px]">
                     {user?.user_metadata?.full_name?.split(" ")[0] || user?.user_metadata?.name?.split(" ")[0] || "Account"}
                   </span>
                   <div className="shrink-0">
@@ -229,69 +229,69 @@ const Navigation = () => {
                         <Link 
                           href="/dashboard"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
                         >
                           Dashboard
                         </Link>
                         <Link 
                           href="/settings"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
                         >
                           My Profile
                         </Link>
                         <Link 
                           href="/goals"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
                         >
                           My Goals
                         </Link>
                         <Link 
                           href="/dashboard"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
                         >
                           My Tasks
                         </Link>
                         <Link 
                           href="/dashboard"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
                         >
                           Planner / Calendar
                         </Link>
                         <Link 
                           href="/stats"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
                         >
                           Progress & Analytics
                         </Link>
                         <Link 
                           href="/settings"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
                         >
                           Settings
                         </Link>
                         <Link 
                           href="/settings#billing"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
                         >
                           Billing
                         </Link>
                         <a 
                           href="mailto:support@goalhyke.com"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-secondary"
+                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
                         >
                           Help & Support
                         </a>
                         <button 
                           onClick={handleLogout}
-                          className="w-full text-left flex items-center px-4 py-2 text-[13px] font-bold text-red-500 hover:bg-red-50 rounded-full transition-colors cursor-pointer mt-1 border-none bg-transparent font-secondary"
+                          className="w-full text-left flex items-center px-4 py-2 text-[13px] font-bold text-red-500 hover:bg-red-50 rounded-full transition-colors cursor-pointer mt-1 border-none bg-transparent font-primary"
                         >
                           Logout
                         </button>
