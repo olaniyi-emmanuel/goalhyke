@@ -58,24 +58,11 @@ export default async function Home({ searchParams }: PageProps) {
         {session ? (
           <div className="gh-shell px-4 pt-12 flex flex-col items-center gap-4 text-center mt-6">
             <h2 className="text-[26px] sm:text-[34px] md:text-[38px] lg:text-[44px] leading-[1.2] font-medium font-primary text-[#262525]">
-              Welcome back, <span className="text-[#7655fb] font-semibold">{userName}</span> 👋
+              Welcome back, <span className="text-[#7655fb] font-semibold">{userName}</span>
             </h2>
-            <p className="text-[14px] sm:text-[16px] text-gray-500 max-w-[600px] leading-relaxed font-secondary">
-              Continue your journey. Establish your daily habits, lock token stakes, and conquer your milestones with accountability.
-            </p>
-            <div className="flex gap-4 mt-4 flex-wrap justify-center">
-              <Link
-                href="/dashboard"
-                className="gh-btn-primary px-8 py-3 text-[14px] font-bold"
-              >
-                CONTINUE TO DASHBOARD
-              </Link>
-              <Link
-                href="/set-goal"
-                className="gh-btn-secondary px-8 py-3 text-[14px] font-bold"
-              >
-                SET NEW GOAL
-              </Link>
+            <div className="w-full">
+              <HeroHeadline />
+              <GoalSelector />
             </div>
           </div>
         ) : (
