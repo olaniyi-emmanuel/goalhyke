@@ -124,7 +124,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [tokenBalance, setTokenBalance] = useState<number>(0);
   const [rechargeToast, setRechargeToast] = useState<{ show: boolean; amount: number } | null>(null);
-  const [fullName, setFullName] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [shareToast, setShareToast] = useState<{ show: boolean; message: string } | null>(null);
 
@@ -147,16 +147,20 @@ export default function Dashboard() {
           return;
         }
 
-        // 1. Fetch user's token balance and full name from public.profiles
+        // 1. Fetch user's token balance and first name from public.profiles
         const { data: profileData } = await supabase
           .from("profiles")
-          .select("tokens, full_name")
+          .select("tokens, full_name, first_name")
           .eq("id", user.id)
           .single();
 
         let currentTokens = profileData?.tokens ?? 0;
         setTokenBalance(currentTokens);
-        setFullName(profileData?.full_name || user?.user_metadata?.full_name || user?.user_metadata?.name || "GoalHyker");
+
+        const rawFirstName = profileData?.first_name || user?.user_metadata?.first_name;
+        const rawFullName = profileData?.full_name || user?.user_metadata?.full_name || user?.user_metadata?.name || "";
+        const resolvedFirstName = rawFirstName || rawFullName.trim().split(/\s+/)[0] || "GoalHyker";
+        setFirstName(resolvedFirstName);
 
         // 2. Check for URL redirect parameters from Paystack
         const params = new URLSearchParams(window.location.search);
@@ -534,7 +538,7 @@ export default function Dashboard() {
             <div className="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border-b border-gray-100 pb-6">
               <div>
                 <h1 className="text-[32px] font-bold text-[#262525]">
-                  Welcome, {fullName || "User"}!
+                  Welcome, {firstName || "User"}!
                 </h1>
                 <p className="text-[14px] text-[#6f6f78] mt-1">
                   Here is a snapshot of your habits and commitments today.

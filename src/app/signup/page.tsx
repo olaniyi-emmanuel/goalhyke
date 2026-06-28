@@ -15,7 +15,8 @@ function SignupContent() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo");
 
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -139,7 +140,7 @@ function SignupContent() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !email || !password || !confirmPassword) {
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
       setError("Please fill in all fields.");
       return;
     }
@@ -161,7 +162,9 @@ function SignupContent() {
       password,
       options: {
         data: {
-          full_name: fullName,
+          first_name: firstName,
+          last_name: lastName,
+          full_name: `${firstName} ${lastName}`.trim(),
           username: email.split("@")[0],
           country: country,
           phone_number: fullPhoneNumber,
@@ -281,15 +284,30 @@ function SignupContent() {
                   )}
 
                   <div className="grid gap-5 md:grid-cols-2">
-                    <div className="flex flex-col gap-1.5 md:col-span-2">
+                    <div className="flex flex-col gap-1.5">
                       <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
-                        Full name
+                        First name
                       </label>
                       <input
                         type="text"
-                        placeholder="Enter your full name"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="First name"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        disabled={isLoading}
+                        className="gh-input"
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                        Last name
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Last name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
                         disabled={isLoading}
                         className="gh-input"
                         required

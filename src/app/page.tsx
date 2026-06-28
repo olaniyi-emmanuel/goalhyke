@@ -47,7 +47,9 @@ export default async function Home({ searchParams }: PageProps) {
   } = await supabase.auth.getSession();
 
   const user = session?.user;
-  const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0] || "GoalHyker";
+  const rawFirstName = user?.user_metadata?.first_name;
+  const rawFullName = user?.user_metadata?.full_name || user?.user_metadata?.name || "";
+  const resolvedFirstName = rawFirstName || rawFullName.trim().split(/\s+/)[0] || user?.email?.split("@")[0] || "GoalHyker";
 
   return (
     <main className="min-h-screen bg-white">
@@ -58,7 +60,7 @@ export default async function Home({ searchParams }: PageProps) {
         {session ? (
           <div className="gh-shell px-4 pt-12 flex flex-col items-center gap-4 text-center mt-6">
             <h2 className="text-[26px] sm:text-[34px] md:text-[38px] lg:text-[44px] leading-[1.2] font-medium font-primary text-[#262525]">
-              Welcome back, <span className="text-[#7655fb] font-semibold">{userName}</span>
+              Welcome back, <span className="text-[#7655fb] font-semibold">{resolvedFirstName}</span>
             </h2>
             <div className="w-full">
               <HeroHeadline />
