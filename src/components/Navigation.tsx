@@ -248,11 +248,23 @@ const Navigation = () => {
                           My Goals
                         </Link>
                         <Link 
-                          href="/dashboard"
-                          onClick={() => setDropdownOpen(false)}
+                          href="/dashboard#tasks"
+                          onClick={() => {
+                            setDropdownOpen(false);
+                            setTimeout(() => {
+                              window.dispatchEvent(new HashChangeEvent("hashchange"));
+                            }, 50);
+                          }}
                           className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
                         >
                           My Tasks
+                        </Link>
+                        <Link 
+                          href="/links"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:bg-[#f3f6ff] hover:text-[#4169e1] rounded-full transition-colors font-primary"
+                        >
+                          Hyke Circle
                         </Link>
                         <Link 
                           href="/dashboard"

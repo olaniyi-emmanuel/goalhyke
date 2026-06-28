@@ -53,6 +53,20 @@ const renderIcon = (label: string) => {
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const [isExpanded, setIsExpanded] = React.useState(false);
+
+  React.useEffect(() => {
+    const saved = localStorage.getItem("sidebar_expanded");
+    if (saved === "true") {
+      setIsExpanded(true);
+    }
+  }, []);
+
+  const toggleExpand = () => {
+    const nextState = !isExpanded;
+    setIsExpanded(nextState);
+    localStorage.setItem("sidebar_expanded", nextState ? "true" : "false");
+  };
 
   const handleLogout = async () => {
     if (confirm("Are you sure you want to log out?")) {
@@ -86,20 +100,37 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="hidden lg:flex flex-col w-[115px] bg-[#f4f6fb] min-h-[calc(100vh-110px)] py-10 items-center border-r border-[#eceff7]">
+    <aside 
+      className={`hidden lg:flex flex-col bg-[#f4f6fb] min-h-[calc(100vh-110px)] py-10 border-r border-[#eceff7] transition-all duration-300 ease-in-out shrink-0 select-none ${
+        isExpanded ? "w-[240px] px-5" : "w-[100px] px-2 items-center"
+      }`}
+    >
       {/* Menu Toggle / Top Icon */}
-      <div className="mb-12 cursor-pointer text-[#7d859a] hover:text-[#4169e1] transition-colors p-2 rounded-xl hover:bg-[#eceff7]/50">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
+      <div className={`mb-12 flex w-full ${isExpanded ? "justify-start pl-3" : "justify-center"}`}>
+        <div 
+          onClick={toggleExpand}
+          className="cursor-pointer text-[#7d859a] hover:text-[#4169e1] transition-colors p-2 rounded-xl hover:bg-[#eceff7]/50"
+          title={isExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            {isExpanded ? (
+              <path d="M15 19l-7-7 7-7" />
+            ) : (
+              <>
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </>
+            )}
+          </svg>
+        </div>
       </div>
 
       {/* Navigation Items */}
-      <div className="flex flex-col gap-6 w-full items-center">
+      <div className="flex flex-col gap-4 w-full">
         {menuItems.map((item, index) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+          const displayName = item.label === "Links" ? "Hyke Circle" : item.label;
           return (
             <Link
               key={index}
@@ -109,14 +140,25 @@ const Sidebar = () => {
                   window.dispatchEvent(new CustomEvent("nav-links-clicked"));
                 }
               }}
-              className={`flex items-center justify-center w-[54px] h-[54px] rounded-[18px] transition-all duration-300 relative group ${
+              className={`flex items-center rounded-[18px] transition-all duration-300 relative group font-primary font-bold text-[14px] ${
+                isExpanded 
+                  ? "w-full px-4 py-3 justify-start gap-4" 
+                  : "w-[54px] h-[54px] justify-center mx-auto"
+              } ${
                 isActive 
                   ? "bg-gradient-to-br from-[#4169e1] to-[#7655fb] text-white shadow-[0_10px_25px_rgba(118,85,251,0.25)]" 
                   : "text-[#7d859a] hover:text-[#4169e1] hover:bg-[#eceff7]/50"
               }`}
-              title={item.label}
+              title={isExpanded ? undefined : displayName}
             >
-              {renderIcon(item.label)}
+              <div className="shrink-0">
+                {renderIcon(item.label)}
+              </div>
+              {isExpanded && (
+                <span className="animate-in fade-in slide-in-from-left-2 duration-200">
+                  {displayName}
+                </span>
+              )}
             </Link>
           );
         })}
@@ -126,17 +168,28 @@ const Sidebar = () => {
       <div className="flex-1"></div>
 
       {/* Bottom Actions */}
-      <div className="flex flex-col gap-6 items-center mt-auto">
+      <div className="w-full flex flex-col items-center">
         <button 
           onClick={handleLogout} 
-          className="cursor-pointer border-none bg-transparent outline-none flex items-center justify-center w-[54px] h-[54px] rounded-[18px] text-[#7d859a] hover:text-red-500 hover:bg-red-50 transition-all duration-200"
-          title="Log out"
+          className={`cursor-pointer border-none bg-transparent outline-none flex items-center text-[#7d859a] hover:text-red-500 hover:bg-red-50 transition-all duration-200 font-primary font-bold text-[14px] ${
+            isExpanded 
+              ? "w-full px-4 py-3 justify-start gap-4" 
+              : "w-[54px] h-[54px] justify-center"
+          }`}
+          title={isExpanded ? undefined : "Log out"}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
+          <div className="shrink-0">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </div>
+          {isExpanded && (
+            <span className="animate-in fade-in slide-in-from-left-2 duration-200">
+              Logout
+            </span>
+          )}
         </button>
       </div>
     </aside>

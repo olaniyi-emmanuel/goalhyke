@@ -191,12 +191,30 @@ export default function CrushITAI() {
       setIsMinimized(true);
     }
 
+    // Hash/Query check for automatic task tab opening
+    const checkUrlParams = () => {
+      const hash = window.location.hash;
+      const params = new URLSearchParams(window.location.search);
+      if (hash === "#tasks" || params.get("open") === "tasks") {
+        setIsOpen(true);
+        setIsMinimized(false);
+        setActiveTab("tasks");
+        localStorage.setItem("crushit_open_state", "true");
+      }
+    };
+
+    checkUrlParams();
+    window.addEventListener("hashchange", checkUrlParams);
+    window.addEventListener("popstate", checkUrlParams);
+
     // Hide tooltip after 8 seconds
     const timer = setTimeout(() => setShowTooltip(false), 8000);
 
     return () => {
       subscription.unsubscribe();
       clearTimeout(timer);
+      window.removeEventListener("hashchange", checkUrlParams);
+      window.removeEventListener("popstate", checkUrlParams);
     };
   }, []);
 
