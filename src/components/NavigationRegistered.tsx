@@ -101,7 +101,7 @@ const NavigationRegistered = () => {
           {[
             { text: "HOW IT WORKS", href: "/#how-it-works" },
             { text: "ABOUT US", href: "/#about-us" },
-            { text: "HELP CENTER", href: "mailto:support@goalhyke.com" }
+            { text: "HELP CENTER", href: "/support" }
           ].map((item) => (
             <Link
               key={item.text}
@@ -266,13 +266,13 @@ const NavigationRegistered = () => {
                     >
                       Billing
                     </Link>
-                    <a 
-                      href="mailto:support@goalhyke.com"
+                    <Link 
+                      href="/support"
                       onClick={() => setDropdownOpen(false)}
                       className="flex items-center px-4 py-2 text-[13px] font-bold text-[#262525] hover:bg-[#f4f2ff] hover:text-[#7655fb] rounded-full transition-colors font-primary"
                     >
                       Help & Support
-                    </a>
+                    </Link>
                     <button 
                       onClick={handleLogout}
                       className="w-full text-left flex items-center px-4 py-2 text-[13px] font-bold text-red-500 hover:bg-red-50 rounded-full transition-colors cursor-pointer mt-1 border-none bg-transparent font-primary"
@@ -374,7 +374,7 @@ const NavigationRegistered = () => {
               {[
                 { text: "HOW IT WORKS", href: "/#how-it-works" },
                 { text: "ABOUT US", href: "/#about-us" },
-                { text: "HELP CENTER", href: "mailto:support@goalhyke.com" }
+                { text: "HELP CENTER", href: "/support" }
               ].map((item) => (
                 <Link
                   key={item.text}

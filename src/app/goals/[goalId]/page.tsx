@@ -497,6 +497,8 @@ export default function GoalDashboardDetailPage() {
 
   const nextReportDue = goal.metadata?.next_report_due || formatShortMonthDay(goal.start_date);
   const reportTime = goal.metadata?.report_time || "12:00 AM CAT";
+  const successfulPeriods = submissions.filter((submission) => submission.verified === "verified").length;
+  const unsuccessfulPeriods = submissions.filter((submission) => submission.verified === "failed").length;
   const contractId = goal.id === fallbackGoal.id ? "122345" : goal.id.slice(0, 6);
   const contractLengthLabel = `${totalWeeks} ${totalWeeks === 1 ? "(week)" : "(weeks)"}`;
   const reportEntries = useMemo(() => {
@@ -683,35 +685,48 @@ export default function GoalDashboardDetailPage() {
               <div className="gh-panel p-6 md:p-8">
                 <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_260px]">
                   <section className="min-w-0">
-                    <div className="mb-8 flex items-center justify-between border-b border-[#eceff7] pb-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[14px] text-gray-500 font-semibold font-secondary">Goal Status:</span>
-                        <span className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] ${
-                          goal.status === "completed" 
-                            ? "bg-green-100 text-green-700" 
-                            : goal.status === "failed"
-                            ? "bg-red-100 text-red-600"
-                            : "bg-[#eef2ff] text-[#7655fb]"
-                        }`}>
-                          {goal.status || "active"}
-                        </span>
+                    <div className="mb-8 flex flex-wrap items-center gap-4">
+                      <div className="inline-flex items-center rounded-full border border-[#dddaf8] bg-white p-1 shadow-[0_8px_24px_rgba(24,33,77,0.04)]">
+                        {[
+                          { label: "Active", active: goal.status === "active" },
+                          { label: "Completed", active: goal.status === "completed" },
+                        ].map((item) => (
+                          <span
+                            key={item.label}
+                            className={`rounded-full px-5 py-2 text-[12px] font-bold transition-colors ${
+                              item.active ? "bg-[#eef2ff] text-[#7655fb]" : "text-[#7f7e87]"
+                            }`}
+                          >
+                            {item.label}
+                          </span>
+                        ))}
                       </div>
+                      {goal.status === "failed" ? (
+                        <span className="inline-flex items-center rounded-full bg-red-50 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-red-600">
+                          Failed
+                        </span>
+                      ) : null}
                     </div>
 
-                    <div className="rounded-[18px] border border-[#eceff7] bg-white p-5 shadow-[0_12px_30px_rgba(24,33,77,0.05)]">
+                    <div className="gh-panel-soft rounded-[24px] border border-[#eceff7] bg-white p-5 shadow-[0_16px_36px_rgba(24,33,77,0.06)] md:p-6">
                       <div className="flex items-start justify-between gap-4">
                         <div className="min-w-0">
                           <span className="rounded-full bg-[#f3ecff] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#7655fb]">
                             Featured
                           </span>
-                          <h1 className="mt-3 text-[20px] font-bold text-[#262525]">
+                          <h1 className="mt-3 text-[22px] font-bold text-[#262525] md:text-[24px]">
                             {goal.title}
                           </h1>
-                          <p className="mt-1 text-[12px] text-[#7f7e87]">
+                          <p className="mt-1 text-[13px] text-[#7f7e87]">
                             Week {elapsedWeeks} of {totalWeeks}
                           </p>
                         </div>
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#cfc7ff] text-[#7655fb]">
+                        <button
+                          type="button"
+                          onClick={() => setShowDetailsModal(true)}
+                          className="flex h-11 w-11 items-center justify-center rounded-full border border-[#cfc7ff] bg-white text-[#7655fb] transition-colors hover:bg-[#f7f8ff] cursor-pointer"
+                          aria-label="Open goal details"
+                        >
                           <svg
                             width="16"
                             height="16"
@@ -727,10 +742,10 @@ export default function GoalDashboardDetailPage() {
                               strokeLinejoin="round"
                             />
                           </svg>
-                        </div>
+                        </button>
                       </div>
 
-                      <div className="mt-4 flex flex-wrap gap-1.5">
+                      <div className="mt-5 flex flex-wrap gap-1.5">
                         {Array.from({ length: totalWeeks }).map((_, index) => (
                           <div
                             key={index}
@@ -745,9 +760,9 @@ export default function GoalDashboardDetailPage() {
                         ))}
                       </div>
 
-                      <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_180px]">
+                      <div className="mt-5 grid gap-6">
                         <div>
-                          <div className="grid gap-2 text-[12px] text-[#787783] sm:grid-cols-3">
+                          <div className="grid gap-3 text-[12px] text-[#787783] sm:grid-cols-3">
                             <div>
                               <p className="font-medium text-[#262525]">Next report due:</p>
                               <p className="mt-1">{nextReportDue}</p>
@@ -762,33 +777,41 @@ export default function GoalDashboardDetailPage() {
                             </div>
                           </div>
 
-                          <div className="mt-6 grid gap-2 text-[13px] text-[#555463]">
-                            <p>I commit to:</p>
-                            <p>{goal.description || "Exercise 1 day each week"}</p>
-                            <p>Successful Periods: {submissions.filter(s => s.verified === 'verified').length}</p>
-                            <p>Unsuccessful Periods: {submissions.filter(s => s.verified === 'failed').length}</p>
-                          </div>
-                        </div>
+                          <div className="mt-6 rounded-[20px] border border-[#eceff7] bg-[#fbfbff] p-4 md:p-5">
+                            <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_220px] md:items-start">
+                              <div className="grid gap-2 text-[13px] text-[#555463]">
+                                <p className="font-semibold text-[#262525]">I commit to:</p>
+                                <p>{goal.description || "Exercise 1 day each week"}</p>
+                                <p>Successful Periods: {successfulPeriods}</p>
+                                <p>Unsuccessful Periods: {unsuccessfulPeriods}</p>
+                              </div>
 
-                        <div className="rounded-[22px] border border-[#eceff7] bg-gradient-to-br from-white to-[#f4f6fb] p-5 text-[#4f5b7f] shadow-sm">
-                          <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                            Last reported
-                          </p>
-                          <p className="text-[13px] font-medium text-gray-600 mt-1">
-                            {submissions.length > 0
-                              ? `Reported on ${new Date(submissions[0].created_at).toLocaleDateString()}`
-                              : "No report submitted"}
-                          </p>
-                          <div className="my-4 border-t border-gray-100" />
-                          <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Next report due</p>
-                          <p className="mt-2 text-[26px] font-bold text-[#7655fb] tracking-tight leading-none">
-                            {nextReportDue}
-                          </p>
-                          <p className="mt-4 text-[11px] text-gray-400 font-semibold">12:00 AM CAT</p>
+                              <div className="rounded-[18px] border border-[#efe8b8] bg-gradient-to-br from-[#fffbe0] to-[#f7efb2] p-4 text-[#4f5b7f] shadow-[0_8px_18px_rgba(223,207,111,0.18)]">
+                                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#938b52]">
+                                  Last reported
+                                </p>
+                                <p className="mt-2 text-[13px] font-medium leading-relaxed text-[#6b6650]">
+                                  {submissions.length > 0
+                                    ? `Reported on ${new Date(submissions[0].created_at).toLocaleDateString()}`
+                                    : "No report submitted"}
+                                </p>
+                                <div className="my-4 border-t border-[#d8cf95]" />
+                                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#938b52]">
+                                  Next report due
+                                </p>
+                                <p className="mt-3 text-[28px] font-bold tracking-tight leading-none text-[#6d5d12]">
+                                  {nextReportDue}
+                                </p>
+                                <p className="mt-4 text-[11px] font-semibold text-[#938b52]">
+                                  {reportTime}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="mt-4 flex justify-center">
+                      <div className="mt-5 flex justify-center">
                         <button
                           type="button"
                           onClick={() => setShowDetailsModal(true)}

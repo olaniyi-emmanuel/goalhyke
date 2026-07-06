@@ -56,18 +56,18 @@ const Footer = ({ showCommunities = true }: FooterProps) => {
                 >
                   About us
                 </Link>
-                <a
-                  href="mailto:support@goalhyke.com"
+                <Link
+                  href="/support"
                   className="text-white/82 font-secondary text-[14px] transition-colors hover:text-white"
                 >
                   Help Center
-                </a>
-                <a
-                  href="mailto:support@goalhyke.com"
+                </Link>
+                <Link
+                  href="/support"
                   className="text-white/82 font-secondary text-[14px] transition-colors hover:text-white"
                 >
                   Contact Us
-                </a>
+                </Link>
               </div>
             </div>
 
