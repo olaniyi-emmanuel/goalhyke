@@ -358,7 +358,11 @@ export default function GetToken() {
         <Sidebar />
 
         <div className="flex-1 p-4 md:p-8 flex flex-col gap-6">
-          <div className="grid gap-6 lg:grid-cols-[1fr_350px]">
+          <div 
+            className={`grid gap-6 lg:grid-cols-[1fr_350px] transition-all duration-[800ms] ease-in-out ${
+              !isDetectingLocation ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+            }`}
+          >
             <section className="gh-panel p-6 md:p-8 flex flex-col gap-8">
               <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
                 <div>
@@ -396,7 +400,7 @@ export default function GetToken() {
 
               {/* Grid Header */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
-                <h2 className="text-[22px] font-bold text-[#262525]">Select a package</h2>
+                <h2 className="text-[22px] font-bold text-[#262525] font-primary">Select a package</h2>
               </div>
 
               {/* Package cards */}
@@ -425,7 +429,7 @@ export default function GetToken() {
                         )}
 
                         <div className="flex items-center justify-between">
-                          <h3 className="font-secondary text-[20px] font-semibold text-[#262525]">
+                          <h3 className="font-primary text-[20px] font-bold text-[#262525]">
                             {pkg.name}
                           </h3>
                           <div
@@ -440,7 +444,7 @@ export default function GetToken() {
                           </div>
                         </div>
 
-                        <div className="mt-5 font-secondary font-bold text-[#262525]">
+                        <div className="mt-5 font-primary font-bold text-[#262525]">
                           <span className="text-[32px] leading-none sm:text-[36px]">
                             {displayPrice}
                           </span>
@@ -450,7 +454,7 @@ export default function GetToken() {
                         </div>
 
                         <div className="mt-6 flex-grow">
-                          <p className="font-secondary text-[15px] font-bold text-[#262525]">
+                          <p className="font-primary text-[15px] font-bold text-[#262525]">
                             Benefits
                           </p>
                           <div className="mt-3 flex flex-col gap-3">
@@ -483,7 +487,7 @@ export default function GetToken() {
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-3">
-                        <h3 className="font-secondary text-[18px] font-bold text-[#262525]">Or Buy a Custom Amount</h3>
+                        <h3 className="font-primary text-[18px] font-bold text-[#262525]">Or Buy a Custom Amount</h3>
                         <div
                           className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-all ${selectedId === 4
                               ? "border-[#7655fb] bg-[#7655fb]"
@@ -522,7 +526,7 @@ export default function GetToken() {
 
                   {selectedId === 4 && (
                     <div className="mt-5 pt-4 border-t border-dashed border-[#7655fb]/20 flex flex-col gap-4 animate-in slide-in-from-top-2 duration-200">
-                      <p className="font-secondary text-[15px] font-bold text-[#262525]">
+                      <p className="font-primary text-[15px] font-bold text-[#262525]">
                         Benefits
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
@@ -556,14 +560,14 @@ export default function GetToken() {
 
               {/* Payment Info */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-[22px] border border-[#eceff7] bg-[#fbfbff] px-6 py-4">
-                <span className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90]">
+                <span className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#7a7f90] font-primary">
                   Preferred Payment Method
                 </span>
                 <div className="flex items-center gap-3">
-                  <span className="text-[14px] font-bold text-[#262525] font-secondary">
+                  <span className="text-[14px] font-bold text-[#262525] font-primary">
                     Paystack Secure Checkout
                   </span>
-                  <div className="flex items-center gap-1.5 bg-white border border-[#e2e8f0] px-2.5 py-1 rounded-[8px] shadow-sm">
+                  <div className="flex items-center gap-1.5 bg-white border border-[#e2e8f0] px-2.5 py-1 rounded-[8px] shadow-sm font-primary">
                     <span className="font-black italic text-[11px] text-[#1434CB]">{currency}</span>
                     <div className="flex -space-x-1.5">
                       <div className="h-3 w-3 rounded-full bg-[#EB001B] opacity-90" />
@@ -577,24 +581,24 @@ export default function GetToken() {
             <aside className="gh-panel flex h-fit flex-col p-6 gap-6">
               <div>
                 <span className="gh-badge mb-4">Summary</span>
-                <h2 className="text-[22px] font-bold text-[#262525]">Order Overview</h2>
+                <h2 className="text-[22px] font-bold text-[#262525] font-primary">Order Overview</h2>
                 <p className="mt-1 text-[14px] leading-6 text-[#666f85]">
                   Confirm your package details prior to loading the checkout frame.
                 </p>
               </div>
 
               {/* Current Token Balance */}
-              <div className="gh-panel-soft px-4 py-3.5 flex items-center justify-between text-[13px] text-gray-500">
+              <div className="gh-panel-soft px-4 py-3.5 flex items-center justify-between text-[13px] text-gray-500 font-primary">
                 <span className="font-medium">Current Balance</span>
                 <span className="font-bold text-[#7655fb]">{tokenBalance} tokens</span>
               </div>
 
               <div className="flex flex-col gap-4">
                 <div className="gh-panel-soft p-4">
-                  <div className="text-[12px] font-bold uppercase tracking-[0.12em] text-[#9199ad]">
+                  <div className="text-[12px] font-bold uppercase tracking-[0.12em] text-[#9199ad] font-primary">
                     Selected package
                   </div>
-                  <div className="mt-2 text-[32px] font-bold text-[#262525] leading-none">
+                  <div className="mt-2 text-[32px] font-bold text-[#262525] leading-none font-primary">
                     {selectedPackage?.amount} tokens
                   </div>
                   <div className="mt-2 text-[14px] text-[#666f85] leading-relaxed">
@@ -604,8 +608,8 @@ export default function GetToken() {
 
                 <div className="rounded-[22px] border border-[#eceff7] bg-[#fbfbff] p-4">
                   <div className="flex items-center justify-between text-[15px] text-[#666f85]">
-                    <span className="font-bold">Total price</span>
-                    <span className="text-[22px] font-bold text-[#262525]">
+                    <span className="font-bold font-primary">Total price</span>
+                    <span className="text-[22px] font-bold text-[#262525] font-primary">
                       {currency === "NGN" ? "NGN" : "$"}{" "}
                       {currency === "NGN"
                         ? selectedPackage?.prices.NGN.toLocaleString()
@@ -618,7 +622,7 @@ export default function GetToken() {
               <button
                 onClick={handleRecharge}
                 disabled={isLoading}
-                className="gh-btn-primary h-[56px] w-full text-[16px] cursor-pointer disabled:opacity-50"
+                className="gh-btn-primary h-[56px] w-full text-[16px] cursor-pointer disabled:opacity-50 font-primary"
               >
                 {isLoading ? "Redirecting..." : "Proceed to Checkout"}
               </button>
@@ -629,7 +633,7 @@ export default function GetToken() {
           <section id="transaction-history" className="gh-panel p-6 md:p-8 flex flex-col gap-6 mt-6">
             <div>
               <span className="gh-badge mb-4">Billing</span>
-              <h2 className="text-[22px] font-bold text-[#262525]">Transaction History</h2>
+              <h2 className="text-[22px] font-bold text-[#262525] font-primary">Transaction History</h2>
             </div>
 
             {isTxLoading ? (

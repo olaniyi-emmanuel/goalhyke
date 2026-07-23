@@ -458,3 +458,34 @@ html, body {
 .text-\[46px\] { font-size: 47.38px !important; }
 .text-\[48px\] { font-size: 49.44px !important; }
 
+/* ──────────────────────────────────────────────
+   Testimonial Infinite Marquee Scroll
+   ────────────────────────────────────────────── */
+.marquee-container {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  display: flex;
+  mask-image: linear-gradient(to right, transparent, white 15%, white 85%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, white 15%, white 85%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  animation: marquee-scroll 45s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-340px * 6 - 1.5rem * 6));
+  }
+}
