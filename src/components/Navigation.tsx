@@ -115,63 +115,62 @@ const Navigation = () => {
 
         {/* Desktop Auth Buttons */}
         <div className="hidden lg:inline-flex items-center shrink-0">
-          {/* Notification Bell (Global) */}
-          <div 
-            className="relative mr-[20px]"
-            onMouseLeave={() => setNotificationOpen(false)}
-          >
-            <button
-              onClick={() => setNotificationOpen(!notificationOpen)}
-              className="relative w-[40px] h-[40px] rounded-full border border-[#eceff7] bg-white flex items-center justify-center text-[#7d859a] hover:text-[#7655fb] hover:bg-[#f3f6ff]/40 shadow-sm transition-all duration-300 cursor-pointer"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-              </svg>
-              {hasUnread && (
-                <div className="absolute top-[8px] right-[10px] w-[7px] h-[7px] bg-[#ff4e68] rounded-full ring-2 ring-white animate-pulse"></div>
-              )}
-            </button>
-
-            {notificationOpen && (
-              <div className="absolute right-0 top-full pt-3 w-80 z-50 animate-in fade-in duration-200">
-                <div className="rounded-[22px] border border-[#eceff7] bg-white p-4 shadow-[0_12px_40px_rgba(24,33,77,0.12)] text-left">
-                  <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-2 px-1">
-                    <h4 className="text-[14px] font-bold text-[#262525]">Notifications</h4>
-                    {hasUnread && (
-                      <button 
-                        onClick={markAllRead}
-                        className="text-[11px] font-bold text-[#7655fb] hover:text-[#6445e0] border-none bg-transparent cursor-pointer"
-                      >
-                        Mark all read
-                      </button>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-2 max-h-60 overflow-y-auto pr-1">
-                    {notifications.map(item => (
-                      <div 
-                        key={item.id} 
-                        className={`p-2.5 rounded-[14px] transition-colors ${item.unread ? 'bg-[#f8f9ff]' : 'hover:bg-gray-50'}`}
-                      >
-                        <div className="flex justify-between items-start gap-1">
-                          <h5 className={`text-[12px] leading-tight ${item.unread ? 'font-bold text-[#262525]' : 'font-semibold text-gray-700'}`}>
-                            {item.title}
-                          </h5>
-                          <span className="text-[10px] text-gray-400 shrink-0">{item.time}</span>
-                        </div>
-                        <p className="text-[11px] text-[#666f85] mt-0.5 leading-normal">
-                          {item.description}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
           {user ? (
             <div className="flex items-center">
+              {/* Notification Bell */}
+              <div 
+                className="relative mr-[20px]"
+                onMouseLeave={() => setNotificationOpen(false)}
+              >
+                <button
+                  onClick={() => setNotificationOpen(!notificationOpen)}
+                  className="relative w-[40px] h-[40px] rounded-full border border-[#eceff7] bg-white flex items-center justify-center text-[#7d859a] hover:text-[#7655fb] hover:bg-[#f3f6ff]/40 shadow-sm transition-all duration-300 cursor-pointer"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                  {hasUnread && (
+                    <div className="absolute top-[8px] right-[10px] w-[7px] h-[7px] bg-[#ff4e68] rounded-full ring-2 ring-white animate-pulse"></div>
+                  )}
+                </button>
+
+                {notificationOpen && (
+                  <div className="absolute right-0 top-full pt-3 w-80 z-50 animate-in fade-in duration-200">
+                    <div className="rounded-[22px] border border-[#eceff7] bg-white p-4 shadow-[0_12px_40px_rgba(24,33,77,0.12)] text-left">
+                      <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-2 px-1">
+                        <h4 className="text-[14px] font-bold text-[#262525]">Notifications</h4>
+                        {hasUnread && (
+                          <button 
+                            onClick={markAllRead}
+                            className="text-[11px] font-bold text-[#7655fb] hover:text-[#6445e0] border-none bg-transparent cursor-pointer"
+                          >
+                            Mark all read
+                          </button>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2 max-h-60 overflow-y-auto pr-1">
+                        {notifications.map(item => (
+                          <div 
+                            key={item.id} 
+                            className={`p-2.5 rounded-[14px] transition-colors ${item.unread ? 'bg-[#f8f9ff]' : 'hover:bg-gray-50'}`}
+                          >
+                            <div className="flex justify-between items-start gap-1">
+                              <h5 className={`text-[12px] leading-tight ${item.unread ? 'font-bold text-[#262525]' : 'font-semibold text-gray-700'}`}>
+                                {item.title}
+                              </h5>
+                              <span className="text-[10px] text-gray-400 shrink-0">{item.time}</span>
+                            </div>
+                            <p className="text-[11px] text-[#666f85] mt-0.5 leading-normal">
+                              {item.description}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
               {/* Get Token / Create Goal */}
               <Link href="/get-token" className="gh-btn-secondary mr-[20px] px-[16px] py-[8px] text-[13px] font-bold font-secondary">
                 GET TOKEN
@@ -307,57 +306,59 @@ const Navigation = () => {
 
         {/* Mobile Menu Button */}
         <div className="lg:hidden ml-auto flex items-center gap-2">
-          <div className="relative">
-            {/* Notification Bell (Mobile) */}
-            <button
-              onClick={() => setNotificationOpen(!notificationOpen)}
-              className="relative w-[36px] h-[36px] rounded-full border border-[#eceff7] bg-white flex items-center justify-center text-[#7d859a] shadow-sm cursor-pointer"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-              </svg>
-              {hasUnread && (
-                <div className="absolute top-[6px] right-[8px] w-[7px] h-[7px] bg-[#ff4e68] rounded-full ring-2 ring-white animate-pulse"></div>
-              )}
-            </button>
+          {user && (
+            <div className="relative">
+              {/* Notification Bell (Mobile) */}
+              <button
+                onClick={() => setNotificationOpen(!notificationOpen)}
+                className="relative w-[36px] h-[36px] rounded-full border border-[#eceff7] bg-white flex items-center justify-center text-[#7d859a] shadow-sm cursor-pointer"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                {hasUnread && (
+                  <div className="absolute top-[6px] right-[8px] w-[7px] h-[7px] bg-[#ff4e68] rounded-full ring-2 ring-white animate-pulse"></div>
+                )}
+              </button>
 
-            {notificationOpen && (
-              <div className="absolute right-0 top-full mt-2 w-72 z-50 animate-in fade-in duration-200">
-                <div className="rounded-[22px] border border-[#eceff7] bg-white p-4 shadow-[0_12px_40px_rgba(24,33,77,0.12)] text-left">
-                  <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-2 px-1">
-                    <h4 className="text-[14px] font-bold text-[#262525]">Notifications</h4>
-                    {hasUnread && (
-                      <button 
-                        onClick={markAllRead}
-                        className="text-[11px] font-bold text-[#7655fb] hover:text-[#6445e0] border-none bg-transparent cursor-pointer"
-                      >
-                        Mark all read
-                      </button>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-2 max-h-60 overflow-y-auto pr-1">
-                    {notifications.map(item => (
-                      <div 
-                        key={item.id} 
-                        className={`p-2.5 rounded-[14px] transition-colors ${item.unread ? 'bg-[#f8f9ff]' : 'hover:bg-gray-50'}`}
-                      >
-                        <div className="flex justify-between items-start gap-1">
-                          <h5 className={`text-[12px] leading-tight ${item.unread ? 'font-bold text-[#262525]' : 'font-semibold text-gray-700'}`}>
-                            {item.title}
-                          </h5>
-                          <span className="text-[10px] text-gray-400 shrink-0">{item.time}</span>
+              {notificationOpen && (
+                <div className="absolute right-0 top-full mt-2 w-72 z-50 animate-in fade-in duration-200">
+                  <div className="rounded-[22px] border border-[#eceff7] bg-white p-4 shadow-[0_12px_40px_rgba(24,33,77,0.12)] text-left">
+                    <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-2 px-1">
+                      <h4 className="text-[14px] font-bold text-[#262525]">Notifications</h4>
+                      {hasUnread && (
+                        <button 
+                          onClick={markAllRead}
+                          className="text-[11px] font-bold text-[#7655fb] hover:text-[#6445e0] border-none bg-transparent cursor-pointer"
+                        >
+                          Mark all read
+                        </button>
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-2 max-h-60 overflow-y-auto pr-1">
+                      {notifications.map(item => (
+                        <div 
+                          key={item.id} 
+                          className={`p-2.5 rounded-[14px] transition-colors ${item.unread ? 'bg-[#f8f9ff]' : 'hover:bg-gray-50'}`}
+                        >
+                          <div className="flex justify-between items-start gap-1">
+                            <h5 className={`text-[12px] leading-tight ${item.unread ? 'font-bold text-[#262525]' : 'font-semibold text-gray-700'}`}>
+                              {item.title}
+                            </h5>
+                            <span className="text-[10px] text-gray-400 shrink-0">{item.time}</span>
+                          </div>
+                          <p className="text-[11px] text-[#666f85] mt-0.5 leading-normal">
+                            {item.description}
+                          </p>
                         </div>
-                        <p className="text-[11px] text-[#666f85] mt-0.5 leading-normal">
-                          {item.description}
-                        </p>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
 
           <button
             className="text-[#262525] p-2 focus:outline-none"
