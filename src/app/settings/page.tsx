@@ -538,7 +538,7 @@ export default function Settings() {
                   <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#7655fb]/20 bg-gray-50 flex items-center justify-center group shadow-sm">
                     <InitialsAvatar
                       src={profile.avatarUrl}
-                      name={profile.name || profile.username || user?.email || "User"}
+                      name={user ? (profile.name || profile.username || user?.email || "User") : "..."}
                       seed={user?.id}
                       size={96}
                     />

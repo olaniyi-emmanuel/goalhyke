@@ -538,7 +538,7 @@ export default function Dashboard() {
             <div className="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border-b border-gray-100 pb-6">
               <div>
                 <h1 className="text-[32px] font-bold text-[#262525]">
-                  Welcome, {firstName || "User"}!
+                  Welcome, {loading ? "..." : (firstName || "User")}!
                 </h1>
                 <p className="text-[14px] text-[#6f6f78] mt-1">
                   Here is a snapshot of your habits and commitments today.

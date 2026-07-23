@@ -187,17 +187,18 @@ const NavigationRegistered = () => {
               <InitialsAvatar
                 src={user?.user_metadata?.avatar_url}
                 name={
-                  user?.user_metadata?.full_name ||
-                  user?.user_metadata?.name ||
-                  user?.email ||
-                  "User"
+                  user 
+                    ? (user.user_metadata?.full_name || user.user_metadata?.name || user.email || "User")
+                    : "..."
                 }
                 seed={user?.id}
                 size={38}
                 className="shrink-0 border border-white"
               />
               <span className="text-white text-[13px] font-bold tracking-wide font-primary truncate max-w-[100px]">
-                {user?.user_metadata?.full_name?.split(" ")[0] || user?.user_metadata?.name?.split(" ")[0] || "Account"}
+                {user 
+                  ? (user.user_metadata?.full_name?.split(" ")[0] || user.user_metadata?.name?.split(" ")[0] || "Account")
+                  : "..."}
               </span>
               <div className="shrink-0">
                 <Image
@@ -215,7 +216,7 @@ const NavigationRegistered = () => {
                 <div className="rounded-[22px] border border-[#eceff7] bg-white p-4 shadow-[0_12px_40px_rgba(24,33,77,0.12)]">
                   <div className="px-3 py-2 border-b border-gray-100 mb-2">
                     <p className="text-[14px] font-bold text-[#262525] truncate">
-                      {user?.user_metadata?.full_name || user?.user_metadata?.name || "User"}
+                      {user ? (user.user_metadata?.full_name || user.user_metadata?.name || "User") : "..."}
                     </p>
                     {user?.email && (
                       <p className="text-[11px] text-[#8f8e98] truncate">
@@ -456,10 +457,9 @@ const NavigationRegistered = () => {
                     <InitialsAvatar
                       src={user?.user_metadata?.avatar_url}
                       name={
-                        user?.user_metadata?.full_name ||
-                        user?.user_metadata?.name ||
-                        user?.email ||
-                        "User"
+                        user 
+                          ? (user.user_metadata?.full_name || user.user_metadata?.name || user.email || "User")
+                          : "..."
                       }
                       seed={user?.id}
                       size={60}
@@ -467,7 +467,7 @@ const NavigationRegistered = () => {
                 </div>
                 <div className="text-center">
                   <p className="text-[#262525] text-[16px] font-bold font-secondary">
-                    {user?.user_metadata?.full_name || user?.user_metadata?.name || "User"}
+                    {user ? (user.user_metadata?.full_name || user.user_metadata?.name || "User") : "..."}
                   </p>
                   <p className="text-[12px] text-gray-500">
                     @{user?.user_metadata?.username || "goalhyker"}

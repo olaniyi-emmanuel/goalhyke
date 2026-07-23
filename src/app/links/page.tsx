@@ -1861,7 +1861,7 @@ export default function Links() {
                       <div className="relative">
                         <InitialsAvatar
                           src={(user?.user_metadata as { avatar_url?: string } | null)?.avatar_url}
-                          name={(user?.user_metadata as { full_name?: string; name?: string } | null)?.full_name || (user?.user_metadata as { full_name?: string; name?: string } | null)?.name || user?.email || "User"}
+                          name={user ? ((user?.user_metadata as { full_name?: string; name?: string } | null)?.full_name || (user?.user_metadata as { full_name?: string; name?: string } | null)?.name || user?.email || "User") : "..."}
                           seed={user?.id}
                           size={40}
                           className="shrink-0 shadow-[0_2px_8px_rgba(118,85,251,0.25)] ring-2 ring-white"
@@ -1870,7 +1870,7 @@ export default function Links() {
                       </div>
                       <div className="min-w-0 flex flex-col">
                         <span className="text-[13px] font-bold text-[#1a1a2e] truncate leading-tight">
-                          {user?.email?.split("@")[0] || "User"}
+                          {user ? (user?.email?.split("@")[0] || "User") : "..."}
                         </span>
                         <span className="text-[11px] text-[#94a3b8] truncate mt-0.5">
                           {user?.email}
