@@ -106,10 +106,10 @@ export default async function Home({ searchParams }: PageProps) {
         </div>
       </div>
 
+      <AboutUsSection />
+
       {/* Full Width Section */}
       <WhatsGoalHyke />
-
-      <AboutUsSection />
 
       {/* Who's It For Section */}
       <div className="max-w-[1280px] mx-auto">
