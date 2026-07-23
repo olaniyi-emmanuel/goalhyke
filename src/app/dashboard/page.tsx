@@ -122,6 +122,7 @@ function buildCalendarDaysForMonth(year: number, month: number) {
 export default function Dashboard() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [contentReady, setContentReady] = useState(false);
   const [tokenBalance, setTokenBalance] = useState<number>(0);
   const [rechargeToast, setRechargeToast] = useState<{ show: boolean; amount: number } | null>(null);
   const [firstName, setFirstName] = useState<string>("");
@@ -285,6 +286,14 @@ export default function Dashboard() {
 
     fetchGoalsAndBalance();
   }, []);
+
+  // All-at-Once Fade-In: trigger content reveal after data loads
+  useEffect(() => {
+    if (!loading) {
+      const timer = setTimeout(() => setContentReady(true), 60);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   const activeGoals = goals.filter((goal) => goal.status !== "completed");
   const completedGoals = goals.filter((goal) => goal.status === "completed");
@@ -530,15 +539,86 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className="gh-page-end-gap mx-auto flex max-w-[1280px] min-h-[calc(100vh-110px)]">
+      <div className="gh-page-end-gap flex w-full min-h-[calc(100vh-110px)] overflow-hidden">
         <Sidebar />
 
-        <div className="flex-1 bg-[#f4f6fb]">
-          <div className="px-8 py-8">
+        <div className="flex-1 min-w-0 bg-[#f4f6fb]">
+          <div className="px-4 py-6 lg:px-6 lg:py-8">
+
+            {/* ═══ Loading Skeleton — shown while fetching ═══ */}
+            {loading && (
+              <div className="animate-pulse">
+                {/* Welcome header skeleton */}
+                <div className="mb-6 border-b border-gray-100 pb-6">
+                  <div className="h-9 w-[320px] rounded-[14px] bg-[#e8eaf3] mb-2" />
+                  <div className="h-4 w-[360px] rounded-[10px] bg-[#eceef5]" />
+                </div>
+
+                {/* Hero metrics skeleton row */}
+                <div className="grid gap-6 lg:grid-cols-2 mb-6">
+                  <div className="rounded-[24px] bg-white p-5 shadow-[0_20px_50px_rgba(24,33,77,0.05)]">
+                    <div className="h-4 w-24 rounded bg-[#eceef5] mb-3" />
+                    <div className="h-6 w-40 rounded bg-[#e8eaf3] mb-4" />
+                    <div className="rounded-[18px] bg-gradient-to-br from-[#d0d5f7] to-[#c9cdf0] h-[160px]" />
+                  </div>
+                  <div className="rounded-[24px] bg-white p-5 shadow-[0_20px_50px_rgba(24,33,77,0.05)]">
+                    <div className="rounded-[18px] bg-gradient-to-br from-[#d0d5f7] to-[#c9cdf0] h-full min-h-[200px]" />
+                  </div>
+                </div>
+
+                {/* Habits skeleton */}
+                <div className="rounded-[24px] bg-white p-5 shadow-[0_20px_50px_rgba(24,33,77,0.05)] mb-6">
+                  <div className="h-6 w-36 rounded bg-[#e8eaf3] mb-5" />
+                  <div className="grid gap-3 lg:grid-cols-2">
+                    {[1, 2].map(i => (
+                      <div key={i} className="rounded-[18px] bg-[#f4f5fa] p-4 h-[80px]">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-[14px] bg-[#e8eaf3] shrink-0" />
+                          <div className="flex-1">
+                            <div className="h-4 w-3/4 rounded bg-[#e0e2ed] mb-2" />
+                            <div className="h-2 w-full rounded-full bg-[#e8eaf3]" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Chart + Calendar skeleton row */}
+                <div className="grid gap-6 lg:grid-cols-2">
+                  <div className="rounded-[24px] bg-white p-5 shadow-[0_20px_50px_rgba(24,33,77,0.05)]">
+                    <div className="h-5 w-28 rounded bg-[#e8eaf3] mb-4" />
+                    <div className="flex items-end gap-2 justify-between h-[120px]">
+                      {[40, 25, 55, 30, 60, 20, 45].map((h, i) => (
+                        <div key={i} className="w-8 rounded-full bg-[#e8eaf3]" style={{ height: `${h}%` }} />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="rounded-[24px] bg-white p-5 shadow-[0_20px_50px_rgba(24,33,77,0.05)]">
+                    <div className="h-5 w-40 rounded bg-[#e8eaf3] mb-4" />
+                    <div className="grid grid-cols-7 gap-2">
+                      {Array.from({ length: 35 }).map((_, i) => (
+                        <div key={i} className="h-8 w-8 mx-auto rounded-full bg-[#eceef5]" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ═══ Actual Dashboard Content — fades in all at once ═══ */}
+            <div
+              className="transition-all duration-700 ease-out"
+              style={{
+                opacity: contentReady ? 1 : 0,
+                transform: contentReady ? 'translateY(0)' : 'translateY(12px)',
+                display: loading ? 'none' : 'block',
+              }}
+            >
             <div className="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border-b border-gray-100 pb-6">
               <div>
                 <h1 className="text-[32px] font-bold text-[#262525]">
-                  Welcome, {loading ? "..." : (firstName || "User")}!
+                  Welcome, {firstName || "User"}!
                 </h1>
                 <p className="text-[14px] text-[#6f6f78] mt-1">
                   Here is a snapshot of your habits and commitments today.
@@ -582,188 +662,182 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {loading ? (
-              <div className="rounded-[28px] border border-white/70 bg-white p-12 shadow-[0_20px_60px_rgba(24,33,77,0.08)]">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#7655fb] border-t-transparent" />
-                  <p className="text-[15px] font-medium text-[#6f6f78]">
-                    Loading your dashboard...
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="grid gap-6 xl:grid-cols-[1.2fr_1fr]">
-                <section className="flex flex-col gap-6">
-                  <div className="rounded-[30px] border border-white/60 bg-white p-6 shadow-[0_24px_70px_rgba(24,33,77,0.08)]">
-                    <div className="mb-4 flex items-center justify-between">
+              <div className="flex flex-col gap-6">
+                {/* ── Row 1: Hero Metrics ─ Momentum + Completion side by side ── */}
+                <div className="grid gap-6 lg:grid-cols-2">
+                  {/* Your momentum / Streak card */}
+                  <div className="rounded-[24px] border border-white/60 bg-white p-5 shadow-[0_20px_50px_rgba(24,33,77,0.07)]">
+                    <div className="mb-3 flex items-center justify-between">
                       <div>
-                        <p className="text-[13px] font-semibold text-[#8b8a96]">
+                        <p className="text-[12px] font-semibold text-[#8b8a96]">
                           {formatToday()}
                         </p>
-                        <h2 className="mt-1 text-[26px] font-bold text-[#262525]">
+                        <h2 className="mt-0.5 text-[20px] font-bold text-[#262525]">
                           Your momentum
                         </h2>
                       </div>
-                      <div className="rounded-full bg-[#eef2ff] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[#4169e1]">
+                      <div className="rounded-full bg-[#eef2ff] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#4169e1]">
                         Current Streak
                       </div>
                     </div>
-
-                    <div className="flex items-center justify-between rounded-[24px] bg-gradient-to-br from-[#4169e1] via-[#5c61f2] to-[#7655fb] p-6 text-white shadow-[0_18px_36px_rgba(118,85,251,0.28)]">
+                    <div className="flex items-center justify-between rounded-[18px] bg-gradient-to-br from-[#4169e1] via-[#5c61f2] to-[#7655fb] p-5 text-white shadow-[0_14px_28px_rgba(118,85,251,0.25)]">
                       <div>
-                        <p className="text-[46px] font-black leading-none">
+                        <p className="text-[40px] font-black leading-none">
                           {streakDays}
                         </p>
-                        <p className="mt-1 text-[18px] font-semibold">days</p>
-                        <p className="mt-3 max-w-[220px] text-[14px] text-white/85">
-                          You&apos;re staying consistent. Keep going to beat your
-                          personal best this week.
+                        <p className="mt-0.5 text-[16px] font-semibold">days</p>
+                        <p className="mt-2 max-w-[200px] text-[13px] text-white/80">
+                          You&apos;re staying consistent. Keep going to beat your personal best.
                         </p>
                       </div>
-                      <div className="rounded-[22px] bg-white/12 p-3 backdrop-blur-sm">
+                      <div className="rounded-[18px] bg-white/12 p-2.5 backdrop-blur-sm">
                         <FireIcon />
                       </div>
                     </div>
                   </div>
 
-                  <div className="rounded-[30px] border border-white/60 bg-white p-6 shadow-[0_24px_70px_rgba(24,33,77,0.08)]">
-                    <div className="mb-5 flex items-center justify-between">
-                      <h3 className="text-[24px] font-bold text-[#262525]">
-                        Today&apos;s Habits
-                      </h3>
-                      <Link
-                        href="/goals"
-                        className="text-[13px] font-bold text-[#7655fb] hover:text-[#6445e0]"
-                      >
-                        View all
-                      </Link>
-                    </div>
-
-                    <div className="flex flex-col gap-4">
-                      {featuredHabits.length > 0 ? (
-                        featuredHabits.map((goal, index) => (
-                          <Link
-                            key={goal.id}
-                            href={`/goals/${goal.id}`}
-                            className="rounded-[22px] border border-[#ececf2] bg-[#fcfcff] p-4 shadow-[0_10px_24px_rgba(24,33,77,0.05)] transition-all hover:-translate-y-0.5 hover:border-[#cfc7ff] hover:shadow-[0_14px_32px_rgba(24,33,77,0.08)]"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div
-                                className={`flex h-12 w-12 items-center justify-center rounded-[16px] ${
-                                  index === 0
-                                    ? "bg-gradient-to-br from-[#4169e1] to-[#7655fb]"
-                                    : "bg-[#eef2ff]"
-                                }`}
-                              >
-                                <svg
-                                  width="20"
-                                  height="20"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    d="M7 12.5L10.5 16L17 8.5"
-                                    stroke={index === 0 ? "#ffffff" : "#7655fb"}
-                                    strokeWidth="2.2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  />
-                                </svg>
-                              </div>
-
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center justify-between gap-3">
-                                  <h4 className="truncate text-[16px] font-bold text-[#262525]">
-                                    {goal.title}
-                                  </h4>
-                                  <span className="text-[12px] font-bold text-[#7655fb]">
-                                    {goal.progress}%
-                                  </span>
-                                </div>
-                                <div className="mt-2 h-2 rounded-full bg-[#ececf7]">
-                                  <div
-                                    className="h-2 rounded-full bg-gradient-to-r from-[#4169e1] to-[#7655fb]"
-                                    style={{ width: `${Math.max(goal.progress, 10)}%` }}
-                                  />
-                                </div>
-                                <div className="mt-2 flex items-center justify-between text-[11px] text-[#8f8e98]">
-                                  <span>{goal.category}</span>
-                                  <span>{goal.streak || index + 1}/14 days</span>
-                                </div>
-                              </div>
-
-                              <div className="shrink-0">
-                                <CheckBadgeIcon />
-                              </div>
-                            </div>
-                          </Link>
-                        ))
-                      ) : (
-                        <div className="rounded-[22px] border border-dashed border-[#d9def4] bg-[#fbfbff] p-8 text-center text-[14px] text-[#7b7a86]">
-                          No active habits yet. Create one to start your GoalHyke
-                          streak.
-                        </div>
-                      )}
-                    </div>
-
-                    <Link
-                      href="/set-goal"
-                      className="mt-5 flex h-[68px] items-center justify-center rounded-[22px] border border-dashed border-[#cfd7ff] bg-[#fbfbff] text-[15px] font-bold text-[#5d5c66] transition-colors hover:border-[#7655fb] hover:text-[#7655fb]"
-                    >
-                      New Habit
-                    </Link>
-                  </div>
-                </section>
-
-                <section className="flex flex-col gap-6">
-                  <div className="rounded-[30px] border border-white/60 bg-white p-6 shadow-[0_24px_70px_rgba(24,33,77,0.08)]">
-                    <div className="rounded-[24px] bg-gradient-to-br from-[#7655fb] to-[#4169e1] p-6 text-white shadow-[0_18px_36px_rgba(118,85,251,0.24)]">
-                      <div className="flex items-start justify-between gap-4">
+                  {/* Completion % card */}
+                  <div className="rounded-[24px] border border-white/60 bg-white p-5 shadow-[0_20px_50px_rgba(24,33,77,0.07)]">
+                    <div className="rounded-[18px] bg-gradient-to-br from-[#7655fb] to-[#4169e1] p-5 text-white shadow-[0_14px_28px_rgba(118,85,251,0.22)] h-full flex flex-col justify-between">
+                      <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-[48px] font-black leading-none">
+                          <p className="text-[44px] font-black leading-none">
                             {completionRate}%
                           </p>
-                          <p className="mt-1 text-[18px] font-semibold">
+                          <p className="mt-1 text-[17px] font-semibold">
                             Completion
                           </p>
                         </div>
-                        <div className="rounded-[18px] bg-white/12 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white/90">
+                        <div className="rounded-[14px] bg-white/12 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/90">
                           This Week
                         </div>
                       </div>
-                      <p className="mt-4 max-w-[250px] text-[14px] text-white/85">
+                      <p className="mt-3 max-w-[240px] text-[13px] text-white/80">
                         You&apos;ve completed {completionRate}% of your habits
                         this week. Keep the GoalHyke momentum going.
                       </p>
                     </div>
                   </div>
+                </div>
 
-                  <div className="rounded-[30px] border border-white/60 bg-white p-6 shadow-[0_24px_70px_rgba(24,33,77,0.08)]">
+                {/* ── Row 2: Today's Habits ─ Full Width ── */}
+                <div className="rounded-[24px] border border-white/60 bg-white p-5 shadow-[0_20px_50px_rgba(24,33,77,0.07)]">
+                  <div className="mb-4 flex items-center justify-between">
+                    <h3 className="text-[22px] font-bold text-[#262525]">
+                      Today&apos;s Habits
+                    </h3>
+                    <Link
+                      href="/goals"
+                      className="text-[13px] font-bold text-[#7655fb] hover:text-[#6445e0]"
+                    >
+                      View all
+                    </Link>
+                  </div>
+
+                  <div className="grid gap-3 lg:grid-cols-2">
+                    {featuredHabits.length > 0 ? (
+                      featuredHabits.map((goal, index) => (
+                        <Link
+                          key={goal.id}
+                          href={`/goals/${goal.id}`}
+                          className="rounded-[18px] border border-[#ececf2] bg-[#fcfcff] p-4 shadow-[0_8px_20px_rgba(24,33,77,0.04)] transition-all hover:-translate-y-0.5 hover:border-[#cfc7ff] hover:shadow-[0_12px_28px_rgba(24,33,77,0.07)]"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`flex h-10 w-10 items-center justify-center rounded-[14px] shrink-0 ${
+                                index === 0
+                                  ? "bg-gradient-to-br from-[#4169e1] to-[#7655fb]"
+                                  : "bg-[#eef2ff]"
+                              }`}
+                            >
+                              <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M7 12.5L10.5 16L17 8.5"
+                                  stroke={index === 0 ? "#ffffff" : "#7655fb"}
+                                  strokeWidth="2.2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </div>
+
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center justify-between gap-2">
+                                <h4 className="truncate text-[14px] font-bold text-[#262525]">
+                                  {goal.title}
+                                </h4>
+                                <span className="text-[11px] font-bold text-[#7655fb] shrink-0">
+                                  {goal.progress}%
+                                </span>
+                              </div>
+                              <div className="mt-1.5 h-1.5 rounded-full bg-[#ececf7]">
+                                <div
+                                  className="h-1.5 rounded-full bg-gradient-to-r from-[#4169e1] to-[#7655fb]"
+                                  style={{ width: `${Math.max(goal.progress, 10)}%` }}
+                                />
+                              </div>
+                              <div className="mt-1.5 flex items-center justify-between text-[10px] text-[#8f8e98]">
+                                <span>{goal.category}</span>
+                                <span>{goal.streak || index + 1}/14 days</span>
+                              </div>
+                            </div>
+
+                            <div className="shrink-0">
+                              <CheckBadgeIcon />
+                            </div>
+                          </div>
+                        </Link>
+                      ))
+                    ) : (
+                      <div className="lg:col-span-2 rounded-[18px] border border-dashed border-[#d9def4] bg-[#fbfbff] p-8 text-center text-[14px] text-[#7b7a86]">
+                        No active habits yet. Create one to start your GoalHyke
+                        streak.
+                      </div>
+                    )}
+                  </div>
+
+                  <Link
+                    href="/set-goal"
+                    className="mt-4 flex h-[56px] items-center justify-center rounded-[18px] border border-dashed border-[#cfd7ff] bg-[#fbfbff] text-[14px] font-bold text-[#5d5c66] transition-colors hover:border-[#7655fb] hover:text-[#7655fb]"
+                  >
+                    New Habit
+                  </Link>
+                </div>
+
+                {/* ── Row 3: Weekly Trend + Consistency Calendar ── */}
+                <div className="grid gap-6 lg:grid-cols-2">
+                  {/* Weekly Trend */}
+                  <div className="rounded-[24px] border border-white/60 bg-white p-5 shadow-[0_20px_50px_rgba(24,33,77,0.07)]">
                     <div className="mb-4 flex items-center justify-between">
-                      <h3 className="text-[24px] font-bold text-[#262525]">
+                      <h3 className="text-[20px] font-bold text-[#262525]">
                         Weekly Trend
                       </h3>
-                      <div className="rounded-full bg-[#f2f4ff] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[#7655fb]">
+                      <div className="rounded-full bg-[#f2f4ff] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#7655fb]">
                         This Week
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-7 items-end gap-3">
+                    <div className="grid grid-cols-7 items-end gap-2">
                       {weeklyTrend.map((bar) => (
                         <div
                           key={bar.label}
-                          className="flex flex-col items-center gap-2"
+                          className="flex flex-col items-center gap-1.5"
                         >
-                          <div className="flex h-[150px] items-end">
-                            <div className="h-full w-10 rounded-full bg-[#f3ecf0] p-[4px]">
+                          <div className="flex h-[120px] items-end">
+                            <div className="h-full w-8 rounded-full bg-[#f3ecf0] p-[3px]">
                               <div
                                 className="w-full rounded-full bg-gradient-to-t from-[#7655fb] to-[#4169e1]"
                                 style={{ height: `${bar.value}%` }}
                               />
                             </div>
                           </div>
-                          <span className="text-[11px] font-bold uppercase text-[#8e8d97]">
+                          <span className="text-[10px] font-bold uppercase text-[#8e8d97]">
                             {bar.label}
                           </span>
                         </div>
@@ -771,24 +845,23 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* Consistency Calendar Widget */}
-                  <div className="rounded-[30px] border border-white/60 bg-white p-6 shadow-[0_24px_70px_rgba(24,33,77,0.08)]">
-                    <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  {/* Consistency Calendar */}
+                  <div className="rounded-[24px] border border-white/60 bg-white p-5 shadow-[0_20px_50px_rgba(24,33,77,0.07)]">
+                    <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <div>
-                        <h3 className="text-[22px] font-bold text-[#262525]">
+                        <h3 className="text-[20px] font-bold text-[#262525]">
                           Consistency Calendar
                         </h3>
-                        <p className="text-[12px] text-gray-500 font-secondary mt-0.5">
+                        <p className="text-[11px] text-gray-500 font-secondary mt-0.5">
                           Track daily show-up history
                         </p>
                       </div>
                       
-                      <div className="flex items-center gap-3">
-                        {/* Goal selector filter */}
+                      <div className="flex items-center gap-2">
                         <select
                           value={selectedGoalId}
                           onChange={(e) => setSelectedGoalId(e.target.value)}
-                          className="h-[38px] rounded-[10px] border border-[#ccd2e2] bg-white px-3 text-[12px] font-semibold text-[#262525] outline-none focus:border-[#7655fb] cursor-pointer"
+                          className="h-[34px] rounded-[8px] border border-[#ccd2e2] bg-white px-2 text-[11px] font-semibold text-[#262525] outline-none focus:border-[#7655fb] cursor-pointer max-w-[120px]"
                         >
                           <option value="all">All Goals</option>
                           {goals.map(g => (
@@ -796,22 +869,21 @@ export default function Dashboard() {
                           ))}
                         </select>
 
-                        {/* Month navigation */}
-                        <div className="flex items-center gap-1.5 bg-[#f4f6fb] p-1 rounded-full">
+                        <div className="flex items-center gap-1 bg-[#f4f6fb] p-0.5 rounded-full">
                           <button
                             type="button"
                             onClick={handlePrevMonth}
-                            className="flex h-7 w-7 items-center justify-center rounded-full bg-white hover:bg-gray-100 text-[#7655fb] shadow-sm transition-all cursor-pointer font-bold"
+                            className="flex h-6 w-6 items-center justify-center rounded-full bg-white hover:bg-gray-100 text-[#7655fb] shadow-sm transition-all cursor-pointer font-bold text-[12px]"
                           >
                             ‹
                           </button>
-                          <span className="text-[12px] font-bold text-[#262525] px-1 whitespace-nowrap">
+                          <span className="text-[11px] font-bold text-[#262525] px-1 whitespace-nowrap">
                             {monthLabel}
                           </span>
                           <button
                             type="button"
                             onClick={handleNextMonth}
-                            className="flex h-7 w-7 items-center justify-center rounded-full bg-white hover:bg-gray-100 text-[#7655fb] shadow-sm transition-all cursor-pointer font-bold"
+                            className="flex h-6 w-6 items-center justify-center rounded-full bg-white hover:bg-gray-100 text-[#7655fb] shadow-sm transition-all cursor-pointer font-bold text-[12px]"
                           >
                             ›
                           </button>
@@ -819,15 +891,15 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-7 gap-2 text-center text-[10px] uppercase text-[#9a99a3] font-bold border-t border-gray-100 pt-4">
+                    <div className="grid grid-cols-7 gap-1.5 text-center text-[9px] uppercase text-[#9a99a3] font-bold border-t border-gray-100 pt-3">
                       {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                         <span key={day}>{day}</span>
                       ))}
                     </div>
 
-                    <div className="mt-3 grid grid-cols-7 gap-y-3 text-center text-[12px] text-[#3f3e4a]">
+                    <div className="mt-2 grid grid-cols-7 gap-y-2 text-center text-[11px] text-[#3f3e4a]">
                       {calendarDays.map((item, index) => {
-                        let cellClass = "relative flex flex-col items-center justify-center h-9 w-9 mx-auto rounded-full transition-all ";
+                        let cellClass = "relative flex flex-col items-center justify-center h-8 w-8 mx-auto rounded-full transition-all ";
                         let statusIndicator = null;
                         
                         if (item.muted) {
@@ -836,13 +908,13 @@ export default function Dashboard() {
                           cellClass += "hover:bg-gray-100 cursor-pointer ";
                           if (item.status === "verified") {
                             cellClass += "bg-green-50 text-green-700 font-bold border border-green-200";
-                            statusIndicator = <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />;
+                            statusIndicator = <span className="absolute bottom-0.5 h-1 w-1 rounded-full bg-green-500 animate-pulse" />;
                           } else if (item.status === "failed" || item.status === "missed") {
                             cellClass += "bg-red-50 text-red-700 font-medium border border-red-200";
-                            statusIndicator = <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />;
+                            statusIndicator = <span className="absolute bottom-0.5 h-1 w-1 rounded-full bg-red-500 animate-pulse" />;
                           } else if (item.status === "pending") {
                             cellClass += "bg-amber-50 text-amber-700 font-medium border border-amber-200";
-                            statusIndicator = <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />;
+                            statusIndicator = <span className="absolute bottom-0.5 h-1 w-1 rounded-full bg-amber-500 animate-pulse" />;
                           }
                         }
 
@@ -857,7 +929,7 @@ export default function Dashboard() {
                               item.status === "pending" ? "Pending AI Review" : undefined
                             }
                           >
-                            <span className={item.status !== "none" && !item.muted ? "translate-y-[-2px]" : ""}>
+                            <span className={item.status !== "none" && !item.muted ? "translate-y-[-1px]" : ""}>
                               {item.day}
                             </span>
                             {statusIndicator}
@@ -866,31 +938,35 @@ export default function Dashboard() {
                       })}
                     </div>
                   </div>
+                </div>
 
+                {/* ── Row 4: Stats + Quick Snapshot ── */}
+                <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
+                  {/* Stat cards */}
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="relative rounded-[24px] border border-white/60 bg-white p-5 shadow-[0_18px_44px_rgba(24,33,77,0.08)] flex flex-col justify-between">
+                    <div className="relative rounded-[20px] border border-white/60 bg-white p-5 shadow-[0_14px_36px_rgba(24,33,77,0.06)] flex flex-col justify-between">
                       <div>
-                        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#eef2ff]">
+                        <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-[12px] bg-[#eef2ff]">
                           <FireIcon />
                         </div>
-                        <p className="text-[32px] font-black leading-none text-[#262525]">
+                        <p className="text-[28px] font-black leading-none text-[#262525]">
                           {longestStreakLabel}
                         </p>
-                        <p className="mt-2 text-[13px] text-[#7c7b85]">
+                        <p className="mt-1.5 text-[12px] text-[#7c7b85]">
                           Longest streak
                         </p>
                       </div>
 
-                      <div className="mt-4 pt-3 border-t border-gray-100/70">
-                        <p className="text-[10px] font-bold text-[#8f8e98] uppercase tracking-wider mb-2">
+                      <div className="mt-3 pt-2.5 border-t border-gray-100/70">
+                        <p className="text-[9px] font-bold text-[#8f8e98] uppercase tracking-wider mb-1.5">
                           Share Streak
                         </p>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
                           {shareLinks.map((link) => (
                             <button
                               key={link.name}
                               onClick={() => handleShareClick(link)}
-                              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f4f6fb] hover:bg-[#7655fb]/10 transition-all duration-300 cursor-pointer"
+                              className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f4f6fb] hover:bg-[#7655fb]/10 transition-all duration-300 cursor-pointer"
                               title={`Share on ${link.name}`}
                             >
                               <span className="shrink-0 transition-transform hover:scale-110">{link.icon}</span>
@@ -900,75 +976,76 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    <div className="rounded-[24px] border border-white/60 bg-white p-5 shadow-[0_18px_44px_rgba(24,33,77,0.08)]">
-                      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#eef2ff]">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div className="rounded-[20px] border border-white/60 bg-white p-5 shadow-[0_14px_36px_rgba(24,33,77,0.06)]">
+                      <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-[12px] bg-[#eef2ff]">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M12 3V21M3 12H21" stroke="#7655fb" strokeWidth="2" strokeLinecap="round" />
                         </svg>
                       </div>
-                      <p className="text-[32px] font-black leading-none text-[#262525]">
+                      <p className="text-[28px] font-black leading-none text-[#262525]">
                         {consistencyChange}
                       </p>
-                      <p className="mt-2 text-[13px] text-[#7c7b85]">
+                      <p className="mt-1.5 text-[12px] text-[#7c7b85]">
                         Consistency
                       </p>
                     </div>
                   </div>
 
-                  <div className="rounded-[30px] border border-white/60 bg-white p-6 shadow-[0_24px_70px_rgba(24,33,77,0.08)]">
-                    <h3 className="text-[22px] font-bold text-[#262525]">
+                  {/* Quick Snapshot */}
+                  <div className="rounded-[24px] border border-white/60 bg-white p-5 shadow-[0_20px_50px_rgba(24,33,77,0.07)]">
+                    <h3 className="text-[20px] font-bold text-[#262525]">
                       Quick Snapshot
                     </h3>
-                    <div className="mt-4 flex flex-col gap-3">
-                      <div className="flex items-center justify-between rounded-[18px] bg-[#fbfbff] px-4 py-3">
-                        <span className="text-[14px] text-[#6f6f78]">
+                    <div className="mt-3 flex flex-col gap-2">
+                      <div className="flex items-center justify-between rounded-[14px] bg-[#fbfbff] px-3 py-2.5">
+                        <span className="text-[13px] text-[#6f6f78]">
                           Token balance
                         </span>
-                        <span className="text-[18px] font-bold text-[#7655fb]">
+                        <span className="text-[16px] font-bold text-[#7655fb]">
                           {tokenBalance} tokens
                         </span>
                       </div>
-                      <div className="flex items-center justify-between rounded-[18px] bg-[#fbfbff] px-4 py-3">
-                        <span className="text-[14px] text-[#6f6f78]">
+                      <div className="flex items-center justify-between rounded-[14px] bg-[#fbfbff] px-3 py-2.5">
+                        <span className="text-[13px] text-[#6f6f78]">
                           Active goals
                         </span>
-                        <span className="text-[18px] font-bold text-[#262525]">
+                        <span className="text-[16px] font-bold text-[#262525]">
                           {activeGoals.length}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between rounded-[18px] bg-[#fbfbff] px-4 py-3">
-                        <span className="text-[14px] text-[#6f6f78]">
+                      <div className="flex items-center justify-between rounded-[14px] bg-[#fbfbff] px-3 py-2.5">
+                        <span className="text-[13px] text-[#6f6f78]">
                           Completed goals
                         </span>
-                        <span className="text-[18px] font-bold text-[#262525]">
+                        <span className="text-[16px] font-bold text-[#262525]">
                           {completedGoals.length}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between rounded-[18px] bg-[#fbfbff] px-4 py-3">
-                        <span className="text-[14px] text-[#6f6f78]">
+                      <div className="flex items-center justify-between rounded-[14px] bg-[#fbfbff] px-3 py-2.5">
+                        <span className="text-[13px] text-[#6f6f78]">
                           Focus category
                         </span>
-                        <span className="text-[18px] font-bold text-[#262525]">
+                        <span className="text-[16px] font-bold text-[#262525]">
                           {focusCategory}
                         </span>
                       </div>
                     </div>
                     <Link
                       href="/goals"
-                      className="mt-5 inline-flex items-center gap-2 text-[14px] font-bold text-[#7655fb] hover:text-[#6445e0]"
+                      className="mt-4 inline-flex items-center gap-2 text-[13px] font-bold text-[#7655fb] hover:text-[#6445e0]"
                     >
                       <span>Open full goals list</span>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </Link>
-                  </div>
-                </section>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
       <Footer />
     </main>

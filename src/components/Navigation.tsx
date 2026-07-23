@@ -97,7 +97,8 @@ const Navigation = () => {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-2 rounded-full border border-[#d9e1ff] bg-white/90 p-1 shadow-[0_10px_30px_rgba(24,33,77,0.06)] shrink-0">
+        <div className="hidden lg:flex flex-1 justify-center mx-4 xl:mx-8">
+          <div className="flex items-center justify-center gap-2 rounded-full border border-[#d9e1ff] bg-white/90 p-1 shadow-[0_10px_30px_rgba(24,33,77,0.06)] shrink-0">
           {[
             { text: "HOW IT WORKS", href: "/#how-it-works" },
             { text: "ABOUT US", href: "/#about-us" },
@@ -111,6 +112,7 @@ const Navigation = () => {
               {item.text}
             </Link>
           ))}
+          </div>
         </div>
 
         {/* Desktop Auth Buttons */}
