@@ -4,7 +4,7 @@ import "./globals.css";
 import CrushITAI from "@/components/CrushITAI";
 
 const nunitoSans = Nunito_Sans({
-  variable: "--font-secondary", // Mapped to Secondary
+  variable: "--font-secondary-family", // Mapped to Secondary
   subsets: ["latin"],
   display: "swap",
 });
@@ -13,10 +13,10 @@ const nunitoSans = Nunito_Sans({
 // import localFont from 'next/font/local'
 // const poligon = localFont({
 //   src: './fonts/Poligon.woff2',
-//   variable: '--font-primary',
+//   variable: '--font-primary-family',
 // })
 const poligon = Inter({
-  variable: "--font-primary", // Mapped to Primary
+  variable: "--font-primary-family", // Mapped to Primary
   subsets: ["latin"],
   display: "swap",
 });

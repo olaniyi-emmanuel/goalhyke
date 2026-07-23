@@ -216,12 +216,12 @@ const NavigationRegistered = () => {
             {dropdownOpen && (
               <div className="absolute right-0 top-full pt-3 w-64 z-50 animate-in fade-in duration-200">
                 <div className="rounded-[22px] border border-[#eceff7] bg-white p-4 shadow-[0_12px_40px_rgba(24,33,77,0.12)]">
-                  <div className="px-3 py-2 border-b border-gray-100 mb-2">
-                    <p className="text-[14px] font-bold text-[#262525] truncate">
+                  <div className="px-3 py-2 border-b border-gray-100 mb-2 text-left">
+                    <p className="text-[14px] font-bold text-[#262525] truncate font-primary">
                       {user ? (user.user_metadata?.full_name || user.user_metadata?.name || "User") : "..."}
                     </p>
                     {user?.email && (
-                      <p className="text-[11px] text-[#8f8e98] truncate">
+                      <p className="text-[11px] text-[#8f8e98] truncate font-primary">
                         {user.email}
                       </p>
                     )}

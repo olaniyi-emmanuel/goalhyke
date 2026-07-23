@@ -14,8 +14,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-primary: var(--font-primary);
-  --font-secondary: var(--font-secondary);
+  --font-primary: var(--font-primary-family);
+  --font-secondary: var(--font-secondary-family);
 }
 
 body {
@@ -25,7 +25,7 @@ body {
     radial-gradient(circle at top right, rgba(65, 105, 225, 0.08), transparent 24%),
     var(--background);
   color: var(--foreground);
-  font-family: 'Inter', var(--font-primary), system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', var(--font-primary-family), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
