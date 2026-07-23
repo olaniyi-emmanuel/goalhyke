@@ -19,26 +19,29 @@ const Sparkle = ({ className }: { className?: string }) => (
 const HeroHeadline = () => {
   return (
     <div className="flex justify-center items-center w-full px-4 mt-[30px] lg:mt-[60px]">
-      <div className="w-full max-w-[895px] text-center relative">
-        <h1 className="text-[26px] sm:text-[34px] md:text-[38px] lg:text-[48px] leading-[1.2] md:leading-[1.3] font-medium font-primary text-[#262525]">
+      <div className="w-full max-w-[1000px] text-center relative">
+        <h1 className="text-[36px] sm:text-[44px] md:text-[56px] lg:text-[68px] leading-[1.15] md:leading-[1.1] font-bold font-primary text-[#262525] tracking-tight">
           <span>Ready to finally embark on</span>
           <br className="hidden md:block" />
-          <div className="relative inline-block mt-2 lg:mt-3">
+          <div className="relative inline-block mt-2 lg:mt-4">
             <span>your </span>
             <span className="relative inline-flex items-center mx-2 z-10">
               {/* Background Blob/Highlight */}
-              <div className="absolute inset-0 bg-[#7655fb]/10 rounded-lg blur-sm scale-110 -z-10"></div>
+              <div className="absolute inset-0 bg-[#eef2fa] rounded-xl -z-10 transform scale-x-110 scale-y-125 md:scale-x-125 md:scale-y-150 skew-x-[-2deg] skew-y-[1deg]"></div>
               
               {/* Text */}
-              <span className="text-[#7655fb] font-semibold">goalHYKE</span>
+              <span className="text-[#7655fb] font-extrabold tracking-normal">goalHYKE</span>
 
               {/* Sparkles */}
-              <Sparkle className="absolute -top-3 -left-3 md:-top-5 md:-left-5 text-[#FFB800] w-3 h-3 md:w-5 md:h-5 animate-pulse" />
-              <Sparkle className="absolute -bottom-2.5 -right-2.5 md:-bottom-3 md:-right-3 text-[#FF4D4D] w-2 h-2 md:w-4 md:h-4 animate-bounce delay-100" />
-              <Sparkle className="absolute top-0 -right-5 md:-right-7 text-[#FFB800] w-2 h-2 md:w-3.5 md:h-3.5 animate-pulse delay-75" />
+              <Sparkle className="absolute -top-4 -left-4 md:-top-6 md:-left-8 text-[#FFB800] w-4 h-4 md:w-7 md:h-7 animate-pulse" />
+              <Sparkle className="absolute -bottom-3 -left-1 md:-bottom-4 md:-left-2 text-[#FF4D4D] w-3 h-3 md:w-5 md:h-5 animate-bounce delay-100" />
+              <Sparkle className="absolute -top-1 -right-2 md:-top-2 md:-right-3 text-[#FF4D4D] w-3 h-3 md:w-5 md:h-5 animate-pulse delay-75" />
+              <Sparkle className="absolute -bottom-4 -right-4 md:-bottom-6 md:-right-8 text-[#FFB800] w-4 h-4 md:w-6 md:h-6 animate-bounce delay-150" />
             </span>
-            <span> to your goals?</span>
+            <span> to your</span>
           </div>
+          <br className="hidden md:block" />
+          <div className="mt-2 lg:mt-4">goals?</div>
         </h1>
       </div>
     </div>
