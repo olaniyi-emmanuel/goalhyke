@@ -59,6 +59,7 @@ const goalsList = [
   "Excel academically",
   "Read more",
   "Stay healthy",
+  "Create Custom Goal",
 ];
 
 const GoalSelector = () => {
@@ -116,17 +117,20 @@ const GoalSelector = () => {
 
   return (
     <div className="flex flex-col items-center w-full mt-[24px] lg:mt-[36px]">
-      <div className="flex flex-col md:flex-row items-center md:items-end justify-center gap-[15px] md:gap-[24px] px-4 w-full relative z-50">
-        {/* Input Wrapper with label */}
+      <div className="flex flex-col md:flex-row items-center justify-center gap-[15px] md:gap-[20px] px-4 w-full relative z-50">
+        
+        {/* Sentence start */}
+        <p className="font-primary text-[22px] md:text-[26px] text-[#262525] font-bold tracking-tight text-center whitespace-nowrap mb-2 md:mb-0">
+          I pursue to
+        </p>
+
+        {/* Input Wrapper */}
         <div className="flex flex-col items-center w-full max-w-[280px]">
-          <p className="font-primary text-[18px] md:text-[20px] text-[#262525] mb-4 font-medium text-center">
-            I pursue to
-          </p>
           {/* Input Container */}
           <div className="relative w-full" ref={dropdownRef}>
             <div
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center justify-between w-full h-[52px] px-4 border border-[#e4e8f2] bg-[#fbfbff] rounded-[18px] cursor-pointer hover:border-[#7655fb] transition-colors"
+              className="flex items-center justify-between w-full h-[52px] px-4 border border-[#e4e8f2] bg-[#fbfbff] rounded-[18px] cursor-pointer hover:border-[#7655fb] focus:ring-2 focus:ring-[#7655fb]/20 transition-all shadow-sm"
             >
               <span
                 className={`font-primary text-[15px] ${
@@ -146,7 +150,7 @@ const GoalSelector = () => {
             {isOpen && (
               <div className="absolute top-[58px] left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0 w-[90vw] max-w-[360px] md:w-[360px] bg-white rounded-[22px] shadow-2xl border border-[#eceff7] py-5 px-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                 {/* Search Bar */}
-                <div className="flex items-center gap-2 bg-[#F6F6F6] rounded-full px-3.5 py-2.5 mb-3 border border-gray-100">
+                <div className="flex items-center gap-2 bg-[#F6F6F6] rounded-full px-3.5 py-2.5 mb-3 border border-gray-100 focus-within:ring-2 focus-within:ring-[#7655fb]/20 focus-within:border-[#7655fb] transition-all">
                   <SearchIcon className="text-[#878484] w-3.5 h-3.5 shrink-0" />
                   <input
                     type="text"

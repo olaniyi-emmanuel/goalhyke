@@ -121,12 +121,6 @@ function LoginContent() {
         <div className="gh-panel overflow-hidden">
           <div className="grid min-h-[calc(100vh-210px)] grid-cols-1 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="relative hidden overflow-hidden bg-[linear-gradient(145deg,#eef2ff_0%,#f8faff_46%,#ffffff_100%)] lg:flex lg:items-center lg:justify-center">
-              <div className="absolute inset-x-10 top-10 flex items-center justify-between">
-                <span className="gh-badge">GoalHyke Access</span>
-                <span className="rounded-full bg-white/85 px-4 py-2 text-[13px] font-semibold text-[#4f5b7f] shadow-[0_8px_24px_rgba(24,33,77,0.06)]">
-                  Build habits with clarity
-                </span>
-              </div>
               <div className="absolute left-10 top-28 h-[180px] w-[180px] rounded-full bg-[#7655fb]/10 blur-3xl" />
               <div className="absolute bottom-10 right-12 h-[220px] w-[220px] rounded-full bg-[#4169e1]/10 blur-3xl" />
               <div className="relative h-full min-h-[780px] w-full">
