@@ -44,14 +44,14 @@ const HeroHeadline = () => {
   return (
     <div className="flex justify-center items-center w-full px-4 mt-[30px] lg:mt-[60px]">
       <div className="w-full max-w-[1000px] text-center relative">
-        <h1 className="text-[34px] sm:text-[46px] md:text-[58px] lg:text-[68px] leading-[1.2] font-bold font-primary text-[#262525] tracking-tight">
+        <h1 className="text-[38px] sm:text-[50px] md:text-[62px] lg:text-[74px] leading-[1.15] font-bold font-primary text-[#262525] tracking-tight">
           {/* Line 1: Build New Habits. */}
           <span className="block mb-2 md:mb-3">Build New Habits.</span>
 
           {/* Line 2: Achieve [Bigger Goals. / Without Burnout.] */}
-          <div className="inline-flex items-center justify-center gap-2 sm:gap-3 flex-nowrap whitespace-nowrap">
+          <div className="inline-flex items-center justify-center gap-2 sm:gap-4.5 flex-nowrap whitespace-nowrap max-w-full">
             <span className="shrink-0">Achieve</span>
-            <span className="relative inline-flex items-center px-3 md:px-5 py-1 md:py-1.5 z-10 shrink-0 min-h-[50px] sm:min-h-[62px] md:min-h-[74px]">
+            <span className="relative inline-flex items-center px-3.5 md:px-6 py-1 md:py-2 z-10 shrink-0 min-h-[54px] sm:min-h-[66px] md:min-h-[80px]">
               {/* Background Blob/Highlight */}
               <div className="absolute inset-0 bg-[#eef2fa] rounded-2xl -z-10 transform skew-x-[-2deg] skew-y-[1deg]"></div>
 
