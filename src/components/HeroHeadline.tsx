@@ -20,29 +20,31 @@ const HeroHeadline = () => {
   return (
     <div className="flex justify-center items-center w-full px-4 mt-[30px] lg:mt-[60px]">
       <div className="w-full max-w-[1000px] text-center relative">
-        <h1 className="text-[36px] sm:text-[46px] md:text-[58px] lg:text-[68px] leading-[1.2] md:leading-[1.15] font-bold font-primary text-[#262525] tracking-tight">
-          <span>Ready to finally embark on</span>
-          <br className="hidden md:block" />
-          <div className="relative inline-block mt-2 lg:mt-4">
-            <span>your</span>
-            <span className="relative inline-flex items-center mx-2 md:mx-3 px-3 md:px-5 py-1 md:py-2 z-10">
+        <h1 className="text-[36px] sm:text-[48px] md:text-[60px] lg:text-[70px] leading-[1.18] font-bold font-primary text-[#262525] tracking-tight">
+          <span>Build New Habits.</span>
+          <br className="hidden sm:block" />
+          <div className="relative inline-block mt-2 lg:mt-3">
+            <span className="mr-2 md:mr-3">Achieve</span>
+            <span className="relative inline-flex items-center mx-1 md:mx-2 px-3 md:px-5 py-1 md:py-1.5 z-10">
               {/* Background Blob/Highlight */}
-              <div className="absolute inset-0 bg-[#eef2fa] rounded-xl -z-10 transform skew-x-[-2deg] skew-y-[1deg]"></div>
+              <div className="absolute inset-0 bg-[#eef2fa] rounded-2xl -z-10 transform skew-x-[-2deg] skew-y-[1deg]"></div>
 
               {/* Text */}
-              <span className="text-[#7655fb] font-extrabold tracking-normal">goalHYKE</span>
+              <span className="text-[#7655fb] font-extrabold tracking-normal">Bigger Goals.</span>
 
               {/* Sparkles */}
-              <Sparkle className="absolute -top-3 -left-3 md:-top-5 md:-left-6 text-[#FFB800] w-3 h-3 md:w-6 md:h-6 animate-pulse" />
-              <Sparkle className="absolute -bottom-2 -left-1 md:-bottom-3 md:-left-2 text-[#FF4D4D] w-2 h-2 md:w-5 md:h-5 animate-bounce delay-100" />
-              <Sparkle className="absolute -top-1 -right-2 md:-top-2 md:-right-3 text-[#FF4D4D] w-2 h-2 md:w-4 md:h-4 animate-pulse delay-75" />
-              <Sparkle className="absolute -bottom-3 -right-3 md:-bottom-5 md:-right-6 text-[#FFB800] w-3 h-3 md:w-5 md:h-5 animate-bounce delay-150" />
+              <Sparkle className="absolute -top-3 -left-3 md:-top-5 md:-left-6 text-[#FFB800] w-4 h-4 md:w-6 md:h-6 animate-pulse" />
+              <Sparkle className="absolute -bottom-2 -left-1 md:-bottom-3 md:-left-2 text-[#FF4D4D] w-3 h-3 md:w-5 md:h-5 animate-bounce delay-100" />
+              <Sparkle className="absolute -top-1 -right-2 md:-top-2 md:-right-3 text-[#FF4D4D] w-3 h-3 md:w-4 md:h-4 animate-pulse delay-75" />
+              <Sparkle className="absolute -bottom-3 -right-3 md:-bottom-5 md:-right-6 text-[#FFB800] w-4 h-4 md:w-5 md:h-5 animate-bounce delay-150" />
             </span>
-            <span> to your</span>
           </div>
-          <br className="hidden md:block" />
-          <div className="mt-2 lg:mt-4">goals?</div>
         </h1>
+
+        {/* Subheadline */}
+        <p className="mt-5 text-[17px] sm:text-[19px] md:text-[21px] text-[#5e6677] font-secondary max-w-[760px] mx-auto leading-relaxed px-2">
+          Lock stakes, stay accountable with peers &amp; referees, and turn ambition into daily consistency.
+        </p>
       </div>
     </div>
   );
