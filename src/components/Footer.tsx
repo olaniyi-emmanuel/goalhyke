@@ -15,19 +15,24 @@ const Footer = ({ showCommunities = true }: FooterProps) => {
         <div className="gh-shell flex flex-col justify-between gap-12 rounded-[28px] border border-white/8 bg-[#12171d] px-6 py-10 lg:flex-row lg:gap-0 lg:px-12">
           {/* Left Section - Logo & Copyright */}
           <div className="flex flex-col gap-6">
-            <div className="relative w-[120px] lg:w-[150px] h-[32px] lg:h-[40px]">
-              <Image
-                src="/images/mku9ytzu-u6m6vhm.png"
-                alt="Goal Hyke"
-                fill
-                className="object-contain brightness-0 invert"
-                priority
-              />
-            </div>
+            <Link href="/" className="flex items-center gap-3 w-fit group">
+              <div className="relative w-[42px] h-[42px] rounded-[12px] overflow-hidden shrink-0 shadow-[0_4px_20px_rgba(65,105,225,0.35)] group-hover:scale-105 transition-transform duration-300">
+                <Image
+                  src="/images/footer-logo.png"
+                  alt="goalHyke Logo"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              <span className="text-white font-primary font-bold text-[22px] tracking-tight group-hover:text-[#4169e1] transition-colors">
+                goal<span className="text-[#4169e1]">HYKE</span>
+              </span>
+            </Link>
 
-            <div className="flex flex-col gap-4 mt-2">
+            <div className="flex flex-col gap-4 mt-1">
               <p className="text-[13px] text-white/78 font-secondary">
-                © 2025 Copyright goalHyke.com - All rights reserved
+                © {new Date().getFullYear()} Copyright goalHyke.com - All rights reserved
               </p>
 
               {/* Social Icons */}
