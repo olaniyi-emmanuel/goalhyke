@@ -43,15 +43,15 @@ const HeroHeadline = () => {
 
   return (
     <div className="flex justify-center items-center w-full px-4 mt-[30px] lg:mt-[60px]">
-      <div className="w-full max-w-[1000px] text-center relative">
-        <h1 className="text-[38px] sm:text-[50px] md:text-[62px] lg:text-[74px] leading-[1.15] font-bold font-primary text-[#262525] tracking-tight">
+      <div className="w-full max-w-[1100px] text-center relative">
+        <h1 className="text-[42px] sm:text-[56px] md:text-[70px] lg:text-[82px] xl:text-[90px] leading-[1.12] font-extrabold font-primary text-[#262525] tracking-tight">
           {/* Line 1: Build New Habits. */}
-          <span className="block mb-2 md:mb-3">Build New Habits.</span>
+          <span className="block mb-2 md:mb-4">Build New Habits.</span>
 
           {/* Line 2: Achieve [Bigger Goals. / Without Burnout.] */}
           <div className="inline-flex items-center justify-center gap-2 sm:gap-4.5 flex-nowrap whitespace-nowrap max-w-full">
             <span className="shrink-0">Achieve</span>
-            <span className="relative inline-flex items-center px-3.5 md:px-6 py-1 md:py-2 z-10 shrink-0 min-h-[54px] sm:min-h-[66px] md:min-h-[80px]">
+            <span className="relative inline-flex items-center px-4 md:px-7 py-1 md:py-2.5 z-10 shrink-0 min-h-[58px] sm:min-h-[74px] md:min-h-[90px] lg:min-h-[104px]">
               {/* Background Blob/Highlight */}
               <div className="absolute inset-0 bg-[#eef2fa] rounded-2xl -z-10 transform skew-x-[-2deg] skew-y-[1deg]"></div>
 
