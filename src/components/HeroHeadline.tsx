@@ -44,18 +44,20 @@ const HeroHeadline = () => {
   return (
     <div className="flex justify-center items-center w-full px-4 mt-[30px] lg:mt-[60px]">
       <div className="w-full max-w-[1000px] text-center relative">
-        <h1 className="text-[36px] sm:text-[48px] md:text-[60px] lg:text-[70px] leading-[1.18] font-bold font-primary text-[#262525] tracking-tight">
-          <span>Build New Habits.</span>
-          <br className="hidden sm:block" />
-          <div className="relative inline-block mt-2 lg:mt-3">
-            <span className="mr-2 md:mr-3">Achieve</span>
-            <span className="relative inline-flex items-center mx-1 md:mx-2 px-3 md:px-5 py-1 md:py-1.5 z-10 min-h-[54px] sm:min-h-[64px] md:min-h-[76px]">
+        <h1 className="text-[32px] sm:text-[44px] md:text-[56px] lg:text-[66px] leading-[1.2] font-bold font-primary text-[#262525] tracking-tight">
+          {/* Line 1: Build New Habits. */}
+          <span className="block mb-2 md:mb-3">Build New Habits.</span>
+
+          {/* Line 2: Achieve [Bigger Goals. / Goals Without Burnout.] */}
+          <div className="inline-flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+            <span>Achieve</span>
+            <span className="relative inline-flex items-center px-3 md:px-5 py-1 md:py-1.5 z-10 min-h-[50px] sm:min-h-[60px] md:min-h-[72px]">
               {/* Background Blob/Highlight */}
               <div className="absolute inset-0 bg-[#eef2fa] rounded-2xl -z-10 transform skew-x-[-2deg] skew-y-[1deg]"></div>
 
               {/* Animated Text */}
               <span
-                className={`transition-all duration-500 ease-out inline-block transform ${
+                className={`transition-all duration-500 ease-out inline-block transform whitespace-nowrap ${
                   isFading
                     ? "opacity-0 translate-y-2 scale-95"
                     : "opacity-100 translate-y-0 scale-100"
