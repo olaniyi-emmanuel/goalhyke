@@ -1,4 +1,6 @@
-import React from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 
 const Sparkle = ({ className }: { className?: string }) => (
   <svg
@@ -16,7 +18,29 @@ const Sparkle = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const phrases = [
+  { text: "Bigger Goals.", colorClass: "text-[#262525] font-extrabold" },
+  { text: "Goals Without Burnout.", colorClass: "bg-gradient-to-r from-[#7655fb] via-[#4169e1] to-[#ff4d4d] bg-clip-text text-transparent font-extrabold" },
+];
+
 const HeroHeadline = () => {
+  const [index, setIndex] = useState(0);
+  const [isFading, setIsFading] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsFading(true);
+      setTimeout(() => {
+        setIndex((prevIndex) => (prevIndex + 1) % phrases.length);
+        setIsFading(false);
+      }, 350); // 350ms fade transition
+    }, 3400); // Cycles every 3.4 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentPhrase = phrases[index];
+
   return (
     <div className="flex justify-center items-center w-full px-4 mt-[30px] lg:mt-[60px]">
       <div className="w-full max-w-[1000px] text-center relative">
@@ -25,12 +49,20 @@ const HeroHeadline = () => {
           <br className="hidden sm:block" />
           <div className="relative inline-block mt-2 lg:mt-3">
             <span className="mr-2 md:mr-3">Achieve</span>
-            <span className="relative inline-flex items-center mx-1 md:mx-2 px-3 md:px-5 py-1 md:py-1.5 z-10">
+            <span className="relative inline-flex items-center mx-1 md:mx-2 px-3 md:px-5 py-1 md:py-1.5 z-10 min-h-[54px] sm:min-h-[64px] md:min-h-[76px]">
               {/* Background Blob/Highlight */}
               <div className="absolute inset-0 bg-[#eef2fa] rounded-2xl -z-10 transform skew-x-[-2deg] skew-y-[1deg]"></div>
 
-              {/* Text */}
-              <span className="text-[#7655fb] font-extrabold tracking-normal">Bigger Goals.</span>
+              {/* Animated Text */}
+              <span
+                className={`transition-all duration-500 ease-out inline-block transform ${
+                  isFading
+                    ? "opacity-0 translate-y-2 scale-95"
+                    : "opacity-100 translate-y-0 scale-100"
+                } ${currentPhrase.colorClass}`}
+              >
+                {currentPhrase.text}
+              </span>
 
               {/* Sparkles */}
               <Sparkle className="absolute -top-3 -left-3 md:-top-5 md:-left-6 text-[#FFB800] w-4 h-4 md:w-6 md:h-6 animate-pulse" />
