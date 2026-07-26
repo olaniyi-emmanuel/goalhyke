@@ -45,6 +45,7 @@ export default function Links() {
   // Tabs & Navigation State
   const [activeTab, setActiveTab] = useState<TabId>("chats");
   const [loading, setLoading] = useState(true);
+  const [contentReady, setContentReady] = useState(false);
   const [initError, setInitError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [mobilePane, setMobilePane] = useState<"list" | "chat">("list");
@@ -353,6 +354,14 @@ export default function Links() {
       window.removeEventListener("beforeunload", handleUnload);
     };
   }, []);
+
+  // All-at-Once Fade-In: trigger content reveal after data loads
+  useEffect(() => {
+    if (!loading) {
+      const timer = setTimeout(() => setContentReady(true), 60);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   // Update presence status in DB periodically and map updates
   useEffect(() => {
@@ -1550,7 +1559,13 @@ export default function Links() {
               </div>
             ) : (
               /* Global Immersive 3-Column Layout */
-              <div className="flex-1 flex overflow-hidden bg-white select-none">
+              <div
+                className="flex-1 flex overflow-hidden bg-white select-none transition-all duration-700 ease-out"
+                style={{
+                  opacity: contentReady ? 1 : 0,
+                  transform: contentReady ? 'translateY(0)' : 'translateY(12px)',
+                }}
+              >
                 {mobileNavOpen ? (
                   <div className="fixed inset-0 z-[120] lg:hidden">
                     <button

@@ -206,15 +206,11 @@ export default function FAQSection() {
     () => categories.find((category) => category.label === activeCategory)?.items ?? [],
     [activeCategory],
   );
-  const [openQuestions, setOpenQuestions] = useState<string[]>(
-    categories[0].items.map((item) => item.question),
-  );
+  const [openQuestions, setOpenQuestions] = useState<string[]>([]);
 
   const handleCategorySelect = (label: string) => {
     setActiveCategory(label);
-    const items =
-      categories.find((category) => category.label === label)?.items ?? [];
-    setOpenQuestions(items.map((item) => item.question));
+    setOpenQuestions([]);
   };
 
   const handleToggle = (question: string) => {

@@ -18,8 +18,13 @@
   --font-secondary: var(--font-secondary-family);
 }
 
-body {
+html, body {
   overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
+body {
   background:
     radial-gradient(circle at top left, rgba(118, 85, 251, 0.08), transparent 28%),
     radial-gradient(circle at top right, rgba(65, 105, 225, 0.08), transparent 24%),

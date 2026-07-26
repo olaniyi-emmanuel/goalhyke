@@ -423,66 +423,96 @@ const NavigationRegistered = () => {
           </div>
 
           {/* Mobile Content */}
-          <div className="flex flex-col items-center justify-center flex-1 gap-8 py-10 min-h-[calc(100vh-120px)]">
-            {/* Links */}
-            <div className="flex flex-col items-center gap-8">
-              {[
-                { text: "HOW IT WORKS", href: "/#how-it-works" },
-                { text: "ABOUT US", href: "/#about-us" },
-                { text: "HELP CENTER", href: "/support" }
-              ].map((item) => (
-                <Link
-                  key={item.text}
-                  href={item.href}
-                  className="text-[#262525] text-[16px] font-medium font-secondary tracking-wide hover:text-[#7655fb] transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.text}
-                </Link>
-              ))}
-            </div>
-
-            {/* Mobile Actions */}
-            <div className="flex flex-col items-center gap-6 mt-8 w-full px-10 max-w-[350px] shrink-0">
-              <Link href="/get-token" onClick={() => setIsMenuOpen(false)} className="w-full">
-                <button className="flex items-center justify-center border border-[#7655fb] rounded-[50px] w-full h-[50px] text-[#7655fb] text-[14px] font-bold font-secondary tracking-wide hover:bg-[#F9FAFF] transition-colors cursor-pointer">
-                  GET TOKEN
-                </button>
-              </Link>
-              
-              <Link 
-                href="/settings"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex flex-col items-center gap-2 cursor-pointer mb-2"
-              >
-                <div className="relative w-[60px] h-[60px] rounded-full overflow-hidden border-2 border-[#7655fb]/20 shadow-sm">
-                    <InitialsAvatar
-                      src={user?.user_metadata?.avatar_url}
-                      name={
-                        user 
-                          ? (user.user_metadata?.full_name || user.user_metadata?.name || user.email || "User")
-                          : "..."
-                      }
-                      seed={user?.id}
-                      size={60}
-                    />
-                </div>
-                <div className="text-center">
-                  <p className="text-[#262525] text-[16px] font-bold font-secondary">
+          <div className="flex flex-col flex-1 py-6 px-6 overflow-y-auto">
+            <div className="flex flex-col gap-5 w-full max-w-[360px] mx-auto pb-8">
+              {/* User Info Header */}
+              <div className="flex items-center gap-3 p-3.5 rounded-[20px] bg-[#F8F9FF] border border-[#ECEFF7]">
+                <InitialsAvatar
+                  src={user?.user_metadata?.avatar_url}
+                  name={
+                    user 
+                      ? (user.user_metadata?.full_name || user.user_metadata?.name || user.email || "User")
+                      : "..."
+                  }
+                  seed={user?.id}
+                  size={46}
+                  className="shrink-0 border border-white shadow-sm"
+                />
+                <div className="flex flex-col min-w-0 text-left">
+                  <p className="text-[#262525] text-[15px] font-bold font-primary truncate">
                     {user ? (user.user_metadata?.full_name || user.user_metadata?.name || "User") : "..."}
                   </p>
-                  <p className="text-[12px] text-gray-500">
-                    @{user?.user_metadata?.username || "goalhyker"}
-                  </p>
+                  {user?.email && (
+                    <p className="text-[12px] text-[#8F8E98] truncate font-primary">
+                      {user.email}
+                    </p>
+                  )}
                 </div>
-              </Link>
+              </div>
 
-              <button 
-                onClick={handleLogout}
-                className="flex items-center justify-center border border-red-200 rounded-[50px] w-full h-[50px] text-red-500 text-[14px] font-bold font-secondary tracking-wide hover:bg-red-50 transition-colors cursor-pointer"
-              >
-                LOG OUT
-              </button>
+              {/* Account Navigation Links */}
+              <div className="flex flex-col gap-1 text-left border-b border-gray-100 pb-4">
+                <p className="px-3 pb-1 text-[11px] font-bold font-secondary uppercase tracking-wider text-[#8F8E98]">
+                  Account Menu
+                </p>
+                {[
+                  { text: "Dashboard", href: "/dashboard" },
+                  { text: "My Profile", href: "/settings" },
+                  { text: "Hyke Circle", href: "/links" },
+                  { text: "Progress & Analytics", href: "/stats" },
+                  { text: "Settings", href: "/settings" },
+                  { text: "Billing", href: "/settings#billing" },
+                  { text: "Help & Support", href: "/support" }
+                ].map((item) => (
+                  <Link
+                    key={item.text}
+                    href={item.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center px-3.5 py-2 text-[15px] font-bold text-[#262525] hover:bg-[#F4F2FF] hover:text-[#7655fb] rounded-[12px] transition-colors font-primary"
+                  >
+                    {item.text}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Main Site Links */}
+              <div className="flex flex-col gap-1 text-left border-b border-gray-100 pb-4">
+                <p className="px-3 pb-1 text-[11px] font-bold font-secondary uppercase tracking-wider text-[#8F8E98]">
+                  Navigation
+                </p>
+                {[
+                  { text: "HOW IT WORKS", href: "/#how-it-works" },
+                  { text: "ABOUT US", href: "/#about-us" },
+                ].map((item) => (
+                  <Link
+                    key={item.text}
+                    href={item.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center px-3.5 py-2 text-[14px] font-bold text-[#4F5B7F] hover:bg-[#F4F2FF] hover:text-[#7655fb] rounded-[12px] transition-colors font-secondary tracking-wide"
+                  >
+                    {item.text}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col gap-3 pt-1">
+                <Link href="/get-token" onClick={() => setIsMenuOpen(false)} className="w-full">
+                  <button className="flex items-center justify-center border border-[#7655fb] rounded-[50px] w-full h-[48px] text-[#7655fb] text-[14px] font-bold font-secondary tracking-wide hover:bg-[#F9FAFF] transition-colors cursor-pointer shadow-sm">
+                    GET TOKEN
+                  </button>
+                </Link>
+
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="flex items-center justify-center border border-red-200 bg-white rounded-[50px] w-full h-[48px] text-red-500 text-[14px] font-bold font-secondary tracking-wide hover:bg-red-50 transition-colors cursor-pointer"
+                >
+                  LOG OUT
+                </button>
+              </div>
             </div>
           </div>
         </div>

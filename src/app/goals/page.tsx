@@ -54,6 +54,7 @@ function formatDate(dateStr: string) {
 export default function Goals() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [contentReady, setContentReady] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -114,6 +115,14 @@ export default function Goals() {
 
     fetchGoals();
   }, []);
+
+  // All-at-Once Fade-In: trigger content reveal after data loads
+  useEffect(() => {
+    if (!loading) {
+      const timer = setTimeout(() => setContentReady(true), 60);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -274,12 +283,21 @@ export default function Goals() {
               </div>
 
               {/* Goals Lists */}
-              {loading ? (
+              {loading && (
                 <div className="py-20 text-center flex flex-col items-center justify-center gap-3">
                   <div className="w-8 h-8 rounded-full border-4 border-[#7655fb] border-t-transparent animate-spin"></div>
                   <p className="text-gray-500 font-secondary text-sm">Loading your Goals...</p>
                 </div>
-              ) : (
+              )}
+
+              <div
+                className="transition-all duration-700 ease-out flex-1 flex flex-col"
+                style={{
+                  opacity: contentReady ? 1 : 0,
+                  transform: contentReady ? 'translateY(0)' : 'translateY(12px)',
+                  display: loading ? 'none' : 'flex',
+                }}
+              >
                 <div className="flex flex-col gap-8 flex-1">
                   
                   {/* Active Goals Section */}
@@ -457,9 +475,8 @@ export default function Goals() {
                       </div>
                     )}
                   </div>
-
                 </div>
-              )}
+              </div>
 
             </div>
 

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import NavigationRegistered from "@/components/NavigationRegistered";
 import Sidebar from "@/components/Sidebar";
 import DashboardHeader from "@/components/DashboardHeader";
@@ -129,11 +129,21 @@ function buildCalendarDaysForMonth(year: number, month: number) {
 }
 
 export default function GoalDashboardDetailPage() {
+  const router = useRouter();
   const params = useParams<{ goalId: string }>();
   const goalId = Array.isArray(params?.goalId) ? params.goalId[0] : params?.goalId;
 
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/goals");
+    }
+  };
+
   const [goal, setGoal] = useState<GoalDetail>(fallbackGoal);
   const [loading, setLoading] = useState(true);
+  const [contentReady, setContentReady] = useState(false);
   const [activeTab, setActiveTab] = useState<JournalTab>("posts");
   const [journalEntry, setJournalEntry] = useState("");
   const [journalPosts, setJournalPosts] = useState<string[]>([]);
@@ -272,6 +282,14 @@ export default function GoalDashboardDetailPage() {
   useEffect(() => {
     fetchGoalAndSubmissions();
   }, [goalId]);
+
+  // All-at-Once Fade-In: trigger content reveal after data loads
+  useEffect(() => {
+    if (!loading) {
+      const timer = setTimeout(() => setContentReady(true), 60);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   // Fetch leaderboard data when modal opens
   useEffect(() => {
@@ -674,38 +692,61 @@ export default function GoalDashboardDetailPage() {
           <DashboardHeader />
 
           <div className="flex-1 px-8 pb-12">
-            {loading ? (
-              <div className="gh-panel flex items-center gap-4 p-10">
+            {loading && (
+              <div className="gh-panel flex items-center justify-center gap-4 p-12 text-[#7655fb]">
                 <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#7655fb] border-t-transparent" />
-                <p className="text-[15px] font-medium text-[#6f6f78]">
+                <p className="text-[15px] font-bold text-[#262525] font-secondary">
                   Loading goal dashboard...
                 </p>
               </div>
-            ) : (
+            )}
+
+            <div
+              className="transition-all duration-700 ease-out"
+              style={{
+                opacity: contentReady ? 1 : 0,
+                transform: contentReady ? 'translateY(0)' : 'translateY(12px)',
+                display: loading ? 'none' : 'block',
+              }}
+            >
               <div className="gh-panel p-6 md:p-8">
                 <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_260px]">
                   <section className="min-w-0">
-                    <div className="mb-8 flex flex-wrap items-center gap-4">
-                      <div className="inline-flex items-center rounded-full border border-[#dddaf8] bg-white p-1 shadow-[0_8px_24px_rgba(24,33,77,0.04)]">
-                        {[
-                          { label: "Active", active: goal.status === "active" },
-                          { label: "Completed", active: goal.status === "completed" },
-                        ].map((item) => (
-                          <span
-                            key={item.label}
-                            className={`rounded-full px-5 py-2 text-[12px] font-bold transition-colors ${
-                              item.active ? "bg-[#eef2ff] text-[#7655fb]" : "text-[#7f7e87]"
-                            }`}
-                          >
-                            {item.label}
+                    <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+                      {/* Back Button */}
+                      <button
+                        type="button"
+                        onClick={handleBack}
+                        className="inline-flex items-center gap-2 rounded-full border border-[#eceff7] bg-white px-4 py-2 text-[13px] font-bold text-[#4f5b7f] hover:text-[#7655fb] hover:bg-[#f3f6ff] hover:border-[#7655fb]/30 transition-all duration-200 shadow-[0_2px_8px_rgba(24,33,77,0.03)] cursor-pointer"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        <span>Back</span>
+                      </button>
+
+                      <div className="flex items-center gap-3">
+                        <div className="inline-flex items-center rounded-full border border-[#dddaf8] bg-white p-1 shadow-[0_8px_24px_rgba(24,33,77,0.04)]">
+                          {[
+                            { label: "Active", active: goal.status === "active" },
+                            { label: "Completed", active: goal.status === "completed" },
+                          ].map((item) => (
+                            <span
+                              key={item.label}
+                              className={`rounded-full px-5 py-2 text-[12px] font-bold transition-colors ${
+                                item.active ? "bg-[#eef2ff] text-[#7655fb]" : "text-[#7f7e87]"
+                              }`}
+                            >
+                              {item.label}
+                            </span>
+                          ))}
+                        </div>
+                        {goal.status === "failed" ? (
+                          <span className="inline-flex items-center rounded-full bg-red-50 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-red-600">
+                            Failed
                           </span>
-                        ))}
+                        ) : null}
                       </div>
-                      {goal.status === "failed" ? (
-                        <span className="inline-flex items-center rounded-full bg-red-50 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-red-600">
-                          Failed
-                        </span>
-                      ) : null}
                     </div>
 
                     <div className="gh-panel-soft rounded-[24px] border border-[#eceff7] bg-white p-5 shadow-[0_16px_36px_rgba(24,33,77,0.06)] md:p-6">
@@ -1534,7 +1575,7 @@ export default function GoalDashboardDetailPage() {
                   </aside>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

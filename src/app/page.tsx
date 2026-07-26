@@ -44,7 +44,7 @@ export default async function Home({ searchParams }: PageProps) {
 
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white overflow-x-clip max-w-full relative">
       <Navigation />
 
       {/* Hero & Features Section */}

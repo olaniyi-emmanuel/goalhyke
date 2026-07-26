@@ -19,6 +19,7 @@ interface Goal {
 export default function Stats() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [contentReady, setContentReady] = useState(false);
   const [tokenBalance, setTokenBalance] = useState<number>(0);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [selectedGoalFilter, setSelectedGoalFilter] = useState("all");
@@ -82,6 +83,14 @@ export default function Stats() {
 
     fetchStatsData();
   }, []);
+
+  // All-at-Once Fade-In: trigger content reveal after data loads
+  useEffect(() => {
+    if (!loading) {
+      const timer = setTimeout(() => setContentReady(true), 60);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   const filteredGoals = useMemo(() => {
     if (selectedGoalFilter === "all") return goals;
@@ -224,12 +233,21 @@ export default function Stats() {
                 </select>
               </div>
 
-              {loading ? (
+              {loading && (
                 <div className="flex justify-center items-center py-20 text-[#7655fb]">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7655fb]"></div>
                   <span className="ml-3 text-[14px] font-medium font-secondary">Loading statistics...</span>
                 </div>
-              ) : (
+              )}
+
+              <div
+                className="transition-all duration-700 ease-out flex flex-col gap-8 flex-1"
+                style={{
+                  opacity: contentReady ? 1 : 0,
+                  transform: contentReady ? 'translateY(0)' : 'translateY(12px)',
+                  display: loading ? 'none' : 'flex',
+                }}
+              >
                 <>
                   {/* Grid of Key Metrics */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -302,7 +320,7 @@ export default function Stats() {
                     </div>
                   </div>
                 </>
-              )}
+              </div>
 
             </div>
 

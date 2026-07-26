@@ -154,13 +154,13 @@ export default function PricingSection() {
   }, []);
 
   return (
-    <section className="w-full bg-white px-4 py-[56px] sm:py-[72px]">
+    <section className="w-full bg-white px-4 sm:px-6 py-[44px] sm:py-[72px] overflow-x-clip">
       <div className="mx-auto max-w-[1280px]">
         <div className="mx-auto max-w-[760px] text-center">
-          <h2 className="font-primary text-[34px] font-bold text-[#262525] sm:text-[45px]">
+          <h2 className="font-primary text-[28px] xs:text-[34px] sm:text-[45px] font-bold text-[#262525]">
             Our pricing plans
           </h2>
-          <p className="mx-auto mt-5 max-w-[700px] font-secondary text-[18px] leading-[1.5] text-[#111111e5] sm:text-[20px]">
+          <p className="mx-auto mt-3 sm:mt-5 max-w-[700px] font-secondary text-[15px] sm:text-[18px] md:text-[20px] leading-[1.5] text-[#111111e5]">
             Choose the perfect token package that fits your goal-tracking needs.
             Lock stakes, verify achievements, and build lasting habits!
           </p>
@@ -171,7 +171,7 @@ export default function PricingSection() {
             isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
         >
-          <div className="mt-16 grid gap-8 md:grid-cols-3 max-w-[1024px] mx-auto">
+          <div className="mt-10 sm:mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-[1024px] mx-auto w-full">
             {plans.map((plan) => {
               const isSelected = selectedPlan === plan.name;
               const linkHref = user
@@ -182,49 +182,49 @@ export default function PricingSection() {
                 <div
                   key={plan.name}
                   onClick={() => setSelectedPlan(plan.name)}
-                  className={`relative flex h-full cursor-pointer flex-col rounded-[24px] border-[3px] bg-white px-6 py-10 transition-all duration-300 hover:-translate-y-1 ${
+                  className={`relative flex h-full cursor-pointer flex-col rounded-[22px] sm:rounded-[24px] border-2 sm:border-[3px] bg-white px-4 min-[380px]:px-6 py-7 sm:py-10 transition-all duration-300 hover:-translate-y-1 w-full box-border ${
                     isSelected
-                      ? "border-[#7655fb] shadow-[0_20px_48px_rgba(118,85,251,0.12)] scale-[1.01]"
+                      ? "border-[#7655fb] shadow-[0_16px_40px_rgba(118,85,251,0.12)] sm:scale-[1.01]"
                       : "border-[#11111114] hover:border-[#11111129] hover:shadow-[0_12px_32px_rgba(17,17,17,0.04)]"
                   }`}
                 >
                   {plan.badge && (
-                    <div className="absolute -top-[16px] left-1/2 -translate-x-1/2 rounded-full bg-[#7655fb] px-5 py-1.5 shadow-[0_6px_20px_rgba(118,85,251,0.25)] whitespace-nowrap">
-                      <span className="font-secondary text-[11px] font-bold tracking-widest text-white uppercase">
+                    <div className="absolute -top-[14px] sm:-top-[16px] left-1/2 -translate-x-1/2 rounded-full bg-[#7655fb] px-4 sm:px-5 py-1 sm:py-1.5 shadow-[0_6px_20px_rgba(118,85,251,0.25)] whitespace-nowrap z-10">
+                      <span className="font-secondary text-[10px] sm:text-[11px] font-bold tracking-widest text-white uppercase">
                         {plan.badge}
                       </span>
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-primary text-[26px] font-bold text-[#262525]">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-primary text-[21px] min-[380px]:text-[24px] sm:text-[26px] font-bold text-[#262525] truncate">
                       {plan.name}
                     </h3>
                     <div
-                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
+                      className={`flex h-5 w-5 sm:h-6 sm:w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
                         isSelected
                           ? "border-[#7655fb] bg-[#7655fb]"
                           : "border-[#11111133] bg-transparent"
                       }`}
                     >
                       {isSelected && (
-                        <div className="h-2 w-2 rounded-full bg-white" />
+                        <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-white" />
                       )}
                     </div>
                   </div>
 
-                  <div className="mt-6 font-primary font-bold text-[#262525]">
-                    <span className="text-[40px] leading-none sm:text-[46px]">
+                  <div className="mt-4 sm:mt-6 font-primary font-bold text-[#262525]">
+                    <span className="text-[32px] min-[380px]:text-[38px] sm:text-[46px] leading-none">
                       {currency === "NGN" ? plan.priceNGN : plan.priceUSD}
                     </span>
-                    <span className="text-[16px] font-normal text-[#7b7474] block mt-1.5">
+                    <span className="text-[14px] sm:text-[16px] font-normal text-[#7b7474] block mt-1.5">
                       for {plan.amount} tokens
                     </span>
                   </div>
 
                   <Link
                     href={linkHref}
-                    className={`mt-10 flex h-[54px] w-full items-center justify-center rounded-full border text-[18px] font-bold font-primary transition-all ${
+                    className={`mt-6 sm:mt-10 flex h-[48px] sm:h-[54px] w-full items-center justify-center rounded-full border text-[16px] sm:text-[18px] font-bold font-primary transition-all ${
                       isSelected
                         ? "border-[#7655fb] bg-[#7655fb] text-white shadow-[0_12px_30px_rgba(118,85,251,0.24)] hover:bg-[#6445e0]"
                         : "border-[#d7d7d7] bg-white text-[#262525] shadow-[0_0_4px_rgba(0,0,0,0.08)] hover:border-[#7655fb] hover:text-[#7655fb]"
@@ -233,15 +233,15 @@ export default function PricingSection() {
                     {user ? "Buy Now" : "Get Started"}
                   </Link>
 
-                  <div className="mt-10 flex-grow">
-                    <p className="font-primary text-[20px] font-bold text-[#262525]">
+                  <div className="mt-8 sm:mt-10 flex-grow">
+                    <p className="font-primary text-[18px] sm:text-[20px] font-bold text-[#262525]">
                       Benefits
                     </p>
-                    <div className="mt-5 flex flex-col gap-4">
+                    <div className="mt-4 sm:mt-5 flex flex-col gap-3 sm:gap-4">
                       {plan.features.map((feature) => (
                         <div
                           key={feature}
-                          className="flex items-start gap-3 font-secondary text-[15px] leading-[1.4] text-[#262525]"
+                          className="flex items-start gap-2.5 sm:gap-3 font-secondary text-[14px] sm:text-[15px] leading-[1.4] text-[#262525]"
                         >
                           <CheckIcon />
                           <span>{feature}</span>
@@ -254,8 +254,8 @@ export default function PricingSection() {
             })}
           </div>
 
-          <div className="mt-12 text-center">
-            <p className="font-secondary text-[16px] text-[#7b7474]">
+          <div className="mt-10 sm:mt-12 text-center">
+            <p className="font-secondary text-[14px] sm:text-[16px] text-[#7b7474]">
               Looking for a custom amount of tokens?{" "}
               <Link
                 href={user ? "/get-token?package=custom" : `/signup?redirectTo=${encodeURIComponent("/get-token?package=custom")}`}
