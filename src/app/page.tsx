@@ -47,12 +47,12 @@ export default async function Home({ searchParams }: PageProps) {
     <main className="min-h-screen bg-white overflow-x-clip max-w-full relative">
       <Navigation />
 
-      {/* Hero & Features Section */}
-      <div className="max-w-[1024px] mx-auto pb-12">
-        <HeroHeadline />
-        <GoalSelector />
+      {/* Hero Headline & Goal Selector — full width, no max-w constraint */}
+      <HeroHeadline />
+      <GoalSelector />
 
-        {/* Dashboard Preview */}
+      {/* Features Section — constrained width */}
+      <div className="w-full max-w-[1024px] mx-auto pb-12">
         <div className="relative w-full max-w-[960px] mx-auto mt-[20px] lg:mt-[24px] px-4">
           {/* Desktop Image */}
           <div className="hidden md:block relative aspect-[1240/768] w-full rounded-[20px] overflow-hidden shadow-2xl border border-gray-100">
