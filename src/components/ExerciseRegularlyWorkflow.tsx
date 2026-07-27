@@ -7,9 +7,6 @@ import { createClient } from "@/lib/supabase/client";
 import GoalRefereeForm, {
   type ExerciseRefereeFormData,
 } from "@/components/GoalRefereeForm";
-import GoalSupportersForm, {
-  type ExerciseSupportersFormData,
-} from "@/components/GoalSupportersForm";
 
 interface ExerciseRegularlyWorkflowProps {
   goalTitle?: string;
@@ -18,18 +15,16 @@ interface ExerciseRegularlyWorkflowProps {
 
 interface ExerciseTargetFormData {
   daysPerWeek: string;
-  sessionDuration: string;
   exerciseType: string;
   startDate: string;
   reportingDay: string;
 }
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 3;
 const MIN_COMMIT_TOKENS = 20;
 
 const DEFAULT_TARGET: ExerciseTargetFormData = {
   daysPerWeek: "3 days",
-  sessionDuration: "15 minutes",
   exerciseType: "Cardio",
   startDate: "Today",
   reportingDay: "Tuesday",
@@ -40,22 +35,6 @@ const DEFAULT_REFEREE: ExerciseRefereeFormData = {
   refereeContact: "",
   selfManaged: false,
 };
-
-const DEFAULT_SUPPORTERS: ExerciseSupportersFormData = {
-  autoAccept: false,
-  supporters: "",
-};
-
-const CHALLENGE_OPTIONS = [
-  "Lack of time",
-  "Lack of motivation",
-  "Feeling tired or low energy",
-  "Too many distractions",
-  "No proper workout plan",
-  "Lack of support or accountability",
-  "Unhealthy eating habits",
-  "Other",
-];
 
 function resolveStartDate(label: string) {
   const date = new Date();
@@ -106,9 +85,6 @@ function StepShell({
   goalTitle,
   icon,
   children,
-  visualTitle,
-  visualBody,
-  visualImageSrc,
   onBack,
   onCancel,
   onNext,
@@ -120,9 +96,6 @@ function StepShell({
   goalTitle: string;
   icon: ReactNode;
   children: ReactNode;
-  visualTitle: string;
-  visualBody: string;
-  visualImageSrc: string;
   onBack: () => void;
   onCancel: () => void;
   onNext: () => void;
@@ -178,35 +151,23 @@ function StepShell({
         </div>
       </div>
 
-      <div className="mt-8 grid w-full grid-cols-1 gap-8 px-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:px-0">
+      <div className="mt-8 w-full max-w-[720px] px-4 lg:px-0">
         <div className="gh-panel-soft p-6 sm:p-8">{children}</div>
+      </div>
 
-        <div className="relative hidden overflow-hidden rounded-[28px] border border-[#eceff7] bg-white p-6 shadow-[0_20px_45px_rgba(24,33,77,0.08)] lg:flex lg:flex-col">
-          <div className="absolute right-[-40px] top-[-40px] h-[120px] w-[120px] rounded-full bg-[#ebe5ff]" />
-          <div className="absolute bottom-[-30px] left-[-20px] h-[90px] w-[90px] rounded-full bg-[#eef4ff]" />
-
-          <div className="relative">
-            <div className="relative mx-auto h-[180px] w-[180px]">
-              <Image
-                src={visualImageSrc}
-                alt={visualTitle}
-                fill
-                className="object-contain"
-              />
-            </div>
-            <div className="mt-6 rounded-[22px] bg-[#f7f8ff] p-5">
-              <p className="text-[18px] font-semibold text-[#262525] font-secondary">
-                {visualTitle}
-              </p>
-              <p className="mt-3 text-[14px] leading-6 text-[#5a6075]">
-                {visualBody}
-              </p>
-            </div>
-          </div>
+      {/* Centered circular illustration */}
+      <div className="mt-10 flex justify-center">
+        <div className="relative h-[120px] w-[120px] overflow-hidden rounded-full border border-[#eceff7] bg-white shadow-[0_8px_24px_rgba(24,33,77,0.06)]">
+          <Image
+            src="/images/goal-exercise.png"
+            alt="Exercise illustration"
+            fill
+            className="object-cover"
+          />
         </div>
       </div>
 
-      <div className="mb-10 mt-12 flex w-full flex-wrap items-center justify-center gap-5">
+      <div className="mb-10 mt-10 flex w-full flex-wrap items-center justify-center gap-5">
         <button
           type="button"
           onClick={onCancel}
@@ -292,55 +253,6 @@ function SelectQuestion({
   );
 }
 
-function ChallengeOption({
-  label,
-  selected,
-  onClick,
-}: {
-  label: string;
-  selected: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex items-center gap-4 rounded-[18px] border px-4 py-4 text-left transition-colors ${
-        selected
-          ? "border-[#7655fb] bg-[#f3efff]"
-          : "border-[#e4e8f2] bg-white hover:border-[#7655fb]"
-      }`}
-    >
-      <span
-        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[8px] border-2 ${
-          selected
-            ? "border-[#7655fb] bg-[#7655fb]"
-            : "border-[#d3d9e8] bg-[#fbfbff]"
-        }`}
-      >
-        {selected && (
-          <svg
-            width="14"
-            height="11"
-            viewBox="0 0 14 11"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1 5L5 9L13 1"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
-      </span>
-      <span className="text-[16px] text-[#262525] font-secondary">{label}</span>
-    </button>
-  );
-}
-
 export default function ExerciseRegularlyWorkflow({
   goalTitle = "Exercise regularly",
   onCancel,
@@ -348,11 +260,8 @@ export default function ExerciseRegularlyWorkflow({
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [target, setTarget] = useState<ExerciseTargetFormData>(DEFAULT_TARGET);
-  const [challenges, setChallenges] = useState<string[]>([]);
   const [referee, setReferee] =
     useState<ExerciseRefereeFormData>(DEFAULT_REFEREE);
-  const [supporters, setSupporters] =
-    useState<ExerciseSupportersFormData>(DEFAULT_SUPPORTERS);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showCommitConfirm, setShowCommitConfirm] = useState(false);
@@ -372,18 +281,12 @@ export default function ExerciseRegularlyWorkflow({
     switch (currentStep) {
       case 1:
         return (
-          target.daysPerWeek.length > 0 &&
-          target.sessionDuration.length > 0 &&
-          target.exerciseType.length > 0 &&
-          target.startDate.length > 0 &&
-          target.reportingDay.length > 0
+          target.daysPerWeek.length > 0 && target.exerciseType.length > 0
         );
       case 2:
-        return challenges.length > 0;
+        return target.startDate.length > 0 && target.reportingDay.length > 0;
       case 3:
         return referee.selfManaged || referee.refereeContact.trim().length > 0;
-      case 4:
-        return true;
       default:
         return false;
     }
@@ -409,17 +312,8 @@ export default function ExerciseRegularlyWorkflow({
     moveToStep(step - 1);
   };
 
-  const handleToggleChallenge = (challenge: string) => {
-    setErrorMessage(null);
-    setChallenges((current) =>
-      current.includes(challenge)
-        ? current.filter((entry) => entry !== challenge)
-        : [...current, challenge],
-    );
-  };
-
   const handleOpenCommitConfirm = () => {
-    if (!validateStep(4)) {
+    if (!validateStep(3)) {
       setErrorMessage("Complete this step before continuing.");
       return;
     }
@@ -488,23 +382,11 @@ export default function ExerciseRegularlyWorkflow({
 
       const description = [
         `Exercise ${target.daysPerWeek}.`,
-        `Each session lasts ${target.sessionDuration}.`,
         `Focus area: ${target.exerciseType}.`,
         `Reporting day: ${target.reportingDay}.`,
-        challenges.length > 0 ? `Challenges: ${challenges.join(", ")}.` : null,
         referee.selfManaged
           ? "Referee preference: self-managed accountability."
           : `Referee type: ${referee.refereeType}. Referee contact: ${referee.refereeContact}.`,
-        supporters.autoAccept
-          ? "Supporters setting: auto-accept supporters enabled."
-          : null,
-        supporters.supporters.trim().length > 0
-          ? `Invited supporters: ${supporters.supporters
-              .split(/\r?\n/)
-              .map((entry) => entry.trim())
-              .filter(Boolean)
-              .join(", ")}.`
-          : null,
       ]
         .filter(Boolean)
         .join(" ");
@@ -575,10 +457,11 @@ export default function ExerciseRegularlyWorkflow({
           </div>
         )}
 
+        {/* Step 1: Define the Routine */}
         {step === 1 && (
           <StepShell
             currentStep={1}
-            title="Set Your Target"
+            title="Define the Routine"
             goalTitle={goalTitle}
             icon={
               <svg
@@ -603,9 +486,6 @@ export default function ExerciseRegularlyWorkflow({
                 />
               </svg>
             }
-            visualTitle="Define the workout commitment"
-            visualBody="Set the cadence, session length, workout type, start timing, and reporting rhythm that shape the exercise commitment."
-            visualImageSrc="/images/goal-exercise.png"
             onBack={handleBack}
             onCancel={onCancel}
             onNext={handleNext}
@@ -628,22 +508,6 @@ export default function ExerciseRegularlyWorkflow({
                 ]}
               />
               <SelectQuestion
-                label="How long do you plan to work out each session?"
-                value={target.sessionDuration}
-                onChange={(value) =>
-                  setTarget((current) => ({
-                    ...current,
-                    sessionDuration: value,
-                  }))
-                }
-                options={[
-                  "15 minutes",
-                  "30 minutes",
-                  "45 minutes",
-                  "1 hour",
-                ]}
-              />
-              <SelectQuestion
                 label="What type of exercise will you focus on?"
                 value={target.exerciseType}
                 onChange={(value) =>
@@ -651,6 +515,46 @@ export default function ExerciseRegularlyWorkflow({
                 }
                 options={["Cardio", "Strength", "Yoga", "HIIT"]}
               />
+            </div>
+          </StepShell>
+        )}
+
+        {/* Step 2: Set Schedule & Reporting */}
+        {step === 2 && (
+          <StepShell
+            currentStep={2}
+            title="Set the Schedule & Reporting"
+            goalTitle={goalTitle}
+            icon={
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="3"
+                  y="4"
+                  width="18"
+                  height="18"
+                  rx="2"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+                <path
+                  d="M16 2V6M8 2V6M3 10H21"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            }
+            onBack={handleBack}
+            onCancel={onCancel}
+            onNext={handleNext}
+          >
+            <div className="flex flex-col gap-6">
               <SelectQuestion
                 label="This commitment starts:"
                 value={target.startDate}
@@ -680,64 +584,7 @@ export default function ExerciseRegularlyWorkflow({
           </StepShell>
         )}
 
-        {step === 2 && (
-          <StepShell
-            currentStep={2}
-            title="Identify Your Challenges"
-            goalTitle={goalTitle}
-            icon={
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M10.5 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V13.5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M14 6L18 10"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M8 14L16 6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            }
-            visualTitle="Capture the blockers"
-            visualBody="Select the obstacles that are most likely to interrupt the exercise routine so your accountability flow reflects the real friction."
-            visualImageSrc="/images/progress-consistency-character.png"
-            onBack={handleBack}
-            onCancel={onCancel}
-            onNext={handleNext}
-          >
-            <div className="flex flex-col gap-5">
-              <p className="text-[18px] font-medium leading-7 text-[#262525] font-secondary">
-                What challenges might stop you from achieving your goal?
-              </p>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {CHALLENGE_OPTIONS.map((challenge) => (
-                  <ChallengeOption
-                    key={challenge}
-                    label={challenge}
-                    selected={challenges.includes(challenge)}
-                    onClick={() => handleToggleChallenge(challenge)}
-                  />
-                ))}
-              </div>
-            </div>
-          </StepShell>
-        )}
-
+        {/* Step 3: Referee */}
         {step === 3 && (
           <GoalRefereeForm
             goalTitle={goalTitle}
@@ -748,33 +595,16 @@ export default function ExerciseRegularlyWorkflow({
             }}
             onCancel={onCancel}
             onBack={handleBack}
-            onNext={handleNext}
+            onNext={handleOpenCommitConfirm}
             progressSteps={TOTAL_STEPS}
             activeIndex={2}
             refereeOptions={["Individual referee", "On your Honor"]}
             selfManagedOptionLabel="On your Honor"
           />
         )}
-
-        {step === 4 && (
-          <GoalSupportersForm
-            goalTitle={goalTitle}
-            value={supporters}
-            onChange={(value) => {
-              setErrorMessage(null);
-              setSupporters(value);
-            }}
-            onCancel={onCancel}
-            onBack={handleBack}
-            onSubmit={handleOpenCommitConfirm}
-            isSubmitting={isSaving}
-            submitLabel="Next"
-            progressSteps={TOTAL_STEPS}
-            activeIndex={3}
-          />
-        )}
       </div>
 
+      {/* Goal Created Modal */}
       {showGoalCreated && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#1b1a1a]/55 backdrop-blur-sm px-4">
           <div className="relative w-full max-w-[820px] rounded-[28px] border border-white/80 bg-white/95 px-8 py-10 shadow-[0_32px_80px_rgba(24,33,77,0.16)] sm:px-14 sm:py-12">
@@ -824,6 +654,7 @@ export default function ExerciseRegularlyWorkflow({
         </div>
       )}
 
+      {/* Commit Confirmation Modal */}
       {showCommitConfirm && (
         <div className="fixed inset-0 z-[79] flex items-center justify-center bg-[#1b1a1a]/55 backdrop-blur-sm px-4">
           <div className="relative w-full max-w-[820px] rounded-[28px] border border-white/80 bg-white/95 px-8 py-10 shadow-[0_32px_80px_rgba(24,33,77,0.16)] sm:px-14 sm:py-12">
@@ -972,6 +803,7 @@ export default function ExerciseRegularlyWorkflow({
         </div>
       )}
 
+      {/* Insufficient Tokens Modal */}
       {showInsufficientTokens && (
         <div className="fixed inset-0 z-[81] flex items-center justify-center bg-[#1b1a1a]/55 backdrop-blur-sm px-4">
           <div className="relative w-full max-w-[820px] rounded-[28px] border border-white/80 bg-white/95 px-8 py-10 shadow-[0_32px_80px_rgba(24,33,77,0.16)] sm:px-14 sm:py-12">

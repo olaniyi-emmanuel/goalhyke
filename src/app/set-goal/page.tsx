@@ -64,17 +64,17 @@ export default function SetGoal() {
     },
     {
       title: "Master tech skill",
-      imageSrc: "/images/behavioural-solution.png",
+      imageSrc: "/images/goal-tech-skill.png",
       category: "Master tech skill",
     },
     {
       title: "Read more",
-      imageSrc: "/images/goal-exercise.png",
+      imageSrc: "/images/goal-read-more.png",
       category: "Read more",
     },
     {
       title: "Stay healthy",
-      imageSrc: "/images/goal-exercise.png",
+      imageSrc: "/images/goal-stay-healthy.png",
       category: "Stay healthy",
     },
   ];
