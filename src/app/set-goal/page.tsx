@@ -15,7 +15,6 @@ import ReadMoreWorkflow from "@/components/ReadMoreWorkflow";
 import StayHealthyWorkflow from "@/components/StayHealthyWorkflow";
 import StrengthenSpiritWorkflow from "@/components/StrengthenSpiritWorkflow";
 import Footer from "@/components/Footer";
-import GoalRecommendationsBanner from "@/components/GoalRecommendationsBanner";
 import Image from "next/image";
 
 interface GoalTemplate {
@@ -221,13 +220,6 @@ export default function SetGoal() {
                     </div>
                   ) : (
                     <>
-                      <div className="mb-2">
-                        <GoalRecommendationsBanner
-                          planTypeLabel="Compulsory Channel Setup"
-                          text="GoalHyke relies on Telegram for live daily check-in reminders and streak accountability notifications. Connect your bot to stay on track."
-                          className="bg-gradient-to-r from-[#229ED9] to-[#179cde] shadow-[0_12px_30px_rgba(34,158,217,0.22)]"
-                        />
-                      </div>
                       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
                         {filteredTemplates.map((tpl) => (
                           <div
