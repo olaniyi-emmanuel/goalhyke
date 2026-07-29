@@ -868,7 +868,7 @@ export default function GrowWealthWorkflow({
         {step === 1 && (
           <StepShell
             currentStep={1}
-            title="Set Your Target"
+            title="Define The Financial Habit"
             goalTitle={goalTitle}
             icon={
               <svg
@@ -901,7 +901,15 @@ export default function GrowWealthWorkflow({
                 onChange={(value) =>
                   setTarget((current) => ({ ...current, specificGoal: value }))
                 }
-                options={WEALTH_GOAL_OPTIONS}
+                options={[
+                  "Save a specific amount of money",
+                  "Invest in stocks or Crypto",
+                  "Pay off debt",
+                  "Build an emergency fund",
+                  "Increase monthly income",
+                  "Start a Business",
+                  "Other...",
+                ]}
               />
               <TextQuestion
                 label="What is your target amount?"
@@ -909,39 +917,7 @@ export default function GrowWealthWorkflow({
                 onChange={(value) =>
                   setTarget((current) => ({ ...current, targetAmount: value }))
                 }
-                placeholder="Enter the amount you want to achieve e.g. $150,000"
-              />
-              <SelectQuestion
-                label="What is your timeline to achieve this goal?"
-                value={target.timeline}
-                onChange={(value) =>
-                  setTarget((current) => ({ ...current, timeline: value }))
-                }
-                options={TIMELINE_OPTIONS}
-              />
-              <CheckboxQuestion
-                label="How will you achieve this goal?"
-                values={target.howToAchieve}
-                onChange={(value) =>
-                  setTarget((current) => ({ ...current, howToAchieve: value }))
-                }
-                options={HOW_TO_ACHIEVE_OPTIONS}
-              />
-              <CheckboxQuestion
-                label="What challenges might stop you from achieving this goal?"
-                values={target.challenges}
-                onChange={(value) =>
-                  setTarget((current) => ({ ...current, challenges: value }))
-                }
-                options={TARGET_CHALLENGE_OPTIONS}
-              />
-              <SelectQuestion
-                label="How will you measure your progress?"
-                value={target.progressTracking}
-                onChange={(value) =>
-                  setTarget((current) => ({ ...current, progressTracking: value }))
-                }
-                options={PROGRESS_TRACKING_OPTIONS}
+                placeholder="Type 1,000,000 or 5,000,000 etc. depending on your target"
               />
             </div>
           </StepShell>
@@ -950,7 +926,7 @@ export default function GrowWealthWorkflow({
         {step === 2 && (
           <StepShell
             currentStep={2}
-            title="Set Your Why"
+            title="Set The Timeline"
             goalTitle={goalTitle}
             icon={
               <svg
@@ -973,8 +949,8 @@ export default function GrowWealthWorkflow({
                 />
               </svg>
             }
-            visualTitle="Connect wealth to meaning"
-            visualBody="This step defines the personal reason behind the money goal so the target stays emotionally relevant, not just numeric."
+            visualTitle="Set your goal timeline"
+            visualBody="Define your status frequency and target end date to keep your financial habit on track."
             visualImageSrc="/images/progress-consistency-character.png"
             onBack={handleBack}
             onCancel={onCancel}
@@ -982,42 +958,24 @@ export default function GrowWealthWorkflow({
           >
             <div className="flex flex-col gap-6">
               <SelectQuestion
-                label="Why do you want to grow your wealth?"
-                value={why.reason}
+                label="Frequency of Target Status"
+                value={target.timeline || "Weekly/Monthly"}
+                onChange={(value) =>
+                  setTarget((current) => ({ ...current, timeline: value }))
+                }
+                options={[
+                  "One-time Target Date",
+                  "Weekly/Monthly",
+                  "Reporting Date",
+                ]}
+              />
+              <SelectQuestion
+                label="Commitment End Date"
+                value={why.reason || "3 months"}
                 onChange={(value) =>
                   setWhy((current) => ({ ...current, reason: value }))
                 }
-                options={WHY_OPTIONS}
-              />
-              <SelectQuestion
-                label="How will achieving this goal impact your life?"
-                value={why.lifeImpact}
-                onChange={(value) =>
-                  setWhy((current) => ({ ...current, lifeImpact: value }))
-                }
-                options={LIFE_IMPACT_OPTIONS}
-              />
-              <SelectQuestion
-                label="Who or what is your biggest financial motivation?"
-                value={why.financialMotivation}
-                onChange={(value) =>
-                  setWhy((current) => ({
-                    ...current,
-                    financialMotivation: value,
-                  }))
-                }
-                options={MOTIVATION_OPTIONS}
-              />
-              <SelectQuestion
-                label="What is one thing that will remind you to stay committed?"
-                value={why.commitmentReminder}
-                onChange={(value) =>
-                  setWhy((current) => ({
-                    ...current,
-                    commitmentReminder: value,
-                  }))
-                }
-                options={REMINDER_OPTIONS}
+                options={["1 month", "3 months", "6 months", "1 year", "Custom"]}
               />
             </div>
           </StepShell>
@@ -1291,20 +1249,66 @@ export default function GrowWealthWorkflow({
         )}
 
         {step === 7 && (
-          <GoalSupportersForm
+          <StepShell
+            currentStep={7}
+            title="Lock In the Stake"
             goalTitle={goalTitle}
-            value={supporters}
-            onChange={(value) => {
-              setErrorMessage(null);
-              setSupporters(value);
-            }}
-            onCancel={onCancel}
+            icon={
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="2" />
+                <path
+                  d="M12 7V12L15.5 14"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            }
+            visualTitle="Lock in your commitment"
+            visualBody="Stake your tokens to back your goal commitment and maintain consistency."
+            visualImageSrc="/images/goal-wealth.png"
             onBack={handleBack}
-            onSubmit={handleOpenCommitConfirm}
-            submitLabel="Submit"
-            progressSteps={TOTAL_STEPS}
-            activeIndex={6}
-          />
+            onCancel={onCancel}
+            onNext={handleOpenCommitConfirm}
+            nextLabel="Submit"
+          >
+            <div className="flex flex-col gap-6 py-2">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[18px] font-bold text-[#262525] font-secondary">
+                    Set your token stake
+                  </span>
+                  <span className="rounded-full bg-[#7655fb]/10 px-3.5 py-1 text-sm font-bold text-[#7655fb]">
+                    {tokenCommitment} Tokens
+                  </span>
+                </div>
+
+                <div className="relative mt-4 flex items-center">
+                  <input
+                    type="range"
+                    min="20"
+                    max="200"
+                    step="5"
+                    value={tokenCommitment}
+                    onChange={(e) => setTokenCommitment(Number(e.target.value))}
+                    className="h-3 w-full cursor-pointer appearance-none rounded-lg bg-[#e2e8f0] accent-[#7655fb]"
+                  />
+                </div>
+
+                <div className="flex justify-between text-xs font-semibold text-gray-500 mt-1">
+                  <span>20 Tokens</span>
+                  <span>100 Tokens</span>
+                  <span>200 Tokens</span>
+                </div>
+              </div>
+            </div>
+          </StepShell>
         )}
       </div>
 
@@ -1361,12 +1365,12 @@ export default function GrowWealthWorkflow({
             </button>
 
             <div className="flex flex-col items-center text-center">
-              <p className="mt-6 text-[22px] font-medium leading-[1.6] text-[#262525] font-secondary sm:text-[26px]">
-                Commit Tokens to Your Goal
+              <p className="mt-6 text-[22px] font-bold leading-[1.6] text-[#262525] font-secondary sm:text-[26px]">
+                You will be charged {tokenCommitment} Tokens if you miss your target goal
               </p>
               
               <p className="mt-2 text-[14px] text-gray-500 max-w-lg">
-                Your committed tokens are staked. If you fail the weekly consistency target (&gt;= 5 verified check-ins), tokens will be deducted.
+                Your committed tokens are staked. If you fail your goal target, tokens will be deducted according to rule terms.
               </p>
 
               <div className="w-full max-w-md mx-auto mt-6 p-5 rounded-[18px] border border-gray-100 bg-[#f7f8ff] text-left">
@@ -1461,9 +1465,9 @@ export default function GrowWealthWorkflow({
                   type="button"
                   onClick={handleSubmit}
                   disabled={isSaving || (isCustomToken && (!customTokenValue || parseInt(customTokenValue) < 20))}
-                  className="gh-btn-primary min-w-[150px] px-8 py-3 text-[18px] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
+                  className="gh-btn-primary min-w-[150px] px-8 py-3 text-[18px] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none bg-[#7655fb]"
                 >
-                  {isSaving ? "Saving..." : "Yes, commit"}
+                  {isSaving ? "Saving..." : "Accept stake"}
                 </button>
                 <button
                   type="button"
@@ -1471,7 +1475,7 @@ export default function GrowWealthWorkflow({
                   disabled={isSaving}
                   className="flex min-w-[150px] items-center justify-center rounded-full border border-[#ff8b97] bg-white px-8 py-3 text-[18px] font-medium text-[#ff6f7d] transition-colors hover:bg-[#fff5f7] disabled:opacity-50"
                 >
-                  No, cancel
+                  Cancel
                 </button>
               </div>
             </div>

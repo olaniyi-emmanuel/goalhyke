@@ -11,6 +11,8 @@ import GoalSupportersForm, {
   type ExerciseSupportersFormData,
 } from "@/components/GoalSupportersForm";
 
+import GoalRecommendationsBanner from "@/components/GoalRecommendationsBanner";
+
 interface ExcelAcademicallyWorkflowProps {
   goalTitle?: string;
   onCancel: () => void;
@@ -56,10 +58,16 @@ interface ExcelAcademicallyTargetData {
   skillsToBuild: string;
   targetTimeline: string;
   goalImportance: string;
+  targetMeasure?: string;
+  standardVolumeSize?: string;
+  volumeUnit?: string;
+  targetVolume?: string;
+  weeklySchedule?: string;
+  sessionVolume?: string;
+  stakedVolume?: number;
 }
 
 const TOTAL_STEPS = 7;
-const REQUIRED_COMMIT_TOKENS = 50;
 
 const DEFAULT_WHY: ExcelAcademicallyWhyData = {
   reason: "",
@@ -105,13 +113,20 @@ const DEFAULT_REFEREE: ExerciseRefereeFormData = {
 };
 
 const DEFAULT_TARGET: ExcelAcademicallyTargetData = {
-  mainGoal: "",
-  focusSubjects: "",
-  targetGrade: "",
-  studyTimePerWeek: "",
-  skillsToBuild: "",
-  targetTimeline: "",
-  goalImportance: "",
+  mainGoal: "Improve grades",
+  focusSubjects: "Math",
+  targetGrade: "A",
+  studyTimePerWeek: "10 hrs",
+  skillsToBuild: "Consistency and active recall",
+  targetTimeline: "End of the semester",
+  goalImportance: "To build confidence in my abilities",
+  targetMeasure: "volume size",
+  standardVolumeSize: "10",
+  volumeUnit: "Pages",
+  targetVolume: "50",
+  weeklySchedule: "1x Weekly schedule",
+  sessionVolume: "10 pages",
+  stakedVolume: 50,
 };
 
 function formatDateForInput(date: Date) {
@@ -451,6 +466,9 @@ export default function ExcelAcademicallyWorkflow({
   const [isCustomToken, setIsCustomToken] = useState<boolean>(false);
   const [customTokenValue, setCustomTokenValue] = useState<string>("");
   const [submissionMode, setSubmissionMode] = useState<string>("image");
+  const [targetSubStep, setTargetSubStep] = useState<1 | 2 | 3>(1);
+  const [showNoCommitmentModal, setShowNoCommitmentModal] = useState<boolean>(false);
+  const [isGeneratingMilestone, setIsGeneratingMilestone] = useState<boolean>(false);
 
   const moveToStep = (nextStep: number) => {
     setErrorMessage(null);
@@ -1203,7 +1221,13 @@ export default function ExcelAcademicallyWorkflow({
         {step === 7 && (
           <StepShell
             currentStep={7}
-            title="Set Your Target"
+            title={
+              targetSubStep === 1
+                ? "Set Your Target"
+                : targetSubStep === 2
+                ? "Set The Weekly Schedule"
+                : "Lock In The Goal"
+            }
             goalTitle={goalTitle}
             icon={
               <svg
@@ -1231,98 +1255,187 @@ export default function ExcelAcademicallyWorkflow({
             visualTitle="Turn ambition into a concrete academic target"
             visualBody="This step defines the measurable academic result, the study commitment behind it, and why the target matters enough to follow through."
             visualImageSrc="/images/goal-exercise.png"
-            onBack={handleBack}
+            onBack={() => {
+              if (targetSubStep > 1) {
+                setTargetSubStep((prev) => (prev - 1) as 1 | 2 | 3);
+              } else {
+                handleBack();
+              }
+            }}
             onCancel={onCancel}
-            onNext={handleOpenCommitConfirm}
+            onNext={() => {
+              if (targetSubStep === 1) {
+                if (!target.targetVolume && !target.standardVolumeSize) {
+                  setShowNoCommitmentModal(true);
+                } else {
+                  setTargetSubStep(2);
+                }
+              } else if (targetSubStep === 2) {
+                setTargetSubStep(3);
+              } else {
+                handleOpenCommitConfirm();
+              }
+            }}
+            nextLabel={targetSubStep === 3 ? "Submit" : "Next Step"}
           >
             <div className="flex flex-col gap-6">
-              <SelectQuestion
-                label="What is your main academic goal right now?"
-                value={target.mainGoal}
-                onChange={(value) =>
-                  setTarget((current) => ({ ...current, mainGoal: value }))
-                }
-                options={[
-                  "Improve grades",
-                  "Pass an important exam",
-                  "Develop better study habits",
-                  "Master a subject or topic",
-                  "Graduate with honors",
-                ]}
-              />
-              <SelectQuestion
-                label="Which subjects or areas do you want to focus on?"
-                value={target.focusSubjects}
-                onChange={(value) =>
-                  setTarget((current) => ({ ...current, focusSubjects: value }))
-                }
-                options={[
-                  "Math",
-                  "Science",
-                  "Literature",
-                  "Languages",
-                  "Others",
-                ]}
-              />
-              <TextQuestion
-                label="What grade or score are you aiming for?"
-                value={target.targetGrade}
-                onChange={(value) =>
-                  setTarget((current) => ({ ...current, targetGrade: value }))
-                }
-                placeholder="E.g. from C to B or above 80%"
-              />
-              <SelectQuestion
-                label="How much study time do you want to commit per week?"
-                value={target.studyTimePerWeek}
-                onChange={(value) =>
-                  setTarget((current) => ({
-                    ...current,
-                    studyTimePerWeek: value,
-                  }))
-                }
-                options={[
-                  "5 hrs",
-                  "10 hrs",
-                  "15+ hrs",
-                  "I’ll set a flexible schedule",
-                ]}
-              />
-              <TextareaQuestion
-                label="What skills or habits do you want to build academically?"
-                value={target.skillsToBuild}
-                onChange={(value) =>
-                  setTarget((current) => ({ ...current, skillsToBuild: value }))
-                }
-                placeholder="E.g. time management, note taking, active recall, consistency"
-              />
-              <SelectQuestion
-                label="When do you want to achieve this target?"
-                value={target.targetTimeline}
-                onChange={(value) =>
-                  setTarget((current) => ({ ...current, targetTimeline: value }))
-                }
-                options={[
-                  "By next test",
-                  "End of the semester",
-                  "3 months",
-                  "6 months",
-                ]}
-              />
-              <SelectQuestion
-                label="Why is this goal important to you?"
-                value={target.goalImportance}
-                onChange={(value) =>
-                  setTarget((current) => ({ ...current, goalImportance: value }))
-                }
-                options={[
-                  "To qualify for a scholarship",
-                  "To make my parents or mentor proud",
-                  "To build confidence in my abilities",
-                  "To prepare for future opportunities",
-                  "To overcome past struggles",
-                ]}
-              />
+              {/* Form Accountability Section */}
+              <div className="border-b border-gray-100 pb-4">
+                <h4 className="text-[22px] font-bold text-[#262525] font-secondary">
+                  Form Accountability
+                </h4>
+                <p className="mt-1 text-[14px] text-gray-600 font-secondary leading-relaxed">
+                  You are strong and accountable to yourself. Let&apos;s get moving, choose your preferred path to stay accountable:
+                </p>
+              </div>
+
+              {/* Sub-step 1: Set Your Target */}
+              {targetSubStep === 1 && (
+                <div className="flex flex-col gap-5">
+                  <SelectQuestion
+                    label="Select Goal Target Measure"
+                    value={target.targetMeasure || "volume size"}
+                    onChange={(value) =>
+                      setTarget((current) => ({ ...current, targetMeasure: value }))
+                    }
+                    options={["volume size", "time based", "custom plan"]}
+                  />
+
+                  <SelectQuestion
+                    label="Pick standard target volume size (e.g. 5, 10, 15...)"
+                    value={target.standardVolumeSize || "10"}
+                    onChange={(value) =>
+                      setTarget((current) => ({ ...current, standardVolumeSize: value }))
+                    }
+                    options={["5", "10", "15", "20", "50"]}
+                  />
+
+                  <SelectQuestion
+                    label="Volume unit (e.g. Pages, Hours)"
+                    value={target.volumeUnit || "Pages"}
+                    onChange={(value) =>
+                      setTarget((current) => ({ ...current, volumeUnit: value }))
+                    }
+                    options={["Pages", "Hours", "Modules", "Books"]}
+                  />
+
+                  <TextQuestion
+                    label="Target volume size (e.g. 50 pages)"
+                    value={target.targetVolume || ""}
+                    onChange={(value) =>
+                      setTarget((current) => ({ ...current, targetVolume: value }))
+                    }
+                    placeholder="Enter your target volume (e.g. 50 pages if reading a book)"
+                  />
+
+                  <div className="mt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsGeneratingMilestone(true);
+                        setTimeout(() => setIsGeneratingMilestone(false), 600);
+                      }}
+                      disabled={isGeneratingMilestone}
+                      className="inline-flex items-center gap-2 rounded-full bg-[#7655fb] px-6 py-3 text-[15px] font-semibold text-white shadow-[0_4px_14px_rgba(118,85,251,0.35)] transition-all hover:bg-[#6442e4]"
+                    >
+                      {isGeneratingMilestone ? (
+                        <>
+                          <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                          Generating...
+                        </>
+                      ) : (
+                        <>
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M12 2L15 8L21 9L16.5 14L18 20L12 17L6 20L7.5 14L3 9L9 8L12 2Z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                          Generate Milestone Target Schedule
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Sub-step 2: Set The Weekly Schedule */}
+              {targetSubStep === 2 && (
+                <div className="flex flex-col gap-5">
+                  <SelectQuestion
+                    label="Set Weekly Schedule"
+                    value={target.weeklySchedule || "1x Weekly schedule"}
+                    onChange={(value) =>
+                      setTarget((current) => ({ ...current, weeklySchedule: value }))
+                    }
+                    options={[
+                      "1x Weekly schedule",
+                      "2x Weekly schedule",
+                      "3x Weekly schedule",
+                      "Custom schedule",
+                    ]}
+                  />
+
+                  <SelectQuestion
+                    label="Target volume per weekly schedule session (e.g. 10 pages)"
+                    value={target.sessionVolume || "10 pages"}
+                    onChange={(value) =>
+                      setTarget((current) => ({ ...current, sessionVolume: value }))
+                    }
+                    options={["5 pages", "10 pages", "15 pages", "20 pages", "50 pages"]}
+                  />
+                </div>
+              )}
+
+              {/* Sub-step 3: Lock In The Goal */}
+              {targetSubStep === 3 && (
+                <div className="flex flex-col gap-6 py-2">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[18px] font-bold text-[#262525] font-secondary">
+                        Self Staked Target Volume
+                      </span>
+                      <span className="rounded-full bg-[#7655fb]/10 px-3.5 py-1 text-sm font-bold text-[#7655fb]">
+                        {target.stakedVolume || 50} {target.volumeUnit || "Pages"}
+                      </span>
+                    </div>
+
+                    <div className="relative mt-4 flex items-center">
+                      <input
+                        type="range"
+                        min="10"
+                        max="100"
+                        step="5"
+                        value={target.stakedVolume || 50}
+                        onChange={(e) =>
+                          setTarget((current) => ({
+                            ...current,
+                            stakedVolume: Number(e.target.value),
+                          }))
+                        }
+                        className="h-3 w-full cursor-pointer appearance-none rounded-lg bg-[#e2e8f0] accent-[#7655fb]"
+                      />
+                    </div>
+
+                    <div className="flex justify-between text-xs font-semibold text-gray-500 mt-1">
+                      <span>Min (10)</span>
+                      <span>50 Pages</span>
+                      <span>Max (100)</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* GoalHyke Recommendations Banner */}
+              <div className="mt-4">
+                <GoalRecommendationsBanner />
+              </div>
             </div>
           </StepShell>
         )}
@@ -1556,6 +1669,57 @@ export default function ExcelAcademicallyWorkflow({
                   Cancel
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating AI Assistant Button */}
+      <button
+        type="button"
+        className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#7655fb] text-white shadow-[0_8px_25px_rgba(118,85,251,0.4)] transition-all hover:scale-105 hover:bg-[#6442e4]"
+        aria-label="Open AI Assistant"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 2L15 8L21 9L16.5 14L18 20L12 17L6 20L7.5 14L3 9L9 8L12 2Z"
+            fill="currentColor"
+          />
+        </svg>
+      </button>
+
+      {/* No Commitment Selected Modal */}
+      {showNoCommitmentModal && (
+        <div className="fixed inset-0 z-[85] flex items-center justify-center bg-[#1b1a1a]/60 px-4 backdrop-blur-xs">
+          <div className="relative w-full max-w-[420px] rounded-[24px] bg-white p-8 text-center shadow-[0_25px_60px_rgba(0,0,0,0.2)]">
+            <h3 className="text-[20px] font-bold text-[#262525] font-secondary leading-snug">
+              No commitment selected. Set standard goal target volume
+            </h3>
+            <div className="mt-8 flex items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setTarget((c) => ({ ...c, targetVolume: c.standardVolumeSize || "50" }));
+                  setShowNoCommitmentModal(false);
+                  setTargetSubStep(2);
+                }}
+                className="gh-btn-primary px-6 py-2.5 text-[15px] bg-[#7655fb]"
+              >
+                Accept Plan
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowNoCommitmentModal(false)}
+                className="flex items-center justify-center rounded-full border border-[#ff8b97] bg-white px-6 py-2.5 text-[15px] font-medium text-[#ff6f7d] transition-colors hover:bg-[#fff5f7]"
+              >
+                Custom
+              </button>
             </div>
           </div>
         </div>

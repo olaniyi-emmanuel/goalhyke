@@ -90,6 +90,9 @@ export default function Settings() {
   const [pushEnabled, setPushEnabled] = useState(false);
   const [prefsLoading, setPrefsLoading] = useState(false);
 
+  const [telegramChatId, setTelegramChatId] = useState<string | null>(null);
+  const [telegramRemindersEnabled, setTelegramRemindersEnabled] = useState(true);
+
   const [refereePrefs, setRefereePrefs] = useState({
     defaultRefereeName: "Adesorotosin",
     defaultRefereeEmail: "referee@goalhyke.com",
@@ -126,9 +129,14 @@ export default function Settings() {
         if (user) {
           const { data: dbProfile } = await supabase
             .from("profiles")
-            .select("country, full_name, username, avatar_url, phone_number, state")
+            .select("country, full_name, username, avatar_url, phone_number, state, telegram_chat_id, reminders_enabled")
             .eq("id", user.id)
             .maybeSingle();
+
+          if (dbProfile) {
+            setTelegramChatId(dbProfile.telegram_chat_id || null);
+            setTelegramRemindersEnabled(dbProfile.reminders_enabled ?? true);
+          }
 
           const dbPhone = dbProfile?.phone_number || user.user_metadata?.phone_number || "";
           let parsedPhone = dbPhone;
@@ -358,21 +366,15 @@ export default function Settings() {
   const handlePrefsSave = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setSuccessMessage(null);
-
-    // Save referee defaults to localStorage to keep it in sync with dashboard
-    const refereeObj = {
-      name: refereePrefs.defaultRefereeName,
-      email: refereePrefs.defaultRefereeEmail,
-      avatar: "",
-    };
-    localStorage.setItem("goalhyke_referee", JSON.stringify(refereeObj));
-
-    setTimeout(() => {
-      setIsLoading(false);
-      setSuccessMessage("Referee preferences saved successfully!");
-      setTimeout(() => setSuccessMessage(null), 3000);
-    }, 1200);
+    localStorage.setItem(
+      "goalhyke_referee",
+      JSON.stringify({
+        name: refereePrefs.defaultRefereeName,
+        email: refereePrefs.defaultRefereeEmail,
+      })
+    );
+    setSuccessMessage("Preferences saved successfully!");
+    setTimeout(() => setSuccessMessage(null), 3000);
   };
 
   const handleToggleEmail = async (enabled: boolean) => {
@@ -497,6 +499,20 @@ export default function Settings() {
       alert("Failed to configure push: " + (err instanceof Error ? err.message : JSON.stringify(err)));
     } finally {
       setPrefsLoading(false);
+    }
+  };
+
+  const handleToggleTelegram = async (checked: boolean) => {
+    setTelegramRemindersEnabled(checked);
+    if (!user) return;
+    try {
+      const supabase = createClient();
+      await supabase
+        .from("profiles")
+        .update({ reminders_enabled: checked })
+        .eq("id", user.id);
+    } catch (err) {
+      console.error("Failed to update Telegram reminder preference:", err);
     }
   };
 
@@ -775,6 +791,53 @@ export default function Settings() {
                       className="w-4 h-4 text-[#7655fb] border-gray-300 rounded focus:ring-[#7655fb] disabled:opacity-50"
                     />
                   </label>
+
+                  {/* Telegram Reminders Toggle & Connection Card */}
+                  <div className="mt-2 border-t border-gray-100 pt-4 flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-bold text-[#262525]">Telegram Daily Reminders</span>
+                        <span className="text-[11px] text-gray-400">Daily check-in prompts on Telegram</span>
+                      </div>
+                      <input
+                        type="checkbox"
+                        disabled={!telegramChatId}
+                        checked={telegramRemindersEnabled && Boolean(telegramChatId)}
+                        onChange={(e) => handleToggleTelegram(e.target.checked)}
+                        className="w-4 h-4 text-[#7655fb] border-gray-300 rounded focus:ring-[#7655fb] disabled:opacity-40"
+                      />
+                    </div>
+
+                    <div className="rounded-xl border border-gray-100 bg-[#f8fafc] p-3 text-[12px]">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-gray-700">Telegram Status</span>
+                        {telegramChatId ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                            Connected
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-600">
+                            Not Linked
+                          </span>
+                        )}
+                      </div>
+
+                      {user && (
+                        <a
+                          href={`https://t.me/GoalHykeBot?start=${user.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 flex w-full items-center justify-center gap-2 rounded-lg bg-[#229ED9] px-3 py-2 text-[12px] font-bold text-white transition-opacity hover:opacity-90"
+                        >
+                          <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.67-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.25.38-.51 1.07-.78 4.18-1.82 6.97-3.02 8.37-3.61 3.99-1.68 4.82-1.97 5.36-1.98.12 0 .38.03.55.17.14.12.18.28.2.45-.01.07.01.24 0 .38z" />
+                          </svg>
+                          {telegramChatId ? "Reconnect Telegram" : "Connect Telegram"}
+                        </a>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 

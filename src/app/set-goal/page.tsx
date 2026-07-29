@@ -10,6 +10,7 @@ import ExerciseRegularlyWorkflow from "@/components/ExerciseRegularlyWorkflow";
 import GrowWealthWorkflow from "@/components/GrowWealthWorkflow";
 import LevelUpCareerWorkflow from "@/components/LevelUpCareerWorkflow";
 import LoseWeightWorkflow from "@/components/LoseWeightWorkflow";
+import MasterSkillWorkflow from "@/components/MasterSkillWorkflow";
 import ReadMoreWorkflow from "@/components/ReadMoreWorkflow";
 import StayHealthyWorkflow from "@/components/StayHealthyWorkflow";
 import StrengthenSpiritWorkflow from "@/components/StrengthenSpiritWorkflow";
@@ -92,7 +93,9 @@ export default function SetGoal() {
       category !== "Stay healthy" &&
       category !== "Strengthen your spirit" &&
       category !== "Read more" &&
-      category !== "Excel academically"
+      category !== "Excel academically" &&
+      category !== "Master tech skill" &&
+      category !== "Master A Skill"
     ) {
       setSelectedCategory(category);
       setTargetMode("custom");
@@ -310,6 +313,11 @@ export default function SetGoal() {
                   ) : selectedCategory === "Excel academically" ? (
                     <ExcelAcademicallyWorkflow
                       goalTitle={selectedCategory}
+                      onCancel={handleBackToFeatured}
+                    />
+                  ) : selectedCategory === "Master tech skill" || selectedCategory === "Master A Skill" ? (
+                    <MasterSkillWorkflow
+                      goalTitle="Master A Skill"
                       onCancel={handleBackToFeatured}
                     />
                   ) : (

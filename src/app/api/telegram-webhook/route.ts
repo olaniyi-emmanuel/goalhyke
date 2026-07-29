@@ -113,11 +113,28 @@ export async function POST(request: Request) {
         return NextResponse.json({ ok: true });
       }
 
+      // Update profile with chat_id and enable reminders
+      await supabase
+        .from("profiles")
+        .update({ telegram_chat_id: chatId, reminders_enabled: true })
+        .eq("id", profile.id);
+
       // Confirm success to the user
       const userName = profile.full_name ? `, ${profile.full_name}` : "";
       await sendTelegramMessage(
         chatId,
-        `🎉 *Success${userName}! Your GoalHyke account is now linked.*\n\nYou will receive accountability reminders and goal updates directly in this chat.`
+        `🎉 *Success${userName}! Your GoalHyke account is now linked.*\n\nYou will receive accountability reminders and daily check-in prompts directly in this chat.`
+      );
+    } else if (text.startsWith("/stop") || text.startsWith("/unsubscribe")) {
+      const supabase = createAdminClient();
+      await supabase
+        .from("profiles")
+        .update({ reminders_enabled: false })
+        .eq("telegram_chat_id", chatId);
+
+      await sendTelegramMessage(
+        chatId,
+        "🔕 *Reminders Paused*\n\nYou have turned off daily reminders. You can re-enable them anytime from your GoalHyke settings."
       );
     }
 

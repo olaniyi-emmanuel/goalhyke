@@ -297,6 +297,15 @@ const GoalRefereeForm = ({
                     : "border-[#535353] bg-white text-[#262525] placeholder:text-[#d7d7d7] focus:border-[#7655fb]"
                 }`}
               />
+              <div className="mt-2">
+                <button
+                  type="button"
+                  disabled={value.selfManaged || !value.refereeContact}
+                  className="inline-flex items-center gap-2 rounded-full bg-[#7655fb] px-6 py-3 text-[15px] font-semibold text-white shadow-[0_4px_14px_rgba(118,85,251,0.35)] transition-all hover:bg-[#6442e4] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  We&apos;ll send an email invite to your referee
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -17,6 +17,10 @@ interface LoseWeightWorkflowProps {
 }
 
 interface LoseWeightTargetData {
+  goalType: string;
+  specificTarget: string;
+  frequency: string;
+  targetDeadline: string;
   currentWeight: string;
   weightUnit: "kg" | "pounds";
   currentHeight: string;
@@ -52,9 +56,12 @@ interface LoseWeightVisualizationData {
 }
 
 const TOTAL_STEPS = 7;
-const REQUIRED_COMMIT_TOKENS = 50;
 
 const DEFAULT_TARGET: LoseWeightTargetData = {
+  goalType: "Avoid Overeating / Binging",
+  specificTarget: "",
+  frequency: "Total weight lost (lbs)",
+  targetDeadline: "3 months",
   currentWeight: "",
   weightUnit: "kg",
   currentHeight: "",
@@ -1076,113 +1083,35 @@ export default function LoseWeightWorkflow({
                 />
               </svg>
             }
-            visualTitle="Set the weight target first"
-            visualBody="The workflow starts by defining your current stats, target weight, time horizon, and BMI guidance so the commitment begins with a measurable destination."
+            visualTitle="Set your weight goal"
+            visualBody="Specify your goal type and target details so your commitment starts with clear metrics."
             visualImageSrc="/images/progress-consistency-character.png"
             onBack={handleBack}
             onCancel={onCancel}
             onNext={handleNext}
           >
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <TextQuestion
-                    label="Current weight"
-                    value={target.currentWeight}
-                    onChange={(value) =>
-                      setTarget((current) => ({ ...current, currentWeight: value }))
-                    }
-                    placeholder="Enter current weight"
-                    type="number"
-                  />
-                  <SegmentedChoice
-                    label="Weight unit"
-                    value={target.weightUnit}
-                    options={["kg", "pounds"] as const}
-                    onChange={(value) =>
-                      setTarget((current) => ({ ...current, weightUnit: value }))
-                    }
-                  />
-                </div>
-
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <TextQuestion
-                    label="Current height"
-                    value={target.currentHeight}
-                    onChange={(value) =>
-                      setTarget((current) => ({ ...current, currentHeight: value }))
-                    }
-                    placeholder="Enter current height"
-                    type="number"
-                  />
-                  <SegmentedChoice
-                    label="Height unit"
-                    value={target.heightUnit}
-                    options={["m", "cm"] as const}
-                    onChange={(value) =>
-                      setTarget((current) => ({ ...current, heightUnit: value }))
-                    }
-                  />
-                </div>
-
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <TextQuestion
-                    label="Target weight"
-                    value={target.targetWeight}
-                    onChange={(value) =>
-                      setTarget((current) => ({ ...current, targetWeight: value }))
-                    }
-                    placeholder="Enter target weight"
-                    type="number"
-                  />
-                  <SegmentedChoice
-                    label="Target unit"
-                    value={target.targetWeightUnit}
-                    options={["kg", "pounds"] as const}
-                    onChange={(value) =>
-                      setTarget((current) => ({
-                        ...current,
-                        targetWeightUnit: value,
-                      }))
-                    }
-                  />
-                </div>
-
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <TextQuestion
-                    label="Timeframe"
-                    value={target.timeframeValue}
-                    onChange={(value) =>
-                      setTarget((current) => ({ ...current, timeframeValue: value }))
-                    }
-                    placeholder="Enter number"
-                    type="number"
-                  />
-                  <SegmentedChoice
-                    label="Time unit"
-                    value={target.timeframeUnit}
-                    options={["days", "weeks"] as const}
-                    onChange={(value) =>
-                      setTarget((current) => ({ ...current, timeframeUnit: value }))
-                    }
-                  />
-                </div>
-
-                <SelectQuestion
-                  label="This commitment starts"
-                  value={target.starts}
-                  onChange={(value) =>
-                    setTarget((current) => ({ ...current, starts: value }))
-                  }
-                  options={["Today"]}
-                />
-              </div>
-
-              <BmiCard
-                currentWeight={target.currentWeight}
-                weightUnit={target.weightUnit}
-                currentHeight={target.currentHeight}
-                heightUnit={target.heightUnit}
+            <div className="flex flex-col gap-6">
+              <SelectQuestion
+                label="What's the goal?"
+                value={target.goalType || "Avoid Overeating / Binging"}
+                onChange={(value) =>
+                  setTarget((current) => ({ ...current, goalType: value }))
+                }
+                options={[
+                  "Add 5-10 lbs of muscle",
+                  "Avoid Overeating / Binging",
+                  "Reduce Waistline",
+                  "Drop 1 Dress Size",
+                  "Other...",
+                ]}
+              />
+              <TextQuestion
+                label="What's the specific target?"
+                value={target.specificTarget}
+                onChange={(value) =>
+                  setTarget((current) => ({ ...current, specificTarget: value }))
+                }
+                placeholder="E.g. Lose 5kg in 2 months, Burn 500 calories daily, etc."
               />
             </div>
           </StepShell>
@@ -1191,7 +1120,7 @@ export default function LoseWeightWorkflow({
         {step === 2 && (
           <StepShell
             currentStep={2}
-            title="Set Your Why"
+            title="Set The Timeline"
             goalTitle={goalTitle}
             icon={
               <svg
@@ -1206,16 +1135,11 @@ export default function LoseWeightWorkflow({
                   stroke="currentColor"
                   strokeWidth="2"
                 />
-                <path
-                  d="M12 8V12L15 15"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
+                <path d="M12 8V12L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
             }
-            visualTitle="Connect the goal to a reason"
-            visualBody="This step locks in the personal reason, life impact, motivation source, and emotional payoff behind your weight-loss commitment."
+            visualTitle="Set your goal timeframe"
+            visualBody="Choose your tracking frequency and deadline for your weight loss commitment."
             visualImageSrc="/images/milestones-character.png"
             onBack={handleBack}
             onCancel={onCancel}
@@ -1223,38 +1147,20 @@ export default function LoseWeightWorkflow({
           >
             <div className="flex flex-col gap-6">
               <SelectQuestion
-                label="What is your primary reason for wanting to lose weight?"
-                value={why.primaryReason}
+                label="Frequency"
+                value={target.frequency || "Total weight lost (lbs)"}
                 onChange={(value) =>
-                  setWhy((current) => ({ ...current, primaryReason: value }))
+                  setTarget((current) => ({ ...current, frequency: value }))
                 }
-                options={PRIMARY_REASON_OPTIONS}
-                placeholder="Choose one or enter your reason"
+                options={["100lbs (or custom)", "Total weight lost (lbs)"]}
               />
               <SelectQuestion
-                label="How do you want losing weight to impact your life?"
-                value={why.lifeImpact}
+                label="Target Deadline"
+                value={target.targetDeadline || "3 months"}
                 onChange={(value) =>
-                  setWhy((current) => ({ ...current, lifeImpact: value }))
+                  setTarget((current) => ({ ...current, targetDeadline: value }))
                 }
-                options={LIFE_IMPACT_OPTIONS}
-              />
-              <SelectQuestion
-                label="Who or what motivates you the most on this journey?"
-                value={why.motivation}
-                onChange={(value) =>
-                  setWhy((current) => ({ ...current, motivation: value }))
-                }
-                options={MOTIVATION_OPTIONS}
-                placeholder="Choose one or enter your reason"
-              />
-              <SelectQuestion
-                label="How would achieving your weight loss goal make you feel?"
-                value={why.successFeeling}
-                onChange={(value) =>
-                  setWhy((current) => ({ ...current, successFeeling: value }))
-                }
-                options={SUCCESS_FEELING_OPTIONS}
+                options={["1 month", "3 months", "6 months", "1 year", "Custom"]}
               />
             </div>
           </StepShell>

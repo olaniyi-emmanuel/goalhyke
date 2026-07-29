@@ -46,12 +46,12 @@ interface CareerVisualizationData {
 
 interface CareerTargetData {
   specificMilestone: string;
+  categoryTag: string;
   timeline: string;
   ultimateGoal: string;
 }
 
 const TOTAL_STEPS = 7;
-const REQUIRED_COMMIT_TOKENS = 50;
 
 const DEFAULT_WHY: CareerWhyData = {
   goalReason: "",
@@ -82,8 +82,9 @@ const DEFAULT_VISUALIZATION: CareerVisualizationData = {
 };
 
 const DEFAULT_TARGET: CareerTargetData = {
-  specificMilestone: "",
-  timeline: "",
+  specificMilestone: "Build A portfolio",
+  categoryTag: "Portfolio",
+  timeline: "3 months",
   ultimateGoal: "",
 };
 
@@ -743,7 +744,62 @@ export default function LevelUpCareerWorkflow({
         {step === 1 && (
           <StepShell
             currentStep={1}
-            title="Set Your Why"
+            title="Define the Milestone"
+            goalTitle={goalTitle}
+            icon={
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="2" />
+                <path d="M12 7V12L15.5 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            }
+            visualTitle="Define your career milestone"
+            visualBody="Specify the career milestone and category tag to guide your growth path."
+            visualImageSrc="/images/milestones-character.png"
+            onBack={handleBack}
+            onCancel={onCancel}
+            onNext={handleNext}
+          >
+            <div className="flex flex-col gap-6">
+              <SelectQuestion
+                label="What is the specific milestone?"
+                value={target.specificMilestone || "Build A portfolio"}
+                onChange={(value) =>
+                  setTarget((current) => ({ ...current, specificMilestone: value }))
+                }
+                options={[
+                  "Build A portfolio",
+                  "Apply for 5 jobs",
+                  "Earn a professional certification",
+                  "Other",
+                ]}
+              />
+              <SelectQuestion
+                label="Category Tag"
+                value={target.categoryTag || "Portfolio"}
+                onChange={(value) =>
+                  setTarget((current) => ({ ...current, categoryTag: value }))
+                }
+                options={[
+                  "Portfolio",
+                  "Job Application",
+                  "Networking",
+                  "Skill Acquisition",
+                ]}
+              />
+            </div>
+          </StepShell>
+        )}
+
+        {step === 2 && (
+          <StepShell
+            currentStep={2}
+            title="Set The Timeline"
             goalTitle={goalTitle}
             icon={
               <svg
@@ -758,85 +814,11 @@ export default function LevelUpCareerWorkflow({
                   stroke="currentColor"
                   strokeWidth="2"
                 />
-                <path
-                  d="M12 8V12L15 15"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
+                <path d="M12 8V12L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
             }
-            visualTitle="Define the career reason"
-            visualBody="This step anchors the career workflow in motivation, inspiration, and the cost of staying where you are."
-            visualImageSrc="/images/milestones-character.png"
-            onBack={handleBack}
-            onCancel={onCancel}
-            onNext={handleNext}
-          >
-            <div className="flex flex-col gap-6">
-              <SelectQuestion
-                label="Why do you want to achieve this career goal?"
-                value={why.goalReason}
-                onChange={(value) =>
-                  setWhy((current) => ({ ...current, goalReason: value }))
-                }
-                options={WHY_OPTIONS}
-              />
-              <TextQuestion
-                label="Who inspires your career journey?"
-                value={why.roleModel}
-                onChange={(value) =>
-                  setWhy((current) => ({ ...current, roleModel: value }))
-                }
-                placeholder="Enter your role model"
-              />
-              <TextareaQuestion
-                label="What will happen if you don’t achieve this goal?"
-                value={why.fearIfMissed}
-                onChange={(value) =>
-                  setWhy((current) => ({ ...current, fearIfMissed: value }))
-                }
-                placeholder="E.g I won't be happy with myself"
-              />
-            </div>
-          </StepShell>
-        )}
-
-        {step === 2 && (
-          <StepShell
-            currentStep={2}
-            title="Identify Your Challenges"
-            goalTitle={goalTitle}
-            icon={
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M10.5 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V13.5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M14 6L18 10"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M8 14L16 6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            }
-            visualTitle="Name the blockers"
-            visualBody="This step identifies what could hold you back so the workflow can push against the right career obstacles."
+            visualTitle="Set your goal timeframe"
+            visualBody="Choose a realistic timeframe for completing your career milestone."
             visualImageSrc="/images/behavioural-solution.png"
             onBack={handleBack}
             onCancel={onCancel}
@@ -844,34 +826,12 @@ export default function LevelUpCareerWorkflow({
           >
             <div className="flex flex-col gap-6">
               <SelectQuestion
-                label="What do you think might hold you back?"
-                value={challenges.blocker}
+                label="Target timeframe"
+                value={target.timeline || "3 months"}
                 onChange={(value) =>
-                  setChallenges((current) => ({ ...current, blocker: value }))
+                  setTarget((current) => ({ ...current, timeline: value }))
                 }
-                options={BLOCKER_OPTIONS}
-              />
-              <TextareaQuestion
-                label="What do you fear most in your career journey?"
-                value={challenges.biggestFear}
-                onChange={(value) =>
-                  setChallenges((current) => ({
-                    ...current,
-                    biggestFear: value,
-                  }))
-                }
-                placeholder="Describe the risk or fear that worries you most"
-              />
-              <TextareaQuestion
-                label="What mistakes have you made before that you don’t want to repeat?"
-                value={challenges.repeatedMistake}
-                onChange={(value) =>
-                  setChallenges((current) => ({
-                    ...current,
-                    repeatedMistake: value,
-                  }))
-                }
-                placeholder="Describe the old pattern you want to break"
+                options={["1 month", "3 months", "6 months", "1 year", "Custom"]}
               />
             </div>
           </StepShell>
@@ -1108,7 +1068,7 @@ export default function LevelUpCareerWorkflow({
         {step === 7 && (
           <StepShell
             currentStep={7}
-            title="Set Your Target"
+            title="Lock In the Stake"
             goalTitle={goalTitle}
             icon={
               <svg
@@ -1133,41 +1093,43 @@ export default function LevelUpCareerWorkflow({
                 />
               </svg>
             }
-            visualTitle="Turn ambition into a concrete milestone"
-            visualBody="The final step defines the specific career milestone, the timeframe, and the bigger destination the workflow supports."
-            visualImageSrc="/images/behavioural-solution.png"
+            visualTitle="Lock in your commitment"
+            visualBody="Stake your tokens to back your career commitment and maintain consistency."
+            visualImageSrc="/images/milestones-character.png"
             onBack={handleBack}
             onCancel={onCancel}
             onNext={handleOpenCommitConfirm}
+            nextLabel="Submit"
           >
-            <div className="flex flex-col gap-6">
-              <SelectQuestion
-                label="What specific career milestone do you want to reach?"
-                value={target.specificMilestone}
-                onChange={(value) =>
-                  setTarget((current) => ({
-                    ...current,
-                    specificMilestone: value,
-                  }))
-                }
-                options={CAREER_TARGET_OPTIONS}
-              />
-              <SelectQuestion
-                label="What’s your timeline?"
-                value={target.timeline}
-                onChange={(value) =>
-                  setTarget((current) => ({ ...current, timeline: value }))
-                }
-                options={TIMELINE_OPTIONS}
-              />
-              <TextQuestion
-                label="What’s your ultimate career goal?"
-                value={target.ultimateGoal}
-                onChange={(value) =>
-                  setTarget((current) => ({ ...current, ultimateGoal: value }))
-                }
-                placeholder="E.g I want to become a senior product designer"
-              />
+            <div className="flex flex-col gap-6 py-2">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[18px] font-bold text-[#262525] font-secondary">
+                    Set your token stake
+                  </span>
+                  <span className="rounded-full bg-[#7655fb]/10 px-3.5 py-1 text-sm font-bold text-[#7655fb]">
+                    {tokenCommitment} Tokens
+                  </span>
+                </div>
+
+                <div className="relative mt-4 flex items-center">
+                  <input
+                    type="range"
+                    min="20"
+                    max="200"
+                    step="5"
+                    value={tokenCommitment}
+                    onChange={(e) => setTokenCommitment(Number(e.target.value))}
+                    className="h-3 w-full cursor-pointer appearance-none rounded-lg bg-[#e2e8f0] accent-[#7655fb]"
+                  />
+                </div>
+
+                <div className="flex justify-between text-xs font-semibold text-gray-500 mt-1">
+                  <span>20 Tokens</span>
+                  <span>100 Tokens</span>
+                  <span>200 Tokens</span>
+                </div>
+              </div>
             </div>
           </StepShell>
         )}
@@ -1237,12 +1199,12 @@ export default function LevelUpCareerWorkflow({
             </button>
 
             <div className="flex flex-col items-center text-center">
-              <p className="mt-6 text-[22px] font-medium leading-[1.6] text-[#262525] font-secondary sm:text-[26px]">
-                Commit Tokens to Your Goal
+              <p className="mt-6 text-[22px] font-bold leading-[1.6] text-[#262525] font-secondary sm:text-[26px]">
+                You will be charged {tokenCommitment} Tokens if you fail to complete this goal
               </p>
               
               <p className="mt-2 text-[14px] text-gray-500 max-w-lg">
-                Your committed tokens are staked. If you fail the weekly consistency target (&gt;= 5 verified check-ins), tokens will be deducted.
+                Your committed tokens are staked. If you fail to reach your milestone deadline, tokens will be deducted.
               </p>
 
               <div className="w-full max-w-md mx-auto mt-6 p-5 rounded-[18px] border border-gray-100 bg-[#f7f8ff] text-left">
@@ -1337,9 +1299,9 @@ export default function LevelUpCareerWorkflow({
                   type="button"
                   onClick={handleSubmit}
                   disabled={isSaving || (isCustomToken && (!customTokenValue || parseInt(customTokenValue) < 20))}
-                  className="gh-btn-primary min-w-[150px] px-8 py-3 text-[18px] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
+                  className="gh-btn-primary min-w-[150px] px-8 py-3 text-[18px] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none bg-[#7655fb]"
                 >
-                  {isSaving ? "Saving..." : "Yes, commit"}
+                  {isSaving ? "Saving..." : "Accept stake"}
                 </button>
                 <button
                   type="button"
@@ -1347,7 +1309,7 @@ export default function LevelUpCareerWorkflow({
                   disabled={isSaving}
                   className="flex min-w-[150px] items-center justify-center rounded-full border border-[#ff8b97] bg-white px-8 py-3 text-[18px] font-medium text-[#ff6f7d] transition-colors hover:bg-[#fff5f7] disabled:opacity-50"
                 >
-                  No, cancel
+                  Cancel
                 </button>
               </div>
             </div>

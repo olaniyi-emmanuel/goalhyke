@@ -53,7 +53,9 @@ interface SpiritVisualizationData {
 
 interface SpiritTargetData {
   spiritualPractice: string;
+  specificTarget: string;
   practiceFrequency: string;
+  targetDeadline: string;
   sessionLength: string;
   thirtyDayMilestone: string;
   trackingStyle: string;
@@ -61,7 +63,6 @@ interface SpiritTargetData {
 }
 
 const TOTAL_STEPS = 7;
-const REQUIRED_COMMIT_TOKENS = 50;
 
 const DEFAULT_WHY: SpiritWhyData = {
   reason: "",
@@ -99,8 +100,10 @@ const DEFAULT_VISUALIZATION: SpiritVisualizationData = {
 };
 
 const DEFAULT_TARGET: SpiritTargetData = {
-  spiritualPractice: "",
-  practiceFrequency: "",
+  spiritualPractice: "Prayer & Worship",
+  specificTarget: "",
+  practiceFrequency: "Daily",
+  targetDeadline: "3 months",
   sessionLength: "",
   thirtyDayMilestone: "",
   trackingStyle: "",
@@ -856,7 +859,60 @@ export default function StrengthenSpiritWorkflow({
         {step === 1 && (
           <StepShell
             currentStep={1}
-            title="Set Your Why"
+            title="Define The Ritual"
+            goalTitle={goalTitle}
+            icon={
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="2" />
+                <path d="M12 7V12L15.5 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            }
+            visualTitle="Define your spiritual practice"
+            visualBody="Specify the spiritual practice and target details to anchor your ritual."
+            visualImageSrc="/images/milestones-character.png"
+            onBack={handleBack}
+            onCancel={onCancel}
+            onNext={handleNext}
+          >
+            <div className="flex flex-col gap-6">
+              <SelectQuestion
+                label="What spiritual practice do you want to focus on?"
+                value={target.spiritualPractice || "Prayer & Worship"}
+                onChange={(value) =>
+                  setTarget((current) => ({ ...current, spiritualPractice: value }))
+                }
+                options={[
+                  "Prayer & Worship",
+                  "Meditation",
+                  "Scripture / Sacred Text Study",
+                  "Gratitude Journaling / Reflection",
+                  "Fast & Silence Practice",
+                  "Fasting",
+                  "Service & Charity / Generosity",
+                ]}
+              />
+              <TextQuestion
+                label="What is the specific target?"
+                value={target.specificTarget}
+                onChange={(value) =>
+                  setTarget((current) => ({ ...current, specificTarget: value }))
+                }
+                placeholder="E.g. Pray 15 minutes every morning, Read 1 chapter daily"
+              />
+            </div>
+          </StepShell>
+        )}
+
+        {step === 2 && (
+          <StepShell
+            currentStep={2}
+            title="Set The Timeline"
             goalTitle={goalTitle}
             icon={
               <svg
@@ -871,109 +927,11 @@ export default function StrengthenSpiritWorkflow({
                   stroke="currentColor"
                   strokeWidth="2"
                 />
-                <path
-                  d="M12 8V12L15 15"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
+                <path d="M12 8V12L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
             }
-            visualTitle="Define the deeper reason"
-            visualBody="This workflow begins with meaning, grounding the spiritual commitment in purpose, inspiration, and the personal cost of not pursuing it."
-            visualImageSrc="/images/milestones-character.png"
-            onBack={handleBack}
-            onCancel={onCancel}
-            onNext={handleNext}
-          >
-            <div className="flex flex-col gap-6">
-              <TextareaQuestion
-                label="Why do you want to strengthen your spirit?"
-                value={why.reason}
-                onChange={(value) =>
-                  setWhy((current) => ({ ...current, reason: value }))
-                }
-                placeholder='E.g. "To find peace, grow closer to God, reduce stress"'
-              />
-              <SelectQuestion
-                label="What positive change do you hope this will bring to your daily life?"
-                value={why.dailyChange}
-                onChange={(value) =>
-                  setWhy((current) => ({ ...current, dailyChange: value }))
-                }
-                options={DAILY_CHANGE_OPTIONS}
-              />
-              <SelectQuestion
-                label="Is this connected to a bigger life goal or value you hold?"
-                value={why.biggerValue}
-                onChange={(value) =>
-                  setWhy((current) => ({ ...current, biggerValue: value }))
-                }
-                options={BIGGER_VALUE_OPTIONS}
-              />
-              <SelectQuestion
-                label="How do you want to feel differently 3 months from now?"
-                value={why.futureFeeling}
-                onChange={(value) =>
-                  setWhy((current) => ({ ...current, futureFeeling: value }))
-                }
-                options={FUTURE_FEELING_OPTIONS}
-              />
-              <SelectQuestion
-                label="Who or what inspires you to grow spiritually?"
-                value={why.inspiration}
-                onChange={(value) =>
-                  setWhy((current) => ({ ...current, inspiration: value }))
-                }
-                options={INSPIRATION_OPTIONS}
-              />
-              <SelectQuestion
-                label="If you don’t pursue this, what do you feel you might miss out on?"
-                value={why.missOut}
-                onChange={(value) =>
-                  setWhy((current) => ({ ...current, missOut: value }))
-                }
-                options={MISS_OUT_OPTIONS}
-              />
-            </div>
-          </StepShell>
-        )}
-
-        {step === 2 && (
-          <StepShell
-            currentStep={2}
-            title="Identify Your Challenges"
-            goalTitle={goalTitle}
-            icon={
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M10.5 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V13.5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M14 6L18 10"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M8 14L16 6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            }
-            visualTitle="Name the blockers"
-            visualBody="This step captures the distractions, inner struggles, and environmental obstacles that typically pull the user away from spiritual consistency."
+            visualTitle="Set your goal timeframe"
+            visualBody="Choose your ritual frequency and deadline for spiritual consistency."
             visualImageSrc="/images/behavioural-solution.png"
             onBack={handleBack}
             onCancel={onCancel}
@@ -981,61 +939,20 @@ export default function StrengthenSpiritWorkflow({
           >
             <div className="flex flex-col gap-6">
               <SelectQuestion
-                label="What usually distracts you from your spiritual growth?"
-                value={challenges.distraction}
+                label="Frequency"
+                value={target.practiceFrequency || "Daily"}
                 onChange={(value) =>
-                  setChallenges((current) => ({ ...current, distraction: value }))
+                  setTarget((current) => ({ ...current, practiceFrequency: value }))
                 }
-                options={DISTRACTION_OPTIONS}
+                options={["Daily", "Weekly / Recurring Set Days", "Monthly"]}
               />
               <SelectQuestion
-                label="What inner struggles do you face most often?"
-                value={challenges.innerStruggle}
+                label="Target Deadline"
+                value={target.targetDeadline || "3 months"}
                 onChange={(value) =>
-                  setChallenges((current) => ({ ...current, innerStruggle: value }))
+                  setTarget((current) => ({ ...current, targetDeadline: value }))
                 }
-                options={INNER_STRUGGLE_OPTIONS}
-              />
-              <SelectQuestion
-                label="Are there external obstacles affecting your spiritual journey?"
-                value={challenges.externalObstacle}
-                onChange={(value) =>
-                  setChallenges((current) => ({
-                    ...current,
-                    externalObstacle: value,
-                  }))
-                }
-                options={EXTERNAL_OBSTACLE_OPTIONS}
-              />
-              <SelectQuestion
-                label="How do you usually feel when you drift away from your spiritual goals?"
-                value={challenges.driftFeeling}
-                onChange={(value) =>
-                  setChallenges((current) => ({ ...current, driftFeeling: value }))
-                }
-                options={DRIFT_FEELING_OPTIONS}
-              />
-              <SelectQuestion
-                label="On a scale of 1-10, how difficult do you feel it is to overcome these challenges?"
-                value={challenges.difficultyLevel}
-                onChange={(value) =>
-                  setChallenges((current) => ({
-                    ...current,
-                    difficultyLevel: value,
-                  }))
-                }
-                options={DIFFICULTY_OPTIONS}
-              />
-              <TextQuestion
-                label="What’s one habit or thought you’d like to change that holds you back?"
-                value={challenges.habitToChange}
-                onChange={(value) =>
-                  setChallenges((current) => ({
-                    ...current,
-                    habitToChange: value,
-                  }))
-                }
-                placeholder="Text here"
+                options={["1 month", "3 months", "6 months", "1 year", "Custom"]}
               />
             </div>
           </StepShell>
@@ -1255,11 +1172,10 @@ export default function StrengthenSpiritWorkflow({
             activeIndex={5}
           />
         )}
-
         {step === 7 && (
           <StepShell
             currentStep={7}
-            title="Set Your Target"
+            title="Lock In the Stake"
             goalTitle={goalTitle}
             icon={
               <svg
@@ -1269,7 +1185,13 @@ export default function StrengthenSpiritWorkflow({
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="2" />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="8.5"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
                 <path
                   d="M12 7V12L15.5 14"
                   stroke="currentColor"
@@ -1278,80 +1200,43 @@ export default function StrengthenSpiritWorkflow({
                 />
               </svg>
             }
-            visualTitle="Turn practice into a measurable target"
-            visualBody="The final step converts spiritual intention into a concrete practice, cadence, session length, and measurable 30-day milestone."
-            visualImageSrc="/images/behavioural-solution.png"
+            visualTitle="Lock in your commitment"
+            visualBody="Stake your tokens to back your spiritual commitment."
+            visualImageSrc="/images/milestones-character.png"
             onBack={handleBack}
             onCancel={onCancel}
             onNext={handleOpenCommitConfirm}
+            nextLabel="Submit"
           >
-            <div className="flex flex-col gap-6">
-              <SelectQuestion
-                label="What spiritual practice do you want to focus on?"
-                value={target.spiritualPractice}
-                onChange={(value) =>
-                  setTarget((current) => ({
-                    ...current,
-                    spiritualPractice: value,
-                  }))
-                }
-                options={SPIRITUAL_PRACTICE_OPTIONS}
-              />
-              <SelectQuestion
-                label="How often do you want to commit to this practice?"
-                value={target.practiceFrequency}
-                onChange={(value) =>
-                  setTarget((current) => ({
-                    ...current,
-                    practiceFrequency: value,
-                  }))
-                }
-                options={PRACTICE_FREQUENCY_OPTIONS}
-              />
-              <SelectQuestion
-                label="How much time will you dedicate to each session?"
-                value={target.sessionLength}
-                onChange={(value) =>
-                  setTarget((current) => ({
-                    ...current,
-                    sessionLength: value,
-                  }))
-                }
-                options={SESSION_LENGTH_OPTIONS}
-              />
-              <TextQuestion
-                label="What specific milestone do you want to achieve in the next 30 days?"
-                value={target.thirtyDayMilestone}
-                onChange={(value) =>
-                  setTarget((current) => ({
-                    ...current,
-                    thirtyDayMilestone: value,
-                  }))
-                }
-                placeholder='E.g. Complete one spiritual book or meditate 10 minutes daily for 30 days'
-              />
-              <SelectQuestion
-                label="Do you want to track progress in quantity, consistency, or both?"
-                value={target.trackingStyle}
-                onChange={(value) =>
-                  setTarget((current) => ({
-                    ...current,
-                    trackingStyle: value,
-                  }))
-                }
-                options={TRACKING_STYLE_OPTIONS}
-              />
-              <SelectQuestion
-                label="Would you like to set a reminder system to help you stay consistent?"
-                value={target.reminderSystem}
-                onChange={(value) =>
-                  setTarget((current) => ({
-                    ...current,
-                    reminderSystem: value,
-                  }))
-                }
-                options={YES_NO_OPTIONS}
-              />
+            <div className="flex flex-col gap-6 py-2">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[18px] font-bold text-[#262525] font-secondary">
+                    Set your token stake
+                  </span>
+                  <span className="rounded-full bg-[#7655fb]/10 px-3.5 py-1 text-sm font-bold text-[#7655fb]">
+                    {tokenCommitment} Tokens
+                  </span>
+                </div>
+
+                <div className="relative mt-4 flex items-center">
+                  <input
+                    type="range"
+                    min="20"
+                    max="200"
+                    step="5"
+                    value={tokenCommitment}
+                    onChange={(e) => setTokenCommitment(Number(e.target.value))}
+                    className="h-3 w-full cursor-pointer appearance-none rounded-lg bg-[#e2e8f0] accent-[#7655fb]"
+                  />
+                </div>
+
+                <div className="flex justify-between text-xs font-semibold text-gray-500 mt-1">
+                  <span>20 Tokens</span>
+                  <span>100 Tokens</span>
+                  <span>200 Tokens</span>
+                </div>
+              </div>
             </div>
           </StepShell>
         )}
@@ -1366,8 +1251,19 @@ export default function StrengthenSpiritWorkflow({
               className="absolute right-6 top-6 flex h-11 w-11 items-center justify-center rounded-full text-[#262525] transition-colors hover:bg-[#f4f6fb]"
               aria-label="Close success dialog"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6 6L18 18M18 6L6 18"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
 
@@ -1410,12 +1306,12 @@ export default function StrengthenSpiritWorkflow({
             </button>
 
             <div className="flex flex-col items-center text-center">
-              <p className="mt-6 text-[22px] font-medium leading-[1.6] text-[#262525] font-secondary sm:text-[26px]">
-                Commit Tokens to Your Goal
+              <p className="mt-6 text-[22px] font-bold leading-[1.6] text-[#262525] font-secondary sm:text-[26px]">
+                You will be charged {tokenCommitment} Tokens if you fail to complete this goal
               </p>
               
               <p className="mt-2 text-[14px] text-gray-500 max-w-lg">
-                Your committed tokens are staked. If you fail the weekly consistency target (&gt;= 5 verified check-ins), tokens will be deducted.
+                Your committed tokens are staked. If you fail to maintain your ritual frequency, tokens will be deducted.
               </p>
 
               <div className="w-full max-w-md mx-auto mt-6 p-5 rounded-[18px] border border-gray-100 bg-[#f7f8ff] text-left">
@@ -1433,86 +1329,16 @@ export default function StrengthenSpiritWorkflow({
                     <option value="text">Text Log / Written proof (no file)</option>
                   </select>
                 </div>
-
-                <p className="text-[13px] font-bold text-[#262525] uppercase tracking-wider mb-3">
-                  Select Token Commitment (Min 20):
-                </p>
-                <div className="flex gap-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsCustomToken(false);
-                      setTokenCommitment(20);
-                    }}
-                    className={`flex-1 py-3 px-4 rounded-xl border text-[14px] font-semibold transition-all cursor-pointer ${
-                      !isCustomToken
-                        ? "border-[#7655fb] bg-[#7655fb]/5 text-[#7655fb] shadow-sm font-bold"
-                        : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    Standard (20 tokens)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsCustomToken(true);
-                    }}
-                    className={`flex-1 py-3 px-4 rounded-xl border text-[14px] font-semibold transition-all cursor-pointer ${
-                      isCustomToken
-                        ? "border-[#7655fb] bg-[#7655fb]/5 text-[#7655fb] shadow-sm font-bold"
-                        : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    Custom Amount
-                  </button>
-                </div>
-
-                {isCustomToken && (
-                  <div className="mt-4">
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                      Enter Custom Tokens (Min 20):
-                    </label>
-                    <input
-                      type="number"
-                      min="20"
-                      value={customTokenValue}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setCustomTokenValue(val);
-                        const num = parseInt(val) || 0;
-                        setTokenCommitment(num);
-                      }}
-                      placeholder="e.g. 50"
-                      className={`w-full px-4 py-2.5 border rounded-xl text-[14px] outline-none focus:border-[#7655fb] ${
-                        customTokenValue && parseInt(customTokenValue) < 20
-                          ? "border-rose-500 focus:border-rose-500 bg-rose-50/10"
-                          : "border-[#ccd2e2]"
-                      }`}
-                    />
-                    {customTokenValue && parseInt(customTokenValue) < 20 && (
-                      <p className="mt-1.5 text-[12px] font-semibold text-rose-600 flex items-center gap-1">
-                        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                        </svg>
-                        Custom commitment must be at least 20 tokens.
-                      </p>
-                    )}
-                  </div>
-                )}
               </div>
-
-              <p className="mt-8 text-[18px] font-bold text-[#7655fb]">
-                Total Staked Commitment: {tokenCommitment} tokens
-              </p>
 
               <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
                 <button
                   type="button"
                   onClick={handleSubmit}
                   disabled={isSaving || (isCustomToken && (!customTokenValue || parseInt(customTokenValue) < 20))}
-                  className="gh-btn-primary min-w-[150px] px-8 py-3 text-[18px] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
+                  className="gh-btn-primary min-w-[150px] px-8 py-3 text-[18px] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none bg-[#7655fb]"
                 >
-                  {isSaving ? "Saving..." : "Yes, commit"}
+                  {isSaving ? "Saving..." : "Accept stake"}
                 </button>
                 <button
                   type="button"
@@ -1520,7 +1346,7 @@ export default function StrengthenSpiritWorkflow({
                   disabled={isSaving}
                   className="flex min-w-[150px] items-center justify-center rounded-full border border-[#ff8b97] bg-white px-8 py-3 text-[18px] font-medium text-[#ff6f7d] transition-colors hover:bg-[#fff5f7] disabled:opacity-50"
                 >
-                  No, cancel
+                  Cancel
                 </button>
               </div>
             </div>
