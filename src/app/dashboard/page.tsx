@@ -720,6 +720,39 @@ export default function Dashboard() {
                   </div>
                 </div>
 
+                {/* ── Row 1.5: Mandatory Telegram Connectivity & Notification Banner ── */}
+                <div className="rounded-[24px] bg-gradient-to-r from-[#229ED9] via-[#0088cc] to-[#179cde] p-5 md:p-6 text-white shadow-[0_16px_36px_rgba(34,158,217,0.28)] flex flex-col md:flex-row items-center justify-between gap-5 transition-all">
+                  <div className="flex items-center gap-4 text-center md:text-left">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-white shadow-inner backdrop-blur-md">
+                      <svg className="h-8 w-8 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.67-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.25.38-.51 1.07-.78 4.18-1.82 6.97-3.02 8.37-3.61 3.99-1.68 4.82-1.97 5.36-1.98.12 0 .38.03.55.17.14.12.18.28.2.45-.01.07.01.24 0 .38z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-center md:justify-start gap-2">
+                        <span className="inline-block rounded-full bg-white/20 px-3 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-white backdrop-blur-sm">
+                          Compulsory GoalHyke Channel
+                        </span>
+                      </div>
+                      <h3 className="text-[18px] font-bold mt-1 leading-tight">
+                        Enable Live Telegram Daily Reminders
+                      </h3>
+                      <p className="text-[13px] text-white/90 mt-0.5 max-w-[540px]">
+                        GoalHyke accountability reminders and evening report check-in prompts are delivered directly to Telegram. Connect your bot to stay on track.
+                      </p>
+                    </div>
+                  </div>
+
+                  <Link href="/settings" className="shrink-0 w-full md:w-auto">
+                    <button className="w-full md:w-auto flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-[14px] font-extrabold text-[#0088cc] shadow-md hover:bg-gray-50 active:scale-[0.98] transition-all cursor-pointer">
+                      <span>Connect Telegram Bot</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                      </svg>
+                    </button>
+                  </Link>
+                </div>
+
                 {/* ── Row 2: Today's Habits ─ Full Width ── */}
                 <div className="rounded-[24px] border border-white/60 bg-white p-5 shadow-[0_20px_50px_rgba(24,33,77,0.07)]">
                   <div className="mb-4 flex items-center justify-between">
