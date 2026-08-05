@@ -172,10 +172,10 @@ export default function Dashboard() {
         if (isSuccess && amountStr && reference) {
           const amount = Number(amountStr);
           const txKey = `goalhyke_tx_processed_${reference}`;
-          
+
           if (!localStorage.getItem(txKey)) {
             localStorage.setItem(txKey, "true");
-            
+
             // Invoke server-side checkout verification API
             fetch("/api/checkout/verify", {
               method: "POST",
@@ -204,7 +204,7 @@ export default function Dashboard() {
                 console.error("Verification connection error:", err);
               });
           }
-          
+
           // Clear query parameters from URL
           window.history.replaceState(null, "", window.location.pathname);
         }
@@ -325,9 +325,9 @@ export default function Dashboard() {
           100,
           Math.round(
             base * 0.45 +
-              (index % 2 === 0 ? 10 : 20) +
-              activeGoals.length * 4 -
-              index * 2
+            (index % 2 === 0 ? 10 : 20) +
+            activeGoals.length * 4 -
+            index * 2
           )
         )
       ),
@@ -343,8 +343,8 @@ export default function Dashboard() {
     goals.length === 0
       ? "0%"
       : completionRate >= 50
-      ? "+24%"
-      : "+12%";
+        ? "+24%"
+        : "+12%";
   const handlePrevMonth = () => {
     setCurrentCalendarMonth(new Date(currentCalendarMonth.getFullYear(), currentCalendarMonth.getMonth() - 1, 1));
   };
@@ -357,55 +357,55 @@ export default function Dashboard() {
     const year = currentCalendarMonth.getFullYear();
     const month = currentCalendarMonth.getMonth();
     const days = buildCalendarDaysForMonth(year, month);
-    
+
     return days.map(item => {
       if (item.muted) {
         return { ...item, status: "none" };
       }
-      
+
       const itemDate = new Date(year, month, item.day);
       const today = new Date();
-      today.setHours(0,0,0,0);
-      
+      today.setHours(0, 0, 0, 0);
+
       // Filter goals that are active on this day
       const activeGoalsOnDay = goals.filter(g => {
         if (selectedGoalId !== "all" && g.id !== selectedGoalId) {
           return false;
         }
         const start = new Date(g.start_date);
-        start.setHours(0,0,0,0);
+        start.setHours(0, 0, 0, 0);
         const end = new Date(g.end_date);
-        end.setHours(23,59,59,999);
+        end.setHours(23, 59, 59, 999);
         return itemDate >= start && itemDate <= end;
       });
-      
+
       if (activeGoalsOnDay.length === 0) {
         return { ...item, status: "none", date: itemDate };
       }
-      
+
       // Filter submissions for active goals on this day
       const daySubmissions = submissions.filter(sub => {
         const subDate = new Date(sub.created_at);
         const isSameDay = subDate.getFullYear() === itemDate.getFullYear() &&
-                          subDate.getMonth() === itemDate.getMonth() &&
-                          subDate.getDate() === itemDate.getDate();
+          subDate.getMonth() === itemDate.getMonth() &&
+          subDate.getDate() === itemDate.getDate();
         if (!isSameDay) return false;
-        
+
         if (selectedGoalId !== "all") {
           return sub.goal_id === selectedGoalId;
         } else {
           return goals.some(g => g.id === sub.goal_id);
         }
       });
-      
+
       const hasVerified = daySubmissions.some(s => s.verified === "verified");
       const hasFailed = daySubmissions.some(s => s.verified === "failed");
       const hasPending = daySubmissions.some(s => s.verified === "pending");
-      
+
       if (hasVerified) {
         return { ...item, status: "verified", date: itemDate };
       }
-      
+
       if (itemDate <= today) {
         if (hasFailed) {
           return { ...item, status: "failed", date: itemDate };
@@ -417,7 +417,7 @@ export default function Dashboard() {
           return { ...item, status: "missed", date: itemDate };
         }
       }
-      
+
       return { ...item, status: "none", date: itemDate };
     });
   }, [goals, submissions, selectedGoalId, currentCalendarMonth]);
@@ -439,7 +439,7 @@ export default function Dashboard() {
       url: `https://api.whatsapp.com/send?text=${encodedText}`,
       icon: (
         <svg className="w-4 h-4 fill-current text-[#25D366]" viewBox="0 0 24 24">
-          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.968C16.688 1.97 14.218 1.05 11.587 1.05 6.155 1.05 1.733 5.42 1.73 10.85c-.001 1.702.447 3.367 1.3 4.85l-.995 3.635 3.737-.98c1.476.804 3.008 1.229 4.585 1.229zm9.693-6.853c-.26-.13-1.534-.757-1.771-.843-.237-.086-.41-.13-.582.13-.172.26-.668.843-.819.1.017-.15.151-.336.336-.582.13-.26.26-.54.388-.813.13-.27.065-.508-.033-.703-.097-.195-.771-1.859-1.056-2.548-.278-.669-.559-.579-.769-.59-.199-.01-.427-.012-.655-.012-.228 0-.6.086-.913.43-.313.344-1.194 1.166-1.194 2.842s1.22 3.293 1.39 3.52c.17.227 2.399 3.662 5.811 5.132.812.35 1.446.559 1.94.716.816.26 1.559.223 2.146.136.655-.098 1.534-.627 1.75-1.234.216-.607.216-1.127.151-1.234-.064-.108-.237-.195-.497-.325z"/>
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.968C16.688 1.97 14.218 1.05 11.587 1.05 6.155 1.05 1.733 5.42 1.73 10.85c-.001 1.702.447 3.367 1.3 4.85l-.995 3.635 3.737-.98c1.476.804 3.008 1.229 4.585 1.229zm9.693-6.853c-.26-.13-1.534-.757-1.771-.843-.237-.086-.41-.13-.582.13-.172.26-.668.843-.819.1.017-.15.151-.336.336-.582.13-.26.26-.54.388-.813.13-.27.065-.508-.033-.703-.097-.195-.771-1.859-1.056-2.548-.278-.669-.559-.579-.769-.59-.199-.01-.427-.012-.655-.012-.228 0-.6.086-.913.43-.313.344-1.194 1.166-1.194 2.842s1.22 3.293 1.39 3.52c.17.227 2.399 3.662 5.811 5.132.812.35 1.446.559 1.94.716.816.26 1.559.223 2.146.136.655-.098 1.534-.627 1.75-1.234.216-.607.216-1.127.151-1.234-.064-.108-.237-.195-.497-.325z" />
         </svg>
       )
     },
@@ -448,7 +448,7 @@ export default function Dashboard() {
       url: `https://twitter.com/intent/tweet?text=${encodedText}`,
       icon: (
         <svg className="w-4 h-4 fill-current text-[#000000]" viewBox="0 0 24 24">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
         </svg>
       )
     },
@@ -457,7 +457,7 @@ export default function Dashboard() {
       url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`,
       icon: (
         <svg className="w-4 h-4 fill-current text-[#1877F2]" viewBox="0 0 24 24">
-          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
         </svg>
       )
     },
@@ -466,7 +466,7 @@ export default function Dashboard() {
       url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
       icon: (
         <svg className="w-4 h-4 fill-current text-[#0A66C2]" viewBox="0 0 24 24">
-          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
         </svg>
       )
     },
@@ -475,7 +475,7 @@ export default function Dashboard() {
       action: "instagram",
       icon: (
         <svg className="w-4 h-4 fill-current text-[#E1306C]" viewBox="0 0 24 24">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
         </svg>
       )
     },
@@ -484,7 +484,7 @@ export default function Dashboard() {
       action: "copy",
       icon: (
         <svg className="w-4 h-4 fill-none stroke-current text-[#4f5b7f]" viewBox="0 0 24 24">
-          <path d="M8 16H6a4 4 0 010-8h2M16 8h2a4 4 0 110 8h-2M8 12h8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M8 16H6a4 4 0 010-8h2M16 8h2a4 4 0 110 8h-2M8 12h8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       )
     }
@@ -615,52 +615,49 @@ export default function Dashboard() {
                 display: loading ? 'none' : 'block',
               }}
             >
-            <div className="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border-b border-gray-100 pb-6">
-              <div>
-                <h1 className="text-[32px] font-bold text-[#262525]">
-                  Welcome, {firstName || "User"}!
-                </h1>
-                <p className="text-[14px] text-[#6f6f78] mt-1">
-                  Here is a snapshot of your habits and commitments today.
-                </p>
-              </div>
+              <div className="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border-b border-gray-100 pb-6">
+                <div>
+                  <h1 className="text-[32px] font-bold text-[#262525]">
+                    Welcome, {firstName || "User"}!
+                  </h1>
+                </div>
 
-              <div className="flex flex-wrap items-center gap-4 shrink-0">
-                {/* High-attention Token Balance Card */}
-                <Link 
-                  href="/get-token"
-                  className="flex items-center gap-4 bg-gradient-to-r from-[#7655fb] to-[#4169e1] rounded-[24px] px-6 text-white shadow-[0_12px_36px_rgba(118,85,251,0.22)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 cursor-pointer h-[62px] md:min-w-[240px]"
-                >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-white/10 text-[#FFD166] backdrop-blur-md shrink-0">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M3 13H7C8.10457 13 9 12.1046 9 11V9C9 7.89543 8.10457 7 7 7H3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M17 13H21" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                      <circle cx="17" cy="13" r="1" fill="currentColor"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/70">
-                      Your GoalHyke Balance
+                <div className="flex flex-wrap items-center gap-4 shrink-0">
+                  {/* High-attention Token Balance Card */}
+                  <Link
+                    href="/get-token"
+                    className="flex items-center gap-4 bg-gradient-to-r from-[#7655fb] to-[#4169e1] rounded-[24px] px-6 text-white shadow-[0_12px_36px_rgba(118,85,251,0.22)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 cursor-pointer h-[62px] md:min-w-[240px]"
+                  >
+                    <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-white/10 text-[#FFD166] backdrop-blur-md shrink-0">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M3 13H7C8.10457 13 9 12.1046 9 11V9C9 7.89543 8.10457 7 7 7H3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M17 13H21" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="17" cy="13" r="1" fill="currentColor" />
+                      </svg>
                     </div>
-                    <div className="flex items-baseline gap-1 mt-0.5">
-                      <span className="text-[26px] font-black leading-none text-[#FFD166]">{tokenBalance}</span>
-                      <span className="text-[11px] font-bold uppercase tracking-[0.05em] text-white/80">Tokens Left</span>
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/70">
+                        Your GoalHyke Balance
+                      </div>
+                      <div className="flex items-baseline gap-1 mt-0.5">
+                        <span className="text-[26px] font-black leading-none text-[#FFD166]">{tokenBalance}</span>
+                        <span className="text-[11px] font-bold uppercase tracking-[0.05em] text-white/80">Tokens Left</span>
+                      </div>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
 
-                {/* Create Goal Button */}
-                <Link href="/set-goal">
-                  <button className="flex items-center justify-center gap-[8px] bg-[#7655fb] text-white rounded-[24px] px-6 h-[62px] font-bold text-[15px] hover:bg-[#6445e0] hover:translate-y-[-1px] transition-all duration-300 shadow-lg shadow-[#7655fb]/20 cursor-pointer">
-                    <span>Create a goal</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                </Link>
+                  {/* Create Goal Button */}
+                  <Link href="/set-goal">
+                    <button className="flex items-center justify-center gap-[8px] bg-[#7655fb] text-white rounded-[24px] px-6 h-[62px] font-bold text-[15px] hover:bg-[#6445e0] hover:translate-y-[-1px] transition-all duration-300 shadow-lg shadow-[#7655fb]/20 cursor-pointer">
+                      <span>Create a goal</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  </Link>
+                </div>
               </div>
-            </div>
 
               <div className="flex flex-col gap-6">
                 {/* ── Row 1: Hero Metrics ─ Momentum + Completion side by side ── */}
@@ -744,11 +741,10 @@ export default function Dashboard() {
                         >
                           <div className="flex items-center gap-3">
                             <div
-                              className={`flex h-10 w-10 items-center justify-center rounded-[14px] shrink-0 ${
-                                index === 0
+                              className={`flex h-10 w-10 items-center justify-center rounded-[14px] shrink-0 ${index === 0
                                   ? "bg-gradient-to-br from-[#4169e1] to-[#7655fb]"
                                   : "bg-[#eef2ff]"
-                              }`}
+                                }`}
                             >
                               <svg
                                 width="18"
@@ -856,7 +852,7 @@ export default function Dashboard() {
                           Track daily show-up history
                         </p>
                       </div>
-                      
+
                       <div className="flex items-center gap-2">
                         <select
                           value={selectedGoalId}
@@ -901,7 +897,7 @@ export default function Dashboard() {
                       {calendarDays.map((item, index) => {
                         let cellClass = "relative flex flex-col items-center justify-center h-8 w-8 mx-auto rounded-full transition-all ";
                         let statusIndicator = null;
-                        
+
                         if (item.muted) {
                           cellClass += "text-[#c8c7cf] cursor-default";
                         } else {
@@ -924,9 +920,9 @@ export default function Dashboard() {
                             className={cellClass}
                             title={
                               item.status === "verified" ? "Verified Check-in" :
-                              item.status === "failed" ? "Failed Verification" :
-                              item.status === "missed" ? "Missed Day" :
-                              item.status === "pending" ? "Pending AI Review" : undefined
+                                item.status === "failed" ? "Failed Verification" :
+                                  item.status === "missed" ? "Missed Day" :
+                                    item.status === "pending" ? "Pending AI Review" : undefined
                             }
                           >
                             <span className={item.status !== "none" && !item.muted ? "translate-y-[-1px]" : ""}>
@@ -1039,13 +1035,13 @@ export default function Dashboard() {
                         <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
       <Footer />
     </main>
