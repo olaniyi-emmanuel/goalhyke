@@ -31,10 +31,10 @@ const GoalSelectionCard = ({ title, imageSrc, href = "#" }: GoalSelectionCardPro
       {/* Start Goal Button */}
       <Link
         href={href}
-        className="flex items-center justify-center gap-2 bg-[#7655fb] text-white rounded-[25px] px-6 py-2 hover:bg-[#6445e0] transition-colors"
+        className="flex items-center justify-center gap-2 bg-[#7655fb] text-white rounded-[25px] w-full sm:w-auto px-6 py-3 text-[15px] sm:px-6 sm:py-2 sm:text-[14px] hover:bg-[#6445e0] transition-colors"
       >
-        <span className="text-[14px] font-medium font-secondary">Start goal</span>
-        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <span className="font-medium font-secondary">Start goal</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M1 11L11 1M11 1H3M11 1V9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </Link>

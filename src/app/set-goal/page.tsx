@@ -242,12 +242,12 @@ export default function SetGoal() {
                             <button
                               type="button"
                               onClick={() => handleSelectTemplate(tpl.category)}
-                              className="gh-btn-primary flex items-center justify-center gap-2 px-4 py-2 text-[12px] cursor-pointer"
+                              className="gh-btn-primary flex w-full sm:w-auto items-center justify-center gap-2 px-6 py-3 text-[15px] sm:px-4 sm:py-2 sm:text-[12px] cursor-pointer"
                             >
                               <span>Start goal</span>
                               <svg
-                                width="10"
-                                height="10"
+                                width="12"
+                                height="12"
                                 viewBox="0 0 12 12"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"

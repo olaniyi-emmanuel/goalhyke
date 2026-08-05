@@ -309,18 +309,19 @@ export default function Links() {
         setUser(currentUser);
 
         if (currentUser) {
-          await fetchConnectionsAndProfile(currentUser.id);
-          await fetchMeetings(currentUser.id);
+          const [, , list] = await Promise.all([
+            fetchConnectionsAndProfile(currentUser.id),
+            fetchMeetings(currentUser.id),
+            ChatService.getConversations(supabase, currentUser.id),
+            ChatService.updatePresence(supabase, currentUser.id, "online"),
+          ]);
 
-          // Update presence online
-          await ChatService.updatePresence(supabase, currentUser.id, "online");
-
-          // Load chat conversations
-          const list = await ChatService.getConversations(supabase, currentUser.id);
-          setConversations(list);
-          if (list.length > 0) {
-            const firstDM = list.find((c) => c.type === "dm");
-            setActiveConvId(firstDM ? firstDM.id : list[0].id);
+          if (list) {
+            setConversations(list);
+            if (list.length > 0) {
+              const firstDM = list.find((c) => c.type === "dm");
+              setActiveConvId(firstDM ? firstDM.id : list[0].id);
+            }
           }
 
           // Pre-fill invite code from join parameters
@@ -556,7 +557,8 @@ export default function Links() {
         return [conv, ...prev];
       });
       setActiveConvId(conv.id);
-      setActiveTab("groups");
+      setActiveTab("chats");
+      setMobilePane("chat");
     } catch (err) {
       console.error("Failed to initialize DM:", err);
     }
@@ -784,7 +786,7 @@ export default function Links() {
 
   // Reconnection hook: flushes offline queue
   const flushOfflineQueue = async () => {
-    if (offlineQueue.length === 0) return;
+    if (offlineQueue.length === 0 || (typeof navigator !== "undefined" && !navigator.onLine)) return;
     const toRetry = [...offlineQueue];
     saveOfflineQueue([]);
 
@@ -900,7 +902,10 @@ export default function Links() {
 
     try {
       const supabase = createClient();
-      const cleanCode = inviteCodeInput.trim().toUpperCase();
+      let cleanCode = inviteCodeInput.trim().toUpperCase();
+      if (!cleanCode.startsWith("HYKE-") && cleanCode.length === 6) {
+        cleanCode = `HYKE-${cleanCode}`;
+      }
 
       const { data: buddyProfile, error: profileErr } = await supabase
         .from("profiles")
@@ -1431,51 +1436,7 @@ export default function Links() {
                   <div className="hyke-glow-aurora-2" style={{ animationDelay: '-3s' }} />
                 </div>
 
-                {/* Modern interactive custom SVG logo mark */}
-                <div className="relative w-12 h-12 shrink-0 group cursor-pointer flex items-center justify-center z-10">
-                  {/* Glowing shadow effect */}
-                  <div className="absolute inset-1.5 rounded-2xl bg-gradient-to-br from-[#7655fb] via-[#5a6bfb] to-[#4169e1] opacity-75 blur-md group-hover:opacity-100 group-hover:blur-lg transition-all duration-500" />
-                  
-                  {/* Glassmorphic border container */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/20 to-[#7655fb]/10 border border-white/40 group-hover:border-[#7655fb]/40 backdrop-blur-md shadow-[inset_0_1.5px_2px_rgba(255,255,255,0.4),0_8px_20px_rgba(118,85,251,0.15)] flex items-center justify-center overflow-hidden transition-colors duration-500">
-                    <div className="absolute inset-0 shimmer-bg opacity-25" />
-                    
-                    <svg className="w-9 h-9" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <defs>
-                        <linearGradient id="peakGrad1" x1="12" y1="36" x2="24" y2="16" gradientUnits="userSpaceOnUse">
-                          <stop offset="0%" stopColor="#4169e1" stopOpacity="0.85" />
-                          <stop offset="100%" stopColor="#7655fb" stopOpacity="0.95" />
-                        </linearGradient>
-                        <linearGradient id="peakGrad2" x1="24" y1="36" x2="36" y2="20" gradientUnits="userSpaceOnUse">
-                          <stop offset="0%" stopColor="#7655fb" stopOpacity="0.55" />
-                          <stop offset="100%" stopColor="#4169e1" stopOpacity="0.8" />
-                        </linearGradient>
-                        <linearGradient id="lineGrad" x1="8" y1="36" x2="38" y2="12" gradientUnits="userSpaceOnUse">
-                          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
-                          <stop offset="50%" stopColor="#7655fb" />
-                          <stop offset="100%" stopColor="#4169e1" />
-                        </linearGradient>
-                      </defs>
-                      
-                      {/* Nested orbital dashed rings */}
-                      <circle cx="24" cy="24" r="22" stroke="url(#lineGrad)" strokeWidth="1" strokeDasharray="3 5" className="hyke-animate-rotate-dashed opacity-40" />
-                      <circle cx="24" cy="24" r="18" stroke="url(#lineGrad)" strokeWidth="0.75" strokeDasharray="6 3" className="hyke-animate-rotate-dashed-counter opacity-25" />
-                      
-                      {/* Core Ascending Peaks (GoalHyke visual mark) */}
-                      <path d="M12 33L22 15L32 33H12Z" fill="url(#peakGrad1)" className="hyke-peak hyke-peak-main" />
-                      <path d="M22 33L29 21L36 33H22Z" fill="url(#peakGrad2)" className="hyke-peak" />
-                      
-                      {/* Drawing path ascending streak */}
-                      <path d="M9 31 L21 17 L33 25 L37 19" stroke="url(#lineGrad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="hyke-draw-path drop-shadow-[0_0_5px_rgba(118,85,251,0.65)]" />
-                    </svg>
-                  </div>
-                  
-                  {/* Outer pulse indicator */}
-                  <div className="absolute -inset-1 rounded-2xl border border-[#7655fb]/30 animate-pulseRing pointer-events-none" />
-                  
-                  {/* Rotating orbital glow beacon */}
-                  <div className="absolute w-2 h-2 rounded-full bg-gradient-to-r from-[#7655fb] to-[#4169e1] shadow-[0_0_8px_rgba(118,85,251,0.85)] pointer-events-none" style={{ top: '-4px', left: '20px', transformOrigin: '4px 28px', animation: 'orbitDotHeader 3.2s linear infinite' }} />
-                </div>
+
 
                 <div className="flex flex-col gap-0.5 z-10">
                   <div className="flex items-center gap-2">
@@ -1542,12 +1503,46 @@ export default function Links() {
                 </div>
               </div>
             ) : loading ? (
-              <div className="rounded-[28px] border border-white/70 bg-white p-12 shadow-[0_20px_60px_rgba(24,33,77,0.08)] flex-1 flex items-center justify-center">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#7655fb] border-t-transparent" />
-                  <p className="text-[15px] font-medium text-[#6f6f78]">
-                    Loading accountability services...
-                  </p>
+              <div className="flex-1 flex overflow-hidden bg-white/80 backdrop-blur-md rounded-[28px] border border-white/70 shadow-[0_20px_60px_rgba(24,33,77,0.08)] transition-opacity duration-500 ease-out opacity-100 min-h-[500px]">
+                {/* Fade-In Skeleton Sidebar */}
+                <div className="w-full md:w-[320px] lg:w-[360px] border-r border-[#eceff7] p-5 flex flex-col gap-4 bg-[#fbfbff]/60">
+                  <div className="h-10 w-full rounded-2xl bg-gray-200/70 animate-pulse" />
+                  <div className="flex items-center gap-3 pt-2">
+                    <div className="h-12 w-12 rounded-full bg-gray-200/70 animate-pulse shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 w-3/4 rounded-lg bg-gray-200/70 animate-pulse" />
+                      <div className="h-3 w-1/2 rounded-lg bg-gray-200/70 animate-pulse" />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 pt-2">
+                    <div className="h-12 w-12 rounded-full bg-gray-200/70 animate-pulse shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 w-2/3 rounded-lg bg-gray-200/70 animate-pulse" />
+                      <div className="h-3 w-1/3 rounded-lg bg-gray-200/70 animate-pulse" />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 pt-2">
+                    <div className="h-12 w-12 rounded-full bg-gray-200/70 animate-pulse shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 w-4/5 rounded-lg bg-gray-200/70 animate-pulse" />
+                      <div className="h-3 w-2/5 rounded-lg bg-gray-200/70 animate-pulse" />
+                    </div>
+                  </div>
+                </div>
+                {/* Fade-In Skeleton Workspace */}
+                <div className="hidden md:flex flex-1 flex-col p-6 gap-6 bg-white/40">
+                  <div className="flex items-center justify-between pb-4 border-b border-[#eceff7]">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-gray-200/70 animate-pulse" />
+                      <div className="h-5 w-40 rounded-lg bg-gray-200/70 animate-pulse" />
+                    </div>
+                    <div className="h-8 w-24 rounded-xl bg-gray-200/70 animate-pulse" />
+                  </div>
+                  <div className="flex-1 flex flex-col justify-end gap-4">
+                    <div className="h-12 w-2/3 rounded-2xl bg-gray-200/50 animate-pulse self-start" />
+                    <div className="h-14 w-1/2 rounded-2xl bg-[#7655fb]/10 animate-pulse self-end" />
+                    <div className="h-10 w-1/3 rounded-2xl bg-gray-200/50 animate-pulse self-start" />
+                  </div>
                 </div>
               </div>
             ) : !user ? (
@@ -2427,7 +2422,7 @@ export default function Links() {
                                   </div>
                                 )}
 
-                                <div className={`flex gap-3 group relative max-w-[75%] animate-slideUp ${isMe ? "self-end flex-row-reverse" : "self-start"}`}>
+                                <div id={`msg-${msg.id}`} className={`flex gap-3 group relative max-w-[75%] animate-slideUp transition-all duration-300 ${isMe ? "self-end flex-row-reverse" : "self-start"}`}>
 
                                   {/* User avatar */}
                                   <InitialsAvatar
